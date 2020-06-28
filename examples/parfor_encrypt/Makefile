@@ -4,7 +4,7 @@ LDFLAGS += -L/opt/ComputeCpp-CE-2.0.0-x86_64-linux-gnu/lib -lComputeCpp
 SYCLFLAGS += -I/opt/ComputeCpp-CE-2.0.0-x86_64-linux-gnu/include -O2 -mllvm -inline-threshold=1000 -sycl -sycl-target ptx64
 SYCLCXX ?= compute++
 
-EXECUTABLE = example4
+EXECUTABLE = parfor_encrypt
 
 all : $(EXECUTABLE)
 
