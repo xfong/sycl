@@ -13,6 +13,7 @@ enable_testing()
 
 add_subdirectory(exceptions)
 add_subdirectory(madd2)
+add_subdirectory(madd3)
 add_subdirectory(parfor_encrypt)
 add_subdirectory(reduce_sum)
 add_subdirectory(simple_vec_add)
