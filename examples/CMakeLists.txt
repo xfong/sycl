@@ -11,6 +11,7 @@ option(SYCL_BUILD_TESTS "Build the tests for the header utilities in include/" O
 set(CMAKE_CXX_STANDARD 14)
 enable_testing()
 
+add_subdirectory(dotproduct)
 add_subdirectory(exceptions)
 add_subdirectory(madd2)
 add_subdirectory(madd3)
