@@ -12,3 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 enable_testing()
 
 add_subdirectory(exceptions)
+add_subdirectory(parfor_encrypt)
+add_subdirectory(reduce_sum)
+add_subdirectory(simple_vec_add)
+add_subdirectory(template_func)
