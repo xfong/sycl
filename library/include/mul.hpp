@@ -5,6 +5,7 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
+// dst[i] = a[i] * b[i]
 template <typename dataT>
 class mul_kernel {
 	public:
