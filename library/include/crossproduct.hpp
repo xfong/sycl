@@ -6,14 +6,15 @@ namespace sycl = cl::sycl;
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
 template <typename dataT>
-class dotproduct_kernel {
+class crossproduct_kernel {
 	public:
 	    using read_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::read, sycl::access::target::global_buffer>;
 	    using write_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::read_write, sycl::access::target::global_buffer>;
-		dotproduct_kernel(write_accessor dstPtr,
-					 dataT prefactor,
+		crossproduct_kernel(write_accessor dstXPtr,
+					 write_accessor dstYPtr,
+					 write_accessor dstZPtr,
 		             read_accessor a0Ptr,
 					 read_accessor a1Ptr,
 					 read_accessor a2Ptr,
@@ -21,7 +22,9 @@ class dotproduct_kernel {
 					 read_accessor b1Ptr,
 					 read_accessor b2Ptr,
 					 size_t N)
-		    :	dstPtr(dstPtr),
+		    :	dstXPtr(dstXPtr),
+				dstYPtr(dstYPtr),
+				dstZPtr(dstZPtr),
 				prefactor(prefactor),
 				axPtr(a0Ptr),
 				ayPtr(a1Ptr),
@@ -33,14 +36,23 @@ class dotproduct_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT c0 = axPtr[gid] * bxPtr[gid];
-				dataT c1 = ayPtr[gid] * byPtr[gid];
-				dataT c2 = azPtr[gid] * bzPtr[gid];
-				dstPtr[gid] += prefactor * (c0 + c1 + c2);
+				dataT ax = axPtr[gid]; dataT ay = ayPtr[gid]; dataT az = azPtr[gid];
+				dataT bx = bxPtr[gid]; dataT by = byPtr[gid]; dataT bz = bzPtr[gid];
+				dataT c0 = ay * bz; dataT d0 = by * az;
+				dataT c1 = ax * bz; dataT d1 = bx * az;
+				dataT c2 = ax * by; dataT d2 = bx * ay;
+				ax = c0 - d0;
+				ay = d1 - c1;
+				az = c2 - d2;
+				dstXPtr[gid] = ax;
+				dstYPtr[gid] = ay;
+				dstZPtr[gid] = az;
 			}
 		}
 	private:
-	    write_accessor dstPtr;
+	    write_accessor dstXPtr;
+	    write_accessor dstYPtr;
+	    write_accessor dstZPtr;
 		dataT          prefactor;
 	    read_accessor  axPtr;
 	    read_accessor  ayPtr;
@@ -52,9 +64,10 @@ class dotproduct_kernel {
 };
 
 template <typename dataT>
-void dotproduct_async(sycl::queue funcQueue,
-                 sycl::buffer<dataT, 1> *dst,
-                 dataT prefactor,
+void crossproduct_async(sycl::queue funcQueue,
+                 sycl::buffer<dataT, 1> *dstX,
+                 sycl::buffer<dataT, 1> *dstY,
+                 sycl::buffer<dataT, 1> *dstZ,
                  sycl::buffer<dataT, 1> *a0,
                  sycl::buffer<dataT, 1> *a1,
                  sycl::buffer<dataT, 1> *a2,
@@ -66,7 +79,9 @@ void dotproduct_async(sycl::queue funcQueue,
 				 size_t lsize) {
 
     funcQueue.submit([&] (sycl::handler& cgh) {
-        auto dst_acc = dst->template get_access<sycl::access::mode::read_write>(cgh);
+        auto dstX_acc = dstX->template get_access<sycl::access::mode::read_write>(cgh);
+        auto dstY_acc = dstY->template get_access<sycl::access::mode::read_write>(cgh);
+        auto dstZ_acc = dstZ->template get_access<sycl::access::mode::read_write>(cgh);
         auto a0_acc = a0->template get_access<sycl::access::mode::read>(cgh);
         auto a1_acc = a1->template get_access<sycl::access::mode::read>(cgh);
         auto a2_acc = a2->template get_access<sycl::access::mode::read>(cgh);
@@ -76,6 +91,6 @@ void dotproduct_async(sycl::queue funcQueue,
 
         cgh.parallel_for(sycl::nd_range<1>(sycl::range<1>(gsize),
 		                                   sycl::range<1>(lsize)),
-		                 dotproduct_kernel<dataT>(dst_acc, prefactor, a0_acc, a1_acc, a2_acc, b0_acc, b1_acc, b2_acc, N));
+		                 crossproduct_kernel<dataT>(dstX_acc, dstY_acc, dstZ_acc, a0_acc, a1_acc, a2_acc, b0_acc, b1_acc, b2_acc, N));
     });
 }

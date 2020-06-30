@@ -1,10 +1,17 @@
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+#define RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+#include <CL/sycl.hpp>
+namespace sycl = cl::sycl;
+
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
 template <typename dataT>
 class madd2_kernel {
 	public:
 	    using read_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::read, sycl::access::target::global_buffer>;
 	    using write_accessor =
-		    sycl::accessor<dataT, 1, sycl::access::mode::discard_write, sycl::access::target::global_buffer>;
+		    sycl::accessor<dataT, 1, sycl::access::mode::read_write, sycl::access::target::global_buffer>;
 		madd2_kernel(write_accessor dstPtr,
 		             read_accessor src1Ptr,
 					 dataT fac1,
@@ -44,7 +51,7 @@ void madd2_async(sycl::queue funcQueue,
 				 size_t lsize) {
 
     funcQueue.submit([&] (sycl::handler& cgh) {
-        auto dst_acc = dst->template get_access<sycl::access::mode::discard_write>(cgh);
+        auto dst_acc = dst->template get_access<sycl::access::mode::read_write>(cgh);
         auto src1_acc = src1->template get_access<sycl::access::mode::read>(cgh);
         auto src2_acc = src2->template get_access<sycl::access::mode::read>(cgh);
 
