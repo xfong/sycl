@@ -7,6 +7,7 @@ namespace sycl = cl::sycl;
 
 #include "stencil.hpp"
 
+// Select and resize one layer for interactive output
 template <typename dataT>
 class resize_kernel {
 	public:
@@ -27,9 +28,9 @@ class resize_kernel {
 				layer(layer),
 				scalex(scalex),
 				scaley(scaley) {}
-		void operator()(sycl::nd_item<1> item) {
-			size_t ix = item.get_group(0) * get_num_range(0) + get_local_id(0);
-			size_t iy = item.get_group(1) * get_num_range(1) + get_local_id(1);
+		void operator()(sycl::nd_item<3> item) {
+			size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
+			size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
 
 			if ((ix < Dx) && (iy < Dy)) {
 
@@ -78,15 +79,15 @@ void resize_async(sycl::queue funcQueue,
                  int    layer,
                  int    scalex,
                  int    scaley,
-				 size_t gsize[2],
-				 size_t lsize[2]) {
+				 size_t gsize[3],
+				 size_t lsize[3]) {
 
     funcQueue.submit([&] (sycl::handler& cgh) {
         auto dst_acc = dst->template get_access<sycl::access::mode::read_write>(cgh);
         auto src_acc = src->template get_access<sycl::access::mode::read>(cgh);
 
-        cgh.parallel_for(sycl::nd_range<2>(sycl::range<2>(gsize[0], gsize[1]),
-		                                   sycl::range<2>(lsize[0], lsize[1])),
+        cgh.parallel_for(sycl::nd_range<3>(sycl::range<3>(gsize[0], gsize[1], gsize(2)),
+		                                   sycl::range<3>(lsize[0], lsize[1], lsize(2))),
 		                 resize_kernel<dataT>(dst_acc, Dx, Dy, Dz, src_acc, Sx, Sy, Sz, layer, scalex, scaley));
     });
 }

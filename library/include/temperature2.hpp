@@ -7,6 +7,7 @@ namespace sycl = cl::sycl;
 
 #include "amul.hpp"
 
+// TODO: this could act on x,y,z, so that we need to call it only once.
 template <typename dataT>
 class settemperature2_kernel {
 	public:

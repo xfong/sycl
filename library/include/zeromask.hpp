@@ -5,6 +5,7 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
+// set dst to zero in cells where mask != 0
 template <typename dataT>
 class zeromask_kernel {
 	public:

@@ -7,6 +7,8 @@ namespace sycl = cl::sycl;
 
 #include "amul.hpp"
 
+// Add uniaxial magnetocrystalline anisotropy field to B.
+// http://www.southampton.ac.uk/~fangohr/software/oxs_uniaxial4.html
 template <typename dataT>
 class adduniaxialanisotropy2_kernel {
 	public:

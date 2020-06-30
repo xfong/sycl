@@ -7,6 +7,8 @@ namespace sycl = cl::sycl;
 
 #include "stencil.hpp"
 
+// shift dst by shx cells (positive or negative) along X-axis.
+// new edge value is clampL at left edge or clampR at right edge.
 template <typename dataT>
 class shiftx_kernel {
 	public:
@@ -29,10 +31,10 @@ class shiftx_kernel {
 				Nz(Nz),
 				clampL(clampL),
 				clampR(clampR) {}
-		void operator()(sycl::nd_item<1> item) {
-			size_t ix = item.get_group(0) * get_num_range(0) + get_local_id(0);
-			size_t iy = item.get_group(1) * get_num_range(1) + get_local_id(1);
-			size_t iz = item.get_group(2) * get_num_range(2) + get_local_id(2);
+		void operator()(sycl::nd_item<3> item) {
+			size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
+			size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
+			size_t iz = item.get_group(2) * item.get_local_range(2) + item.get_local_id(2);
 
 			if ((ix < Nx) || (iy < Ny) || (iz < Nz)) {
 				size_t ix2 = ix-shx;
