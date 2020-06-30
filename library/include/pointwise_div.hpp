@@ -24,15 +24,11 @@ class pointwise_div_kernel {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
 				dataT c0 = bxPtr[gid];
-				if (c0 == (dataT)(0.0)) {
+				dataT c1 = axPtr[gid];
+				if ((c0 == (dataT)(0.0)) || (c1 == (dataT)(0.0))) {
 					dstPtr[gid] = (dataT)(0.0);
 				} else {
-					dataT c1 = axPtr[gid];
-					if (c1 == (dataT)(0.0)) {
-						dstPtr[gid] = (dataT)(0.0);
-					} else {
-						dstPtr[gid] = c1 / c0;
-					}
+					dstPtr[gid] = c1 / c0;
 				}
 			}
 		}
