@@ -5,6 +5,7 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
+// Landau-Lifshitz torque without precession
 template <typename dataT>
 class llnoprecess_kernel {
 	public:

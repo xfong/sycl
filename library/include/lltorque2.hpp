@@ -7,6 +7,7 @@ namespace sycl = cl::sycl;
 
 #include "amul.hpp"
 
+// Landau-Lifshitz torque.
 template <typename dataT>
 class llnoprecess_kernel {
 	public:
