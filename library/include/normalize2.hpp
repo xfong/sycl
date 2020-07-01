@@ -5,8 +5,6 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
-#include "amul.hpp"
-
 // normalize vector {vx, vy, vz} to unit length, unless length or vol are zero.
 template <typename dataT>
 class normalize2_kernel {
@@ -15,9 +13,7 @@ class normalize2_kernel {
 		    sycl::accessor<dataT, 1, sycl::access::mode::read, sycl::access::target::global_buffer>;
 	    using write_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::read_write, sycl::access::target::global_buffer>;
-		normalize2_kernel(write_accessor vxPtr,
-		             write_accessor vyPtr,
-					 write_accessor vzPtr,
+		normalize2_kernel(write_accessor vxPtr, write_accessor vyPtr, write_accessor vzPtr,
 					 read_accessor volPtr,
 					 size_t N)
 		    :	vxPtr(vxPtr),
@@ -55,9 +51,7 @@ class normalize2_kernel {
 
 template <typename dataT>
 void normalize2_async(sycl::queue funcQueue,
-                 sycl::buffer<dataT, 1> *vx,
-                 sycl::buffer<dataT, 1> *vy,
-                 sycl::buffer<dataT, 1> *vz,
+                 sycl::buffer<dataT, 1> *vx, sycl::buffer<dataT, 1> *vy, sycl::buffer<dataT, 1> *vz,
                  sycl::buffer<dataT, 1> *vol,
                  size_t N,
 				 size_t gsize,

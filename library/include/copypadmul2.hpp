@@ -5,6 +5,7 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
+#include "amul.hpp"
 #include "constant.hpp"
 #include "stencil.hpp"
 
@@ -17,18 +18,13 @@ class copypadmul2_kernel {
 	    using write_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::read_write, sycl::access::target::global_buffer>;
 		copypadmul2_kernel(write_accessor dstPtr,
-					 size_t Dx,
-					 size_t Dy,
-					 size_t Dz,
+					 size_t Dx, size_t Dy, size_t Dz,
 		             read_accessor srcPtr,
-					 size_t Sx,
-					 size_t Sy,
-					 size_t Sz,
-		             read_accessor MsPtr,
-					 size_t Ms_mul,
+					 size_t Sx, size_t Sy, size_t Sz,
+		             read_accessor MsPtr, size_t Ms_mul,
 		             read_accessor volPtr)
 		    :	dstPtr(dstPtr),
-				Dx(Dx),
+				Dx(Dx), 
 				Dy(Dy),
 				Dz(Dz),
 				srcPtr(srcPtr),
