@@ -49,36 +49,20 @@ class adduniaxialanisotropy2_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
+				sycl::vec<dataT, 3> u   = normalized(vmul(uxPtr, uyPtr, uzPtr, ux_mul, uy_mul, uz_mul, gid));
 				dataT invMs = inv_Msat(Ms_, Ms_mul, gid);
-				dataT k1 = amul(k1_, k1_mul, gid);
-				    k1 *= invMs;
-				dataT k2 = amul(k2_, k2_mul, gid);
-				    k2 *= invMs;
-				dataT u1x = (uxPtr == NULL) ? ux_mul : (ux_mul * uxPtr[gid]);
-				dataT u1y = (uyPtr == NULL) ? uy_mul : (uy_mul * uyPtr_[gid]);
-				dataT u1z = (uzPtr == NULL) ? uz_mul : (uz_mul * uzPtr_[gid]);
-				dataT u1norm = sycl::rsqrt((u1x*u1x) + (u1y*u1y) + (u1z*u1z));
-				u1x *= u1norm;
-				u1y *= u1norm;
-				u1z *= u1norm;
-				
-				dataT u1m = u1x*mxPtr[gid] + u1y*myPtr[gid] + u1z*mzPtr[gid];
-				
-				dataT u1m3 = pow3(u1m);
+				dataT K1 = amul(k1_, k1_mul, gid);
+				dataT K2 = amul(k2_, k2_mul, gid);
+				K1  *= invMs;
+				K2  *= invMs;
+				sycl::vec<dataT, 3> m   = {mxPtr[gid], myPtr[gid], mzPtr[gid]};
+				dataT  mu  = sycl::dot(m, u);
+				sycl::vec<dataT, 3> Ba  = (dataT)(2.0)*K1*    (mu)*u+
+							              (dataT)(4.0)*K2*pow3(mu)*u;
 
-				dataT tmp_x = (dataT)(2.0)*k1*(u1m * u1x) +
-							  (dataT)(4.0)*k2*(u1m3 * u1x);
-
-				dataT tmp_y = (dataT)(2.0)*k1*(u1m * u1y) +
-							  (dataT)(4.0)*k2*(u1m3 * u1y);
-
-				dataT tmp_z = (dataT)(2.0)*k1*(u1m * u1z) +
-							  (dataT)(4.0)*k2*(u1m3 * u1z);
-
-				// Store to global buffer
-				BXPtr[gid] += tmp_x;
-				BYPtr[gid] += tmp_y;
-				BZPtr[gid] += tmp_z;
+				BXPtr[gid] += Ba.x();
+				BYPtr[gid] += Ba.y();
+				BZPtr[gid] += Ba.z();
 			}
 		}
 	private:

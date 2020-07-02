@@ -25,19 +25,16 @@ class normalize2_kernel {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
 				dataT v = (vol == NULL) ? (dataT)(1.0) : vol[gid];
-
-				if (v == 0.0) {
+				sycl::vec<dataT, 3> V = {v*vxPtr[gid], v*vyPtr[gid], v*vzPtr[gid]};
+				V = normalize(V);
+				if (v == (dataT)(0.0)) {
 					vxPtr[gid] = (dataT)(0.0);
 					vyPtr[gid] = (dataT)(0.0);
 					vzPtr[gid] = (dataT)(0.0);
 				} else {
-					dataT VX = v * vxPtr[gid];
-					dataT VY = v * vyPtr[gid];
-					dataT VZ = v * vzPtr[gid];
-					dataT fac = sycl::rsqrt(VX*VX + VY*VY + VZ*VZ);
-					vxPtr[gid] = fac*VX;
-					vyPtr[gid] = fac*VY;
-					vzPtr[gid] = fac*VZ;
+					vxPtr[gid] = V.x();
+					vyPtr[gid] = V.y();
+					vzPtr[gid] = V.z();
 				}
 			}
 		}

@@ -35,30 +35,17 @@ class llnoprecess_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT mx = mx_[gid]; dataT my = my_[gid]; dataT mz = mz_[gid];
-				dataT hx = hx_[gid]; dataT hy = hy_[gid]; dataT hz = hz_[gid];
+				sycl::vec<dataT, 3> m = {mx_[gid], my_[gid], mz_[gid]};
+				sycl::vec<dataT, 3> H = {hx_[gid], hy_[gid], hz_[gid]};
+				dataT alpha = amul(alpha_, alpha_mul, i);
 
-				dataT c0 = my * hz; dataT d0 = hy * mz;
-				dataT c1 = mx * hz; dataT d1 = hx * mz;
-				dataT c2 = mx * hy; dataT d2 = hx * my;
-				dataT mxhx = c0 - d0;
-				dataT mxhy = d1 - c1;
-				dataT mxhz = c2 - d2;
+				sycl::vec<dataT, 3> mxH = sycl::cross(m, H);
+				dataT gilb = (dataT)(-1.0) / ((dataT)(1.0) + alpha * alpha);
+				sycl::vec<dataT, 3> torque = gilb * (mxH + alpha * sycl::cross(m, mxH));
 
-				c0 = my * mxhz; d0 = mxhy * mz;
-				c1 = mx * mxhz; d1 = mxhx * mz;
-				c2 = mx * mxhy; d2 = mxhx * my;
-
-				dataT alpha = amul(alpha_, alpha_mul, gid);
-				dataT glib = (dataT)(-1.0) / ((dataT)(1.0) + alpha*alpha);
-				
-				dataT m2x = c0 - d0;
-				dataT m2y = d1 - c1;
-				dataT m2z = c2 - d2;
-
-				tx[gid] = glib * (mxhx + alpha * m2x);
-				ty[gid] = glib * (mxhy + alpha * m2y);
-				tz[gid] = glib * (mxhz + alpha * m2z);
+				tx[gid] = torque.x();
+				ty[gid] = torque.y();
+				tz[gid] = torque.z();
 			}
 		}
 	private:

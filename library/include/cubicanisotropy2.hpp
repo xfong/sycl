@@ -61,72 +61,36 @@ class addcubicanisotropy2_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT invMs = inv_Msat(Ms_, Ms_mul, gid);
-				dataT k1 = amul(k1_, k1_mul, gid);
-				    k1 *= invMs;
-				dataT k2 = amul(k2_, k2_mul, gid);
-				    k2 *= invMs;
-				dataT k3 = amul(k3_, k3_mul, gid);
-				    k3 *= invMs;
-				dataT u1x = (c1xPtr == NULL) ? c1x_mul : (c1x_mul * c1xPtr[gid]);
-				dataT u1y = (c1yPtr == NULL) ? c1y_mul : (c1y_mul * c1yPtr_[gid]);
-				dataT u1z = (c1zPtr == NULL) ? c1z_mul : (c1z_mul * c1zPtr_[gid]);
-				dataT u1norm = sycl::rsqrt((u1x*u1x) + (u1y*u1y) + (u1z*u1z));
-				u1x *= u1norm;
-				u1y *= u1norm;
-				u1z *= u1norm;
-				
-				dataT u2x = (c2xPtr == NULL) ? c2x_mul : (c2x_mul * c2xPtr[gid]);
-				dataT u2y = (c2yPtr == NULL) ? c2y_mul : (c2y_mul * c2yPtr_[gid]);
-				dataT u2z = (c2zPtr == NULL) ? c2z_mul : (c2z_mul * c2zPtr_[gid]);
-				dataT u2norm = sycl::rsqrt((u2x*u2x) + (u2y*u2y) + (u2z*u2z));
-				u2x *= u2norm;
-				u2y *= u2norm;
-				u2z *= u2norm;
+				dataT invMs = inv_Msat(Ms_, Ms_mul, i);
+				dataT  k1 = amul(k1_, k1_mul, i);
+				k1 *= invMs;
+				dataT  k2 = amul(k2_, k2_mul, i);
+				k2 *= invMs;
+				dataT  k3 = amul(k3_, k3_mul, i);
+				k3 *= invMs;
+				sycl::vec<dataT, 3> u1 = normalized(vmul(c1xPtr, c1yPtr, c1zPtr, c1x_mul, c1y_mul, c1z_mul, i));
+				sycl::vec<dataT, 3> u2 = normalized(vmul(c2xPtr, c2yPtr, c2zPtr, c2x_mul, c2y_mul, c2z_mul, i));
+				sycl::vec<dataT, 3> u3 = sycl::cross(u1, u2); // 3rd axis perpendicular to u1,u2
+				sycl::vec<dataT, 3> m  = make_vec3(mxPtr[i], myPtr[i], mzPtr[i]);
 
-				dataT u3x = u1y*u2z - u1z*u2y;
-				dataT u3y = u1z*u2x - u1x*u2z;
-				dataT u3z = u1x*u2y - u1y*u2z;
+				dataT u1m = sycl::dot(u1, m);
+				dataT u2m = sycl::dot(u2, m);
+				dataT u3m = sycl::dot(u3, m);
 
-				dataT u1m = u1x*mxPtr[gid] + u1y*myPtr[gid] + u1z*mzPtr[gid];
-				dataT u2m = u2x*mxPtr[gid] + u2y*myPtr[gid] + u2z*mzPtr[gid];
-				dataT u3m = u3x*mxPtr[gid] + u3y*myPtr[gid] + u3z*mzPtr[gid];
-				
-				dataT u1m2 = pow2(u1m); dataT u2m2 = pow2(u2m); dataT u3m2 = pow2(u3m);
-				dataT u1m4 = pow2(u1m2); dataT u2m4 = pow2(u2m2); dataT u3m4 = pow2(u3m2);
-
-				dataT tmp_x = (dataT)(-2.0)*k1*((u2m2 + u3m2) * (    (u1m) * u1x) +
-				                                (u1m2 + u3m2) * (    (u2m) * u2x) +
-										        (u1m2 + u2m2) * (    (u3m) * u3x))-
-							   (dataT)(2.0)*k2*((u2m2 * u3m2) * (    (u1m) * u1x) +
-							                    (u1m2 * u3m2) * (    (u2m) * u2x) +
-											    (u1m2 * u2m2) * (    (u3m) * u3x))-
-							   (dataT)(4.0)*k3*((u2m4 + u3m4) * (pow3(u1m) * u1x) +
-							                    (u1m4 + u3m4) * (pow3(u2m) * u2x) +
-							                    (u1m4 + u2m4) * (pow3(u3m) * u3x));
-				dataT tmp_y = (dataT)(-2.0)*k1*((u2m2 + u3m2) * (    (u1m) * u1y) +
-				                                (u1m2 + u3m2) * (    (u2m) * u2y) +
-										        (u1m2 + u2m2) * (    (u3m) * u3y))-
-							   (dataT)(2.0)*k2*((u2m2 * u3m2) * (    (u1m) * u1y) +
-							                    (u1m2 * u3m2) * (    (u2m) * u2y) +
-											    (u1m2 * u2m2) * (    (u3m) * u3y))-
-							   (dataT)(4.0)*k3*((u2m4 + u3m4) * (pow3(u1m) * u1y) +
-							                    (u1m4 + u3m4) * (pow3(u2m) * u2y) +
-							                    (u1m4 + u2m4) * (pow3(u3m) * u3y));
-				dataT tmp_z = (dataT)(-2.0)*k1*((u2m2 + u3m2) * (    (u1m) * u1z) +
-				                                (u1m2 + u3m2) * (    (u2m) * u2z) +
-										        (u1m2 + u2m2) * (    (u3m) * u3z))-
-							   (dataT)(2.0)*k2*((u2m2 * u3m2) * (    (u1m) * u1z) +
-							                    (u1m2 * u3m2) * (    (u2m) * u2z) +
-											    (u1m2 * u2m2) * (    (u3m) * u3z))-
-							   (dataT)(4.0)*k3*((u2m4 + u3m4) * (pow3(u1m) * u1z) +
-							                    (u1m4 + u3m4) * (pow3(u2m) * u2z) +
-							                    (u1m4 + u2m4) * (pow3(u3m) * u3z));
+				sycl::vec<dataT, 3> B = (dataT)(-2.0)*k1*((pow2(u2m) + pow2(u3m)) * (    (u1m) * u1) +
+									                      (pow2(u1m) + pow2(u3m)) * (    (u2m) * u2) +
+									                      (pow2(u1m) + pow2(u2m)) * (    (u3m) * u3))-
+						                 (dataT)(2.0)*k2*((pow2(u2m) * pow2(u3m)) * (    (u1m) * u1) +
+									                      (pow2(u1m) * pow2(u3m)) * (    (u2m) * u2) +
+									                      (pow2(u1m) * pow2(u2m)) * (    (u3m) * u3))-
+						                 (dataT)(4.0)*k3*((pow4(u2m) + pow4(u3m)) * (pow3(u1m) * u1) +
+									                      (pow4(u1m) + pow4(u3m)) * (pow3(u2m) * u2) +
+									                      (pow4(u1m) + pow4(u2m)) * (pow3(u3m) * u3));
 
 				// Store to global buffer
-				BXPtr[gid] = tmp_x;
-				BYPtr[gid] = tmp_y;
-				BZPtr[gid] = tmp_z;
+				BXPtr[gid] = B.x();
+				BYPtr[gid] = B.y();
+				BZPtr[gid] = B.z();
 			}
 		}
 	private:

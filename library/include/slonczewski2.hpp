@@ -61,29 +61,23 @@ class addslonczewskitorque2_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT  J = amul(jz_, jz_mul, gid);
-				dataT  Ms           = amul(Ms_, Ms_mul, i);
-				if ((J == (dataT)(0.0)) || (Ms == (dataT)(0.0))) {
+				dataT  J  = amul(jz_, jz_mul, gid);
+				dataT  Ms = amul(Ms_, Ms_mul, gid);
+				if (J == (dataT)(0.0) || Ms == (dataT)(0.0)) {
 					return;
 				}
 
+				sycl::vec<dataT, 3> m = make_vec3(mx_[gid], my_[gid], mz_[gid]);
+				sycl::vec<dataT, 3> p = normalized(vmul(px_, py_, pz_, px_mul, py_mul, pz_mul, gid));
 				dataT  alpha        = amul(alpha_, alpha_mul, gid);
 				dataT  flt          = amul(flt_, flt_mul, gid);
 				dataT  pol          = amul(pol_, pol_mul, gid);
 				dataT  lambda       = amul(lambda_, lambda_mul, gid);
 				dataT  epsilonPrime = amul(epsPrime_, epsPrime_mul, gid);
 
-				dataT px = amul(px_, px_mul, gid);
-				dataT py = amul(py_, py_mul, gid);
-				dataT pz = amul(pz_, pz_mul, gid);
-
-				dataT pnormFac = sycl::rsqrt((px*px) + (py*py) + (pz*pz));
-				
-				px *= pnormFac; py *= pnormFac; pz *= pnormFac;
-
 				dataT beta    = (HBAR / QE) * (J / (flt*Ms) );
 				dataT lambda2 = lambda * lambda;
-				dataT epsilon = pol * lambda2 / ((lambda2 + (dataT)(1.0)) + (lambda2 - (dataT)(1.0)) * dot(p, m));
+				dataT epsilon = pol * lambda2 / ((lambda2 + (dataT)(1.0)) + (lambda2 - (dataT)(1.0)) * sycl::dot(p, m));
 
 				dataT A = beta * epsilon;
 				dataT B = beta * epsilonPrime;
@@ -92,26 +86,12 @@ class addslonczewskitorque2_kernel {
 				dataT mxpxmFac = gilb * (A + alpha * B);
 				dataT pxmFac   = gilb * (B - alpha * A);
 
-				dataT mx = mx_[gid]; dataT my = my_[gid]; dataT mz = mz_[gid];
+				sycl::vec<dataT, 3> pxm      = sycl::cross(p, m);
+				sycl::vec<dataT, 3> mxpxm    = sycl::cross(m, pxm);
 
-				dataT c0 = py * mz; dataT d0 = my * pz;
-				dataT c1 = px * mz; dataT d1 = mx * pz;
-				dataT c2 = px * my; dataT d2 = mx * py;
-				dataT pxmx = c0 - d0;
-				dataT pxmy = d1 - c1;
-				dataT pxmz = c2 - d2;
-
-				c0 = my * pxmz; d0 = pxmy * mz;
-				c1 = mx * pxmz; d1 = pxmx * mz;
-				c2 = mx * pxmy; d2 = pxmx * my;
-
-				dataT m2x = c0 - d0;
-				dataT m2y = d1 - c1;
-				dataT m2z = c2 - d2;
-
-				tx[gid] += mxpxmFac * m2x + pxmFac * pxmx;
-				ty[gid] += mxpxmFac * m2y + pxmFac * pxmy;
-				tz[gid] += mxpxmFac * m2z + pxmFac * pxmz;
+				tx[gid] += mxpxmFac * mxpxm.x() + pxmFac * pxm.x();
+				ty[gid] += mxpxmFac * mxpxm.y() + pxmFac * pxm.y();
+				tz[gid] += mxpxmFac * mxpxm.z() + pxmFac * pxm.z();
 			}
 		}
 	private:

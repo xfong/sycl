@@ -68,37 +68,31 @@ class addoommfslonczewskitorque_kernel {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
 				dataT  J = amul(jz_, jz_mul, gid);
-				dataT  Ms           = amul(Ms_, Ms_mul, i);
+				dataT  Ms           = amul(Ms_, Ms_mul, gid);
 				if ((J == (dataT)(0.0)) || (Ms == (dataT)(0.0))) {
 					return;
 				}
 
+				sycl::vec<dataT, 3> m = make_vec3(mx_[gid], my[gid], mz[gid]);
+				sycl::vec<dataT, 3> p = normalized(vmul(px_, py_, pz_, px_mul, py_mul, pz_mul, gid));
 				dataT  alpha        = amul(alpha_, alpha_mul, gid);
 				dataT  flt          = amul(flt_, flt_mul, gid);
 				dataT  pfix         = amul(pfix_, pfix_mul, gid);
 				dataT  pfree        = amul(pfree_, pfree_mul, gid);
 				dataT  lambdafix    = amul(lambdafix_, lambdafix_mul, gid);
-				dataT  lambdafree   = amul(lambdafree_, lambdafree_mul, gid);
-				dataT  epsilonPrime = amul(epsPrime_, epsPrime_mul, gid);
+				dataT  lambdafree   = amul(lambdafree_, lambdafix_mul, gid);
+				dataT  epsilonPrime = amul(epsilonPrime_, epsilonPrime_mul, gid);
 
-				dataT px = amul(px_, px_mul, gid);
-				dataT py = amul(py_, py_mul, gid);
-				dataT pz = amul(pz_, pz_mul, gid);
-
-				dataT pnormFac = sycl::rsqrt((px*px) + (py*py) + (pz*pz));
-				
-				px *= pnormFac; py *= pnormFac; pz *= pnormFac;
-
-				dataT beta    = (HBAR / QE) * (J / ((dataT)(2.0)*flt*Ms) );
+				dataT beta    = (HBAR / QE) * (J / ((dataT)(2.0) *flt*Ms) );
 				dataT lambdafix2 = lambdafix * lambdafix;
 				dataT lambdafree2 = lambdafree * lambdafree;
-				dataT lambdafreePlus = sqrt(lambdafree2 + (dataT)(1.0));
-				dataT lambdafixPlus = sqrt(lambdafix2 + (dataT)(1.0));
-				dataT lambdafreeMinus = sqrt(lambdafree2 - (dataT)(1.0));
-				dataT lambdafixMinus = sqrt(lambdafix2 - (dataT)(1.0));
+				dataT lambdafreePlus = sycl::sqrt(lambdafree2 + (dataT)(1.0));
+				dataT lambdafixPlus = sycl::sqrt(lambdafix2 + (dataT)(1.0));
+				dataT lambdafreeMinus = sycl::sqrt(lambdafree2 - (dataT)(1.0));
+				dataT lambdafixMinus = sycl::sqrt(lambdafix2 - (dataT)(1.0));
 				dataT plus_ratio = lambdafreePlus / lambdafixPlus;
 				dataT minus_ratio = (dataT)(1.0);
-				if (lambdafreeMinus > (dataT)(0.0)) {
+				if (lambdafreeMinus > 0) {
 					minus_ratio = lambdafixMinus / lambdafreeMinus;
 				}
 				// Compute q_plus and q_minus
@@ -108,7 +102,7 @@ class addoommfslonczewskitorque_kernel {
 				dataT q_minus = plus_factor - minus_factor;
 				dataT lplus2 = lambdafreePlus * lambdafixPlus;
 				dataT lminus2 = lambdafreeMinus * lambdafixMinus;
-				dataT pdotm = dot(p, m);
+				dataT pdotm = sycl::dot(p, m);
 				dataT A_plus = lplus2 + (lminus2 * pdotm);
 				dataT A_minus = lplus2 - (lminus2 * pdotm);
 				dataT epsilon = (q_plus / A_plus) - (q_minus / A_minus);
@@ -120,26 +114,12 @@ class addoommfslonczewskitorque_kernel {
 				dataT mxpxmFac = gilb * (A + alpha * B);
 				dataT pxmFac   = gilb * (B - alpha * A);
 
-				dataT mx = mx_[gid]; dataT my = my_[gid]; dataT mz = mz_[gid];
+				sycl::vec<dataT, 3> pxm      = sycl::cross(p, m);
+				sycl::vec<dataT, 3> mxpxm    = sycl::cross(m, pxm);
 
-				dataT c0 = py * mz; dataT d0 = my * pz;
-				dataT c1 = px * mz; dataT d1 = mx * pz;
-				dataT c2 = px * my; dataT d2 = mx * py;
-				dataT pxmx = c0 - d0;
-				dataT pxmy = d1 - c1;
-				dataT pxmz = c2 - d2;
-
-				c0 = my * pxmz; d0 = pxmy * mz;
-				c1 = mx * pxmz; d1 = pxmx * mz;
-				c2 = mx * pxmy; d2 = pxmx * my;
-
-				dataT m2x = c0 - d0;
-				dataT m2y = d1 - c1;
-				dataT m2z = c2 - d2;
-
-				tx[gid] += mxpxmFac * m2x + pxmFac * pxmx;
-				ty[gid] += mxpxmFac * m2y + pxmFac * pxmy;
-				tz[gid] += mxpxmFac * m2z + pxmFac * pxmz;
+				tx[gid] += mxpxmFac * mxpxm.x() + pxmFac * pxm.x();
+				ty[gid] += mxpxmFac * mxpxm.y() + pxmFac * pxm.y();
+				tz[gid] += mxpxmFac * mxpxm.z() + pxmFac * pxm.z();
 			}
 		}
 	private:

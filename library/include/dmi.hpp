@@ -52,160 +52,104 @@ class adddmi_kernel {
 				return;
 			}
 
-			size_t I = idx(ix, iy, iz);                      // central cell index
-
-			// add to H
-			dataT hx_ = (dataT)(0.0);
-			dataT hy_ = (dataT)(0.0);
-			dataT hz_ = (dataT)(0.0);
-
-			// central m
-			dataT m0x = mx[I];
-			dataT m0y = my[I];
-			dataT m0z = mz[I];
-
+			int I = idx(ix, iy, iz);                      // central cell index
+			sycl::vec<dataT, 3> h = make_vec3(0.0, 0.0, 0.0);  // add to H
+			sycl::vec<dataT, 3> m0 = make_vec3(mx[I], my[I], mz[I]); // central m
 			uint8_t r0 = regions[I];
-			size_t i_;                                       // neighbor index
+			int i_;                                       // neighbor index
 
-			bool ism00 = (m0x == (dataT)(0.0)) && (m0y == (dataT)(0.0)) && (m0z == (dataT)(0.0));
-			if(ism00) {
+			if(is0(m0)) {
 				return;
 			}
 
 			// x derivatives (along length)
 			{
-				// left neighbor
-				dataT m1x = (dataT)(0.0);
-				dataT m1y = (dataT)(0.0);
-				dataT m1z = (dataT)(0.0);
-
+				sycl::vec<dataT, 3> m1 = make_vec3(0.0, 0.0, 0.0);     // left neighbor
 				i_ = idx(lclampx(ix-1), iy, iz);               // load neighbor m if inside grid, keep 0 otherwise
 				if (ix-1 >= 0 || PBCx) {
-					m1x = mx[i_];
-					m1y = my[i_];
-					m1z = mz[i_];
+					m1 = make_vec3(mx[i_], my[i_], mz[i_]);
 				}
-
-				bool ism10 = ((m1x == (dataT)(0.0)) && (m1y == (dataT)(0.0)) && (m1z == (dataT)(0.0)));
-
-				int r1 = (ism10) ? r0 : regions[i_];                 // don't use inter region params if m1=0
-				dataT A1 = aLUT2d[symidx(r0, r1)];                   // inter-region Aex
-				dataT D1 = dLUT2d[symidx(r0, r1)];                   // inter-region Dex
-				if (!ism10 || !OpenBC){                              // do nothing at an open boundary
-					if (ism10) {                                     // neighbor missing
-						dataT inFactor = -cx * ((dataT)(0.5)*D1/A1);
-						m1x = m0x - (inFactor * m0z);                // extrapolate missing m from Neumann BC's
-						m1y = m0y;
-						m1z = m0z + (inFactor * m0x);
-					}
-						dataT prefactor = (dataT)(2.0)*A1/(cx*cx));
-						hx_ += prefactor * (m1x - m0x);            // exchange
-						hy_ += prefactor * (m1y - m0y);            // exchange
-						hz_ += prefactor * (m1z - m0z);            // exchange
-						prefactor = D1/cx;
-						hx_ -= prefactor*m1z;
-						hz_ += prefactor*m1x;
-				}
+					int r1 = is0(m1)? r0 : regions[i_];                // don't use inter region params if m1=0
+					dataT A1 = aLUT2d[symidx(r0, r1)];                 // inter-region Aex
+					dataT D1 = dLUT2d[symidx(r0, r1)];                 // inter-region Dex
+					if (!is0(m1) || !OpenBC){                          // do nothing at an open boundary
+						if (is0(m1)) {                                 // neighbor missing
+							// extrapolate missing m from Neumann BC's
+							m1 = {m0.x() - (-cx * ((dataT)(0.5)*D1/A1) * m0.z()),
+									m0.y(),
+									m0.z() + (-cx * ((dataT)(0.5)*D1/A1) * m0.x());
+						}
+							h += ((dataT)(2.0)*A1/(cx*cx)) * (m1 - m0);          // exchange
+							h += {(D1/cx)*(- m1.z()),
+								 (dataT)(0.0),
+								 (D1/cx)*(m1.x())};
+						}
 			}
 
 			{
-				// right neighbor
-				dataT m2x = (dataT)(0.0);
-				dataT m2y = (dataT)(0.0);
-				dataT m2z = (dataT)(0.0);
-
+				sycl::vec<dataT, 3> m2 = make_vec3(0.0, 0.0, 0.0);     // right neighbor
 				i_ = idx(hclampx(ix+1), iy, iz);
 				if (ix+1 < Nx || PBCx) {
-					m2x = mx[i_];
-					m2y = my[i_];
-					m2z = mz[i_];
+					m2 = make_vec3(mx[i_], my[i_], mz[i_]);
 				}
-
-				bool ism20 = ((m2x == (dataT)(0.0)) && (m2y == (dataT)(0.0)) && (m2z == (dataT)(0.0)));
-
-				int r2 = (ism20) ? r0 : regions[i_];
+				int r2 = is0(m2)? r0 : regions[i_];
 				dataT A2 = aLUT2d[symidx(r0, r2)];
 				dataT D2 = dLUT2d[symidx(r0, r2)];
-				if (!ism20 || !OpenBC){
-					if (ism20) {
-						dataT inFactor = cx * ((dataT)(0.5)*D2/A2);
-						m2x = m0x - (inFactor * m0z);
-						m2y = m0y;
-						m2z = m0z + (inFactor * m0x);
+				if (!is0(m2) || !OpenBC){
+					if (is0(m2)) {
+						m2 = { m0.x() - (cx * ((dataT)(0.5)*D2/A2) * m0.z()),
+							   m0.y(),
+							   m0.z() + (cx * ((dataT)(0.5)*D2/A2) * m0.x())};
 					}
-					dataT prefactor = (dataT)(2.0)*A2/(cx*cx);
-					hx_ += prefactor * (m2x - m0x);
-					hy_ += prefactor * (m2y - m0y);
-					hz_ += prefactor * (m2z - m0z);
-					hx_ += (D2/cx)*(m2z);
-					hz_ -= (D2/cx)*(m2x);
+					h += ((dataT)(2.0)*A2/(cx*cx)) * (m2 - m0);
+					h += { (D2/cx)*(m2.z()),
+						   (dataT)(0.0),
+						   (D2/cx)*(- m2.x())};
 				}
 			}
 
 			// y derivatives (along height)
 			{
-				dataT m1x = (dataT)(0.0);
-				dataT m1y = (dataT)(0.0);
-				dataT m1z = (dataT)(0.0);
+				sycl::vec<dataT, 3> m1 = make_vec3(0.0, 0.0, 0.0);
 				i_ = idx(ix, lclampy(iy-1), iz);
 				if (iy-1 >= 0 || PBCy) {
-					m1x = mx[i_];
-					m1y = my[i_];
-					m1z = mz[i_];
+					m1 = make_vec3(mx[i_], my[i_], mz[i_]);
 				}
-
-				bool ism10 = ((m1x == (dataT)(0.0)) && (m1y == (dataT)(0.0)) && (m1z == (dataT)(0.0)))
-
-				int r1 = (ism10) ? r0 : regions[i_];
+				int r1 = is0(m1)? r0 : regions[i_];
 				dataT A1 = aLUT2d[symidx(r0, r1)];
 				dataT D1 = dLUT2d[symidx(r0, r1)];
-				if (!ism10 || !OpenBC){
-					if (ism10) {
-						dataT inFactor = -cy * ((dataT)(0.5)*D1/A1);
-						m1x = m0x;
-						m1y = m0y - (inFactor * m0z);
-						m1z = m0z + (inFactor * m0y);
+				if (!is0(m1) || !OpenBC){
+					if (is0(m1)) {
+						m1 = { m0.x(),
+							   m0.y() - (-cy * ((dataT)(0.5)*D1/A1) * m0.z()),
+							   m0.z() + (-cy * ((dataT)(0.5)*D1/A1) * m0.y())};
 					}
-					dataT prefactor = (dataT)(2.0)*A1/(cy*cy);
-					hx_ += prefactor * (m1x - m0x);
-					hy_ += prefactor * (m1y - m0y);
-					hz_ += prefactor * (m1z - m0z);
-					prefactor = D1/cy;
-					hy_ -= prefactor*(m1z);
-					hz_ += prefactor*(m1y);
+					h += ((dataT)(2.0)*A1/(cy*cy)) * (m1 - m0);
+					h += { (dataT)(0.0),
+						   (D1/cy)*(- m1.z()),
+						   (D1/cy)*(  m1.y())};
 				}
 			}
 
 			{
-				dataT m2x = (dataT)(0.0);
-				dataT m2y = (dataT)(0.0);
-				dataT m2z = (dataT)(0.0);
+				sycl::vec<dataT, 3> m2 = make_vec3(0.0, 0.0, 0.0);
 				i_ = idx(ix, hclampy(iy+1), iz);
 				if  (iy+1 < Ny || PBCy) {
-					m2x = mx[i_];
-					m2y = my[i_];
-					m2z = mz[i_];
+					m2 = make_vec3(mx[i_], my[i_], mz[i_]);
 				}
-
-				bool ism20 = ((m2x == (dataT)(0.0)) && (m2y == (dataT)(0.0)) && (m2z == (dataT)(0.0)));
-
-				int r2 = ism20 ? r0 : regions[i_];
+				int r2 = is0(m2)? r0 : regions[i_];
 				dataT A2 = aLUT2d[symidx(r0, r2)];
 				dataT D2 = dLUT2d[symidx(r0, r2)];
-				if (!ism20 || !OpenBC){
-					if (ism20) {
-						dataT inFactor = cy * ((dataT)(0.5)*D2/A2);
-						m2x = m0x;
-						m2y = m0y - (inFactor * m0z);
-						m2z = m0z + (inFactor * m0y);
+				if (!is0(m2) || !OpenBC){
+					if (is0(m2)) {
+						m2 = { m0.x(),
+							   m0.y() - (cy * ((dataT)(0.5)*D2/A2) * m0.z()),
+							   m0.z() + (cy * ((dataT)(0.5)*D2/A2) * m0.y())};
 					}
-					dataT prefactor = (dataT)(2.0)*A2/(cy*cy);
-					hx_ += prefactor * (m2x - m0x);
-					hy_ += prefactor * (m2y - m0y);
-					hz_ += prefactor * (m2z - m0z);
-					prefactor = D2/cy;
-					hy_ += prefactor*(m2z);
-					hz_ -= prefactor*(m2y);
+					h += ((dataT)(2.0)*A2/(cy*cy)) * (m2 - m0);
+					h += {(dataT)(0.0),
+						 (D2/cy)*(m2.z()),
+						 (D2/cy)*(-m2.y())};
 				}
 			}
 
@@ -214,59 +158,27 @@ class adddmi_kernel {
 				// bottom neighbor
 				{
 					i_  = idx(ix, iy, lclampz(iz-1));
-					dataT m1x = mx[i_];
-					dataT m1y = my[i_];
-					dataT m1z = mz[i_];
-
-					bool ism10 = ((m1x == (dataT)(0.0)) && (m1y == (dataT)(0.0)) && (m1z == (dataT)(0.0)));
-
-					// Neumann BC
-					if (ism10) {
-						m1x = m0x;
-						m1y = m0y;
-						m1z = m0z;
-					} else {
-						m1x = m1x;
-						m1y = m1y;
-						m1z = m1z;
-					}
+					sycl::vec<dataT, 3> m1  = make_vec3(mx[i_], my[i_], mz[i_]);
+					m1  = ( is0(m1)? m0: m1 );                         // Neumann BC
 					dataT A1 = aLUT2d[symidx(r0, regions[i_])];
-					dataT prefactor = (dataT)(2.0)*A1/(cz*cz);
-					hx_ += prefactor * (m1x - m0x);                // Exchange only
-					hy_ += prefactor * (m1y - m0y);                // Exchange only
-					hz_ += prefactor * (m1z - m0z);                // Exchange only
+					h += ((dataT)(2.0)*A1/(cz*cz)) * (m1 - m0);                // Exchange only
 				}
 
 				// top neighbor
 				{
 					i_  = idx(ix, iy, hclampz(iz+1));
-					dataT m2x = mx[i_];
-					dataT m2y = my[i_];
-					dataT m2z = mz[i_];
-
-					bool ism20 = ((m2x == (dataT)(0.0)) && (m2y == (dataT)(0.0)) && (m2z == (dataT)(0.0)));
-					if (ism20) {
-						m2x = m0x;
-						m2y = m0y;
-						m2z = m0z;
-					} else {
-						m2x = m2x;
-						m2y = m2y;
-						m2z = m2z;
-					}
+					sycl::vec<dataT, 3> m2  = make_vec3(mx[i_], my[i_], mz[i_]);
+					m2  = ( is0(m2)? m0: m2 );
 					dataT A2 = aLUT2d[symidx(r0, regions[i_])];
-					dataT prefactor = (dataT)(2.0)*A2/(cz*cz);
-					hx_ += prefactor * (m2x - m0x);
-					hy_ += prefactor * (m2y - m0y);
-					hz_ += prefactor * (m2z - m0z);
+					h += ((dataT)(2.0)*A2/(cz*cz)) * (m2 - m0);
 				}
 			}
 
 			// write back, result is H + Hdmi + Hex
 			dataT invMs = inv_Msat(Ms_, Ms_mul, I);
-			Hx[I] += hx_*invMs;
-			Hy[I] += hy_*invMs;
-			Hz[I] += hz_*invMs;
+			Hx[I] += h.x()*invMs;
+			Hy[I] += h.y()*invMs;
+			Hz[I] += h.z()*invMs;
 		}
 	private:
 	    write_accessor Hx;

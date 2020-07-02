@@ -55,148 +55,70 @@ class addexchange_kernel {
 				return;
 			}
 
-			//central cell
-			size_t I = idx(ix, iy, iz);
+			// central cell
+			int I = idx(ix, iy, iz);
+			sycl::vec<dataT, 3> m0 = make_vec3(mx[I], my[I], mz[I]);
 
-			dataT m0x = mx[I];
-			dataT m0y = my[I];
-			dataT m0z = mz[I];
-
-			if ((m0x == (dataT)(0.0)) && (m0y == (dataT)(0.0)) && (m0z == (dataT)(0.0))) {
+			if (is0(m0)) {
 				return;
 			}
 
 			uint8_t r0 = regions[I];
+			sycl::vec<dataT, 3> B  = make_vec3(0.0, 0.0, 0.0);
 
-			dataT B_x = (dataT)(0.0);
-			dataT B_y = (dataT)(0.0);
-			dataT B_z = (dataT)(0.0);
-
-			size_t i_; // neighbor index
-			dataT mx_; // neighbor mag
-			dataT my_; // neighbor mag
-			dataT mz_; // neighbor mag
+			int i_;    // neighbor index
+			sycl::vec<dataT, 3> m_; // neighbor mag
 			dataT a__; // inter-cell exchange stiffness
 
 			// left neighbor
-			i_ = idx(lclampx(ix-1), iy, iz);           // clamps or wraps index according to PBC
-
-			// load m
-			mx_ = mx[i_];
-			my_ = my[i_];
-			mz_ = mz[i_];
-
-			// replace missing non-boundary neighbor
-			if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-				mx_ = m0x;
-				my_ = m0y;
-				mz_ = m0z;
-			}
+			i_  = idx(lclampx(ix-1), iy, iz);           // clamps or wraps index according to PBC
+			m_  = make_vec3(mx[i_], my[i_], mz[i_]);  // load m
+			m_  = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
 			a__ = aLUT2d[symidx(r0, regions[i_])];
-			B_x += wx * a__ * (mx_ - m0x);
-			B_y += wx * a__ * (my_ - m0y);
-			B_z += wx * a__ * (mz_ - m0z);
+			B += wx * a__ *(m_ - m0);
 
 			// right neighbor
-			i_ = idx(hclampx(ix+1), iy, iz);
-
-			// load m
-			mx_ = mx[i_];
-			my_ = my[i_];
-			mz_ = mz[i_];
-
-			// replace missing non-boundary neighbor
-			if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-				mx_ = m0x;
-				my_ = m0y;
-				mz_ = m0z;
-			}
+			i_  = idx(hclampx(ix+1), iy, iz);
+			m_  = make_vec3(mx[i_], my[i_], mz[i_]);
+			m_  = ( is0(m_)? m0: m_ );
 			a__ = aLUT2d[symidx(r0, regions[i_])];
-			B_x += wx * a__ * (mx_ - m0x);
-			B_y += wx * a__ * (my_ - m0y);
-			B_z += wx * a__ * (mz_ - m0z);
+			B += wx * a__ *(m_ - m0);
 
 			// back neighbor
-			i_ = idx(ix, lclampy(iy-1), iz); 
-
-			mx_ = mx[i_];
-			my_ = my[i_];
-			mz_ = mz[i_];
-
-			if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-				mx_ = m0x;
-				my_ = m0y;
-				mz_ = m0z;
-			}
+			i_  = idx(ix, lclampy(iy-1), iz);
+			m_  = make_vec3(mx[i_], my[i_], mz[i_]);
+			m_  = ( is0(m_)? m0: m_ );
 			a__ = aLUT2d[symidx(r0, regions[i_])];
-			B_x += wy * a__ * (mx_ - m0x);
-			B_y += wy * a__ * (my_ - m0y);
-			B_z += wy * a__ * (mz_ - m0z);
+			B += wy * a__ *(m_ - m0);
 
 			// front neighbor
-			i_ = idx(ix, hclampy(iy+1), iz);
-
-			// load m
-			mx_ = mx[i_];
-			my_ = my[i_];
-			mz_ = mz[i_];
-
-			// replace missing non-boundary neighbor
-			if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-				mx_ = m0x;
-				my_ = m0y;
-				mz_ = m0z;
-			}
+			i_  = idx(ix, hclampy(iy+1), iz);
+			m_  = make_vec3(mx[i_], my[i_], mz[i_]);
+			m_  = ( is0(m_)? m0: m_ );
 			a__ = aLUT2d[symidx(r0, regions[i_])];
-			B_x += wy * a__ * (mx_ - m0x);
-			B_y += wy * a__ * (my_ - m0y);
-			B_z += wy * a__ * (mz_ - m0z);
+			B += wy * a__ *(m_ - m0);
 
 			// only take vertical derivative for 3D sim
 			if (Nz != 1) {
 				// bottom neighbor
-				i_ = idx(ix, iy, lclampz(iz-1)); 
-
-				mx_ = mx[i_];
-				my_ = my[i_];
-				mz_ = mz[i_];
-
-				if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-					mx_ = m0x;
-					my_ = m0y;
-					mz_ = m0z;
-				}
+				i_  = idx(ix, iy, lclampz(iz-1));
+				m_  = make_vec3(mx[i_], my[i_], mz[i_]);
+				m_  = ( is0(m_)? m0: m_ );
 				a__ = aLUT2d[symidx(r0, regions[i_])];
-				B_x += wz * a__ * (mx_ - m0x);
-				B_y += wz * a__ * (my_ - m0y);
-				B_z += wz * a__ * (mz_ - m0z);
+				B += wz * a__ *(m_ - m0);
 
 				// top neighbor
-				i_ = idx(ix, iy, hclampz(iz+1));
-
-				// load m
-				mx_ = mx[i_];
-				my_ = my[i_];
-				mz_ = mz[i_];
-
-				// replace missing non-boundary neighbor
-				if ((mx_ == (dataT)(0.0)) && (my_ == (dataT)(0.0)) && (mz_ == (dataT)(0.0))) {
-					mx_ = m0x;
-					my_ = m0y;
-					mz_ = m0z;
-				}
+				i_  = idx(ix, iy, hclampz(iz+1));
+				m_  = make_vec3(mx[i_], my[i_], mz[i_]);
+				m_  = ( is0(m_)? m0: m_ );
 				a__ = aLUT2d[symidx(r0, regions[i_])];
-				B_x += wz * a__ * (mx_ - m0x);
-				B_y += wz * a__ * (my_ - m0y);
-				B_z += wz * a__ * (mz_ - m0z);
+				B += wz * a__ *(m_ - m0);
 			}
 
 			dataT invMs = inv_Msat(Ms_, Ms_mul, I);
-
-			Bx[I] += B_x*invMs;
-			By[I] += B_y*invMs;
-			Bz[I] += B_z*invMs;
-
+			Bx[I] += B.x()*invMs;
+			By[I] += B.y()*invMs;
+			Bz[I] += B.z()*invMs;
 		}
 	private:
 	    write_accessor Bx;

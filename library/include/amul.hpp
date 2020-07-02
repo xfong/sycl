@@ -10,10 +10,10 @@ inline dataT amul(dataT *arr, dataT mul, int i) {
 }
 
 // Returns m * a[i], or m when a == NULL;
-template<typename dataT, typename vecT>
-inline vecT vmul(dataT &ax, dataT &ay, dataT &az,
+template<typename dataT>
+inline sycl::vec<dataT, 3> vmul(dataT &ax, dataT &ay, dataT &az,
 							 dataT mx,           dataT my,           dataT mz, int i) {
-	return make_vec3<dataT, vecT>(amul(ax, mx, i),
+	return make_vec3<dataT>(amul(ax, mx, i),
 					   amul(ay, my, i),
 					   amul(az, mz, i));
 }

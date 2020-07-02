@@ -32,26 +32,17 @@ class minimize_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT m0x = m0x_[gid];
-				dataT m0y = m0y_[gid];
-				dataT m0z = m0z_[gid];
+				sycl::vec<dataT, 3> m0 = {m0x_[gid], m0y_[gid], m0z_[gid]};
+				sycl::vec<dataT, 3> t = {tx_[gid], ty_[gid], tz_[gid]};
 
-				dataT tx = tx_[gid];
-				dataT ty = ty_[gid];
-				dataT tz = tz_[gid];
+				sycl::vec<dataT, 3> t2 = dt*dt*sycl::dot(t, t);
+				sycl::vec<dataT, 3> result = ((dataT)(4.0) - t2) * m0 + (dataT)(4.0) * dt * t;
+				sycl::vec<dataT, 3> divisor = (dataT)(4.0) + t2;
+				
+				mx_[gid] = result.x() / divisor;
+				my_[gid] = result.y() / divisor;
+				mz_[gid] = result.z() / divisor;
 
-				dataT t2 = dt*dt*((tx*tx) + (ty*ty) + (tz*tz));
-
-				dataT fac1 = (4.0 - t2);
-				dataT fac2 = (4.0 * dt);
-				dataT divisor = 4.0 + t2;
-				dataT result_x = fac1 * m0x + fac2 * tx;
-				dataT result_y = fac1 * m0y + fac2 * ty;
-				dataT result_z = fac1 * m0z + fac2 * tz;
-
-				mx_[gid] = result_x / divisor;
-				my_[gid] = result_y / divisor;
-				mz_[gid] = result_z / divisor;
 			}
 		}
 	private:

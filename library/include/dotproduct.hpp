@@ -33,10 +33,9 @@ class dotproduct_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT c0 = axPtr[gid] * bxPtr[gid];
-				dataT c1 = ayPtr[gid] * byPtr[gid];
-				dataT c2 = azPtr[gid] * bzPtr[gid];
-				dstPtr[gid] += prefactor * (c0 + c1 + c2);
+				sycl::vec<dataT, 3> aVec = { axPtr[gid], ayPtr[gid], azPtr[gid] };
+				sycl::vec<dataT, 3> bVec = { bxPtr[gid], byPtr[gid], bzPtr[gid] };
+				dstPtr[gid] += prefactor * sycl::dot(aVec, bVec);
 			}
 		}
 	private:

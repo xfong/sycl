@@ -36,17 +36,12 @@ class crossproduct_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT ax = axPtr[gid]; dataT ay = ayPtr[gid]; dataT az = azPtr[gid];
-				dataT bx = bxPtr[gid]; dataT by = byPtr[gid]; dataT bz = bzPtr[gid];
-				dataT c0 = ay * bz; dataT d0 = by * az;
-				dataT c1 = ax * bz; dataT d1 = bx * az;
-				dataT c2 = ax * by; dataT d2 = bx * ay;
-				ax = c0 - d0;
-				ay = d1 - c1;
-				az = c2 - d2;
-				dstXPtr[gid] = ax;
-				dstYPtr[gid] = ay;
-				dstZPtr[gid] = az;
+				sycl::vec<dataT, 3> A = {axPtr[i], ayPtr[i], azPtr[i]};
+				sycl::vec<dataT, 3> B = {bxPtr[i], byPtr[i], bzPtr[i]};
+				sycl::vec<dataT, 3> AxB = sycl::cross(A, B);
+				dstXPtr[gid] = AxB.x();
+				dstYPtr[gid] = AxB.y();
+				dstZPtr[gid] = AxB.z();
 			}
 		}
 	private:

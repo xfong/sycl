@@ -25,8 +25,8 @@ class vecnorm_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				dataT c0 = axPtr[gid]; dataT c1 = ayPtr[gid]; dataT c2 = azPtr[gid];
-				dstPtr[gid] += sycl::sqrt((c0*c0) + (c1*c1) + (c2*c2));
+				sycl::vec<dataT, 3> A = {axPtr[gid], ayPtr[gid], azPtr[gid]};
+				dstPtr[gid] = sycl::sqrt(sycl::dot(A, A));
 			}
 		}
 	private:

@@ -76,64 +76,36 @@ class addzhanglitorque2_kernel {
 				return;
 			}
 
-			size_t i = idx(ix, iy, iz);
+			int i = idx(ix, iy, iz);
 
 			dataT alpha = amul(alpha_, alpha_mul, i);
-			dataT xi = amul(xi_, xi_mul, i);
-			dataT pol = amul(pol_, pol_mul, i);
+			dataT xi    = amul(xi_, xi_mul, i);
+			dataT pol   = amul(pol_, pol_mul, i);
 			dataT invMs = inv_Msat(Ms_, Ms_mul, i);
 			dataT b = invMs * PREFACTOR / ((dataT)(1.0) + xi*xi);
-			dataT Jvec_x = amul(jxPtr, jx_mul, i);
-			dataT Jvec_y = amul(jyPtr, jy_mul, i);
-			dataT Jvec_z = amul(jzPtr, jz_mul, i);
-			
-			dataT Jx = pol * Jvec_x;
-			dataT Jy = pol * Jvec_y;
-			dataT Jz = pol * Jvec_z;
+			sycl::vec<dataT, 3> Jvec = vmul(jxPtr, jyPtr, jzPtr, jx_mul, jy_mul, jz_mul, i);
+			sycl::vec<dataT, 3> J = pol*Jvec;
 
-			dataT hspin_x = (dataT)(0.0);
-			dataT hspin_y = (dataT)(0.0);
-			dataT hspin_z = (dataT)(0.0);
-
-			if (Jvec_x != (dataT)(0.0)) {
-				hspin_x += (b/cx)*Jvec_x*deltax(mx);
-				hspin_y += (b/cx)*Jvec_x*deltax(my);
-				hspin_z += (b/cx)*Jvec_x*deltax(mz);
+			sycl::vec<dataT, 3> hspin = make_vec3((dataT)(0.0), (dataT)(0.0), (dataT)(0.0)); // (u·∇)m
+			if (J.x() != (dataT)(0.0)) {
+				hspin += (b/cx)*J.x() * make_vec3(deltax(mxPtr), deltax(myPtr), deltax(mzPtr));
+			}
+			if (J.y() != (dataT)(0.0)) {
+				hspin += (b/cy)*J.y() * make_vec3(deltay(mxPtr), deltay(myPtr), deltay(mzPtr));
+			}
+			if (J.z() != (dataT)(0.0)) {
+				hspin += (b/cz)*J.z() * make_vec3(deltaz(mxPtr), deltaz(myPtr), deltaz(mzPtr));
 			}
 
-			if (Jvec_y != (dataT)(0.0)) {
-				hspin_x += (b/cy)*Jvec_y*deltay(mx);
-				hspin_y += (b/cy)*Jvec_y*deltay(my);
-				hspin_z += (b/cy)*Jvec_y*deltay(mz);
-			}
+			sycl::vec<dataT, 3> m      = make_vec3(mxPtr[i], myPtr[i], mzPtr[i]);
+			sycl::vec<dataT, 3> torque = ((dataT)(-1.0)/((dataT)(1.0) + alpha*alpha)) * (
+								((dataT)(1.0)+xi*alpha) * sycl::cross(m, sycl::cross(m, hspin))
+								+(  xi-alpha) * sycl::cross(m, hspin)           );
 
-			if (Jvec_z != (dataT)(0.0)) {
-				hspin_x += (b/cz)*Jvec_z*deltaz(mx);
-				hspin_y += (b/cz)*Jvec_z*deltaz(my);
-				hspin_z += (b/cz)*Jvec_z*deltaz(mz);
-			}
-
-			dataT mx = mxPtr[i];
-			dataT my = myPtr[i];
-			dataT mz = mzPtr[i];
-
-			dataT mxh_x = my*hspin_z - mz*hspin_y;
-			dataT mxh_y = mz*hspin_x - mx*hspin_z;
-			dataT mxh_z = mx*hspin_z - mz*hspin_x;
-
-			dataT m2x = my*mxh_z - mz*mxh_y;
-			dataT m2y = mz*mxh_x - mx*mxh_z;
-			dataT m2z = mx*mxh_z - mz*mxh_x;
-
-			dataT torque_fac = (-1.0f/(1.0f + alpha*alpha));
-
-			dataT torque_x = (1.0f+xi*alpha) * m2x + (xi-alpha) * mxh_x;
-			dataT torque_y = (1.0f+xi*alpha) * m2y + (xi-alpha) * mxh_y;
-			dataT torque_z = (1.0f+xi*alpha) * m2z + (xi-alpha) * mxh_z;
-
-			TXPtr[i] += torque_fac * torque_x;
-			TYPtr[i] += torque_fac * torque_y;
-			TZPtr[i] += torque_fac * torque_z;
+			// write back, adding to torque
+			TXPtr[i] += torque.x();
+			TYPtr[i] += torque.y();
+			TZPtr[i] += torque.z();
 		}
 	private:
 	    write_accessor TXPtr;
