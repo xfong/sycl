@@ -24,4 +24,5 @@ function(add_sample)
   install(TARGETS ${SDK_ADD_SAMPLE_TARGET} RUNTIME DESTINATION bin)
 endfunction(add_sample)
 
+include_directories(../../library/include)
 add_sample(TARGET reduce_sum SOURCES reduce_sum.cpp)
