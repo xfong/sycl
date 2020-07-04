@@ -1,14 +1,21 @@
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+#include <CL/sycl.hpp>
+namespace sycl = cl::sycl;
+
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
 #include <array>
 #include <cstdint>
 #include <iostream>
 #include <random>
 #include <cassert>
 
-#include <CL/sycl.hpp>
-namespace sycl = cl::sycl;
+#include "gen_device_queue.hpp"
 #include "reducesum.hpp"
 
-int main(int, char**) {
+int main(int argc, char** argv) {
+	int gpu_num = grabOpts(argc, argv);
+
     // Create data array to operate on
     std::array<int32_t, 16> arr;
 
@@ -27,12 +34,9 @@ int main(int, char**) {
     sycl::buffer<int32_t, 1> buf(arr.data(), sycl::range<1>(arr.size()));
 
     // Select OpenCL device and create command queue
-    sycl::device device = sycl::default_selector{}.select_device();
-    sycl::queue queue(device, [] (sycl::exception_list el) {
-        for (auto ex : el) {
-            std::rethrow_exception(ex);
-        }
-    });
+	sycl::queue queue = createSYCLqueue(gpu_num);
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
+	auto device = queue.get_device();
 
     // Find out the workgroup size supported by the OpenCL device
     auto wgroup_size = device.get_info<sycl::info::device::max_work_group_size>();
@@ -60,8 +64,7 @@ int main(int, char**) {
 
 	auto result = reducesum_async<int>(queue, &buf, 0, arr.size(), wgroup_size, wgroup_size);
     // Get result of reduction and print to screen
-    auto acc = buf.get_access<sycl::access::mode::read>();
-    std::cout << "Sum: " << acc[0] << std::endl;
+    std::cout << "Sum: " << result << std::endl;
 
     return 0;
 }

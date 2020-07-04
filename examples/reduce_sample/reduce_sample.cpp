@@ -25,7 +25,11 @@
  *
  **************************************************************************/
 
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 #include <CL/sycl.hpp>
+namespace sycl = cl::sycl;
+
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
 #include <algorithm>
 #include <iostream>
