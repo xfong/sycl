@@ -1,13 +1,30 @@
-#include <cstdlib>
-#include <ctime>
-#include <vector>
-#include <iostream>
-
 #ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 #include <CL/sycl.hpp>
 namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
+#include "gen_device_queue.hpp"
+
+#ifndef CSTDLIB__
+#define CSTDLIB__
+#include <cstdlib>
+#endif // CSTDLIB__
+
+#ifndef CTIME__
+#define CTIME__
+#include <ctime>
+#endif // CTIME__
+
+#ifndef VECTOR__
+#define VECTOR__
+#include <vector>
+#endif // VECTOR__
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
+#include <iostream>
+#endif // IOSTREAM__
 
 template <typename dataT>
 class dotproduct_kernel {
@@ -37,7 +54,7 @@ class dotproduct_kernel {
 		void operator()(sycl::nd_item<1> item) {
 			size_t stride = item.get_global_range(0);
 			for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
-				sycl::vec<dataT, 3> aVec;
+				sycl::vec<dataT, 3> aVec = { axPtr[gid], ayPtr[gid], azPtr[gid] };
 				sycl::vec<dataT, 3> bVec = { bxPtr[gid], byPtr[gid], bzPtr[gid] };
 				dstPtr[gid] += prefactor * sycl::dot(aVec, bVec);
 			}
@@ -83,8 +100,10 @@ void dotproduct_async(sycl::queue funcQueue,
     });
 }
 
-int main(int, char**) {
+int main(int argc, char** argv) {
 
+	int gpu_num = grabOpts(argc, argv);
+	
 	// Initialize random number generator
 	srand (static_cast <unsigned> (time(0)));
 	
@@ -101,12 +120,11 @@ int main(int, char**) {
 		F[idx] = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		G[idx] = 0.0f;
 	}
-	
-	// Need to select the OpenCL device to use first
-	sycl::default_selector device_selector;
 
 	// Then, set up command queue on OpenCL device
-	sycl::queue queue(device_selector);
+	sycl::queue queue = createSYCLqueue(gpu_num);
+
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
 
 	// Create memory buffers that the OpenCL will access
 	// The template is cl::sycl:buffer<type, dims>
@@ -122,6 +140,7 @@ int main(int, char**) {
 		sycl::buffer<sycl::cl_float, 1> g_sycl(G.data(), sycl::range<1>(array_size));
 
 		dotproduct_async<cl_float>(queue, &g_sycl, 1.f, &a_sycl, &b_sycl, &c_sycl, &d_sycl, &e_sycl, &f_sycl, array_size, 1024, 256);
+		queue.wait();
 	}
 	for (unsigned int i = 0; i < array_size; i++) {
 		if ((G[i]*0.000001f) <= fabs(G[i] - (A[i] * D[i]) - (B[i] * E[i]) - (C[i] * F[i]))) {

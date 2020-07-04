@@ -6,11 +6,6 @@ namespace sycl = cl::sycl;
 
 #endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 
-#ifndef IOSTREAM__
-#define IOSTREAM__
-#include <iostream>
-#endif // IOSTREAM__
-
 #ifndef STRING__
 #define STRING__
 #include <string>
@@ -37,6 +32,7 @@ int grabOpts(int nargs, char** argsList) {
 			return std::stoi(argsList[idx+1]);
 		}
 	}
+	return -1;
 }
 
 // Utility function to enable user to select the GPU
@@ -59,19 +55,13 @@ sycl::queue createSYCLqueue(const int targetDeviceNum) {
 			gpuList.push_back(currDevice);
 		}
 	}
-	std::cout << "Found "
-			  << gpuList.size()
-			  << " number of GPUs"
-			  << std::endl;
 	if (gpuList.size() < 1) { // No GPUs found
 		return sycl::queue();
 	}
 	int targIdx = targetDeviceNum;
-	std::cout << "targIdx: " << targIdx << std::endl;
 	if ((targIdx >= gpuList.size()) || (targIdx < 0)) {
 		targIdx = 0;
 	}
-	std::cout << "targIdx: " << targIdx << std::endl;
 	targDevice = gpuList[targIdx];
 	return sycl::queue(targDevice);
 }
