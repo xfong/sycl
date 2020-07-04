@@ -25,4 +25,4 @@ function(add_sample)
 endfunction(add_sample)
 
 include_directories(../../library/include)
-add_sample(TARGET dotproduct SOURCES dotproduct.cpp)
+add_sample(TARGET vecdotproduct SOURCES vecdotproduct.cpp)

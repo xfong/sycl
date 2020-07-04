@@ -1,18 +1,37 @@
-#include <iostream>
-#include <cstring>
-#include <vector>
-
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 #include <CL/sycl.hpp>
-
 namespace sycl = cl::sycl;
 
-int main(int, char**) {
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
+#include "gen_device_queue.hpp"
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
+#include <iostream>
+#endif // IOSTREAM__
+
+#ifndef CSTRING__
+#define CSTRING__
+#include <cstring>
+#include <string>
+#endif // CSTRING__
+
+#ifndef VECTOR__
+#define VECTOR__
+#include <vector>
+#endif //VECTOR__
+
+int main(int argc, char** argv) {
+	int gpu_num = grabOpts(argc, argv);
+
     // Create text array to operate on
     char text[] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum in erat non scelerisque.";
     const size_t len = sizeof(text);
 
     // Create command queue to execute kernel
-    sycl::queue queue(sycl::default_selector{});
+    sycl::queue queue = createSYCLqueue(gpu_num);
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
 
     // Scope for kernel execution
     {

@@ -35,9 +35,6 @@ int main(int argc, char** argv) {
 	std::fill(G.begin(), G.end(), 10.0f);
 	std::fill(H.begin(), H.end(), 100000.0f);
 
-	// Need to select the OpenCL device to use first
-	sycl::default_selector device_selector;
-
 	// Then, set up command queue on OpenCL device
 	sycl::queue queue = createSYCLqueue(gpu_num);
 	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;

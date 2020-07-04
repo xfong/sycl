@@ -1,10 +1,25 @@
-#include <iostream>
-#include <array>
-#include <algorithm>
-
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
 #include <CL/sycl.hpp>
-
 namespace sycl = cl::sycl;
+
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
+#include "gen_device_queue.hpp"
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
+#include <iostream>
+#endif // IOSTREAM__
+
+#ifndef ARRAY__
+#define ARRAY__
+#include <array>
+#endif // ARRAY__
+
+#ifndef ALGORITHM__
+#define ALGORITHM__
+#include <algorithm>
+#endif ALGORITHM__
 
 template<typename T, typename Acc, size_t N>
 class ConstantAdder {
@@ -24,12 +39,15 @@ private:
     const T val;
 };
 
-int main(int, char**) {
+int main(int argc, char** argv) {
+	int gpu_num = grabOpts(argc, argv);
+
     // Create data array to operate on
     std::array<int, 4> vals = {{ 1, 2, 3, 4 }};
 
     // Create command queue to execute kernel
-    sycl::queue queue(sycl::default_selector{});
+    sycl::queue queue = createSYCLqueue(gpu_num);
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
 
     // Scope for kernel execution
     {
