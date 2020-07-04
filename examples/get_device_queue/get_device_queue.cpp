@@ -25,57 +25,15 @@
  *
  **************************************************************************/
 
-#include <iostream>
-#include <string>
-#include <cstring>
-
 #include <CL/sycl.hpp>
-
-using namespace cl::sycl;
-
-int setup_opts(int nargs, char** argsList) {
-	if (nargs < 3) {
-		return -1;
-	}
-	for (int idx = 1; idx < nargs; idx++) {
-		char* argField = argsList[idx];
-		if (strcmp(argField, "-n") == 0) {
-			return std::stoi(argsList[idx+1]);
-		}
-	}
-}
+#include "gen_device_queue.hpp"
 
 int main(int argc, char** argv) {
-	int dev_num = setup_opts(argc, argv);
-	if (dev_num < 0) {
-		std::cout << "No proper arguments were found!" << std::endl;
-		return -1;
-	}
-	std::cout << "Targeting GPU" << dev_num << "..." << std::endl;
-	cl_int err;
-	sycl::device targDevice;
-	std::vector<sycl::device> deviceList;
-	deviceList = targDevice.get_devices();
-	//err = cl::get(platformList);
-	std::cout << "Found " << deviceList.size() << " number of devices" << std::endl;
-	std::vector<sycl::device> gpuList;
-	for (int idx = 0; idx < deviceList.size(); idx++) {
-		sycl::device currDevice = deviceList[idx];
-		if (currDevice.is_gpu()) {
-			gpuList.push_back(currDevice);
-		}
-	}
-	if (gpuList.size() < 1) {
-		std::cout << "No GPU device found!" << std::endl;
-		return -1;
-	}
-	std::cout << "Found " << gpuList.size() << " number of GPUs" << std::endl;
-	if (dev_num > gpuList.size() - 1) {
-		dev_num = 0;
-	}
-	targDevice = gpuList[dev_num];
+	int desired_gpu = grabOpts(argc, argv);
 
-	std::cout << "Setting up queue on device:" << targDevice.get_info<sycl::info::device::name>();
-	sycl::queue myQueue(targDevice);
+	std::cout << "Targeting GPU" << desired_gpu << "..." << std::endl;
+
+	sycl::queue myQueue = createSYCLqueue(desired_gpu);
+	std::cout << "Queue has been setup on device:" << myQueue.get_device().get_info<sycl::info::device::name>();
 	return 0;
 }
