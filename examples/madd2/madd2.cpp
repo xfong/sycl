@@ -1,11 +1,25 @@
-#include <vector>
-#include <iostream>
-
-#include "../../library/include/sycl_engine.hpp"
-
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+#include <CL/sycl.hpp>
 namespace sycl = cl::sycl;
 
-int main(int, char**) {
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
+#include "gen_device_queue.hpp"
+#include "sycl_engine.hpp"
+
+#ifndef VECTOR__
+#define VECTOR__
+#include <vector>
+#endif // VECTOR__
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
+#include <iostream>
+#endif // IOSTREAM__
+
+int main(int argc, char** argv) {
+	int gpu_num = grabOpts(argc, argv);
+
 	const size_t array_size = 1024;
 	std::vector<int> A(array_size), B(array_size), C(array_size);
 	
@@ -23,7 +37,8 @@ int main(int, char**) {
 	sycl::default_selector device_selector;
 
 	// Then, set up command queue on OpenCL device
-	sycl::queue queue(device_selector);
+	sycl::queue queue = createSYCLqueue(gpu_num);
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
 
 	// Create memory buffers that the OpenCL will access
 	// The template is cl::sycl:buffer<type, dims>
@@ -34,7 +49,7 @@ int main(int, char**) {
 		sycl::buffer<sycl::cl_int, 1> b_sycl(B.data(), sycl::range<1>(array_size));
 		sycl::buffer<sycl::cl_int, 1> c_sycl(C.data(), sycl::range<1>(array_size));
 
-		madd2_async<int>(queue, &c_sycl, &a_sycl, 2, &b_sycl, 3, array_size, array_size, array_size);
+		madd2_async<int>(queue, &c_sycl, &a_sycl, 2, &b_sycl, 3, array_size, array_size, array_size/8);
 	}
 	for (unsigned int i = 0; i < array_size; i++) {
 		if (C[i] != 2 * A[i] + 3 * B[i]) {

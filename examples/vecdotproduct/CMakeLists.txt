@@ -24,4 +24,5 @@ function(add_sample)
   install(TARGETS ${SDK_ADD_SAMPLE_TARGET} RUNTIME DESTINATION bin)
 endfunction(add_sample)
 
+include_directories(../../library/include)
 add_sample(TARGET dotproduct SOURCES dotproduct.cpp)

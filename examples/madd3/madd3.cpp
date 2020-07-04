@@ -1,11 +1,25 @@
-#include <vector>
-#include <iostream>
-
-#include "../../library/include/sycl_engine.hpp"
-
+#ifndef RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+#include <CL/sycl.hpp>
 namespace sycl = cl::sycl;
 
-int main(int, char**) {
+#endif // RUNTIME_INCLUDE_SYCL_SYCL_HPP_
+
+#include "gen_device_queue.hpp"
+#include "sycl_engine.hpp"
+
+#ifndef VECTOR__
+#define VECTOR__
+#include <vector>
+#endif // VECTOR__
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
+#include <iostream>
+#endif // IOSTREAM__
+
+int main(int argc, char** argv) {
+	int gpu_num = grabOpts(argc, argv);
+
 	const size_t array_size = 2048;
 	std::vector<int> A(array_size), B(array_size), C(array_size), D(array_size);
 	
@@ -25,7 +39,8 @@ int main(int, char**) {
 	sycl::default_selector device_selector;
 
 	// Then, set up command queue on OpenCL device
-	sycl::queue queue(device_selector);
+	sycl::queue queue = createSYCLqueue(gpu_num);
+	std::cout << "Executing on " << queue.get_device().get_info<sycl::info::device::name>() << std::endl;
 
 	// Create memory buffers that the OpenCL will access
 	// The template is cl::sycl:buffer<type, dims>

@@ -9,4 +9,4 @@ namespace sycl = cl::sycl;
 #include "dotproduct.hpp"
 #include "madd2.hpp"
 #include "madd3.hpp"
-#include "pointwise_div.hpp"
+#include "div.hpp"
