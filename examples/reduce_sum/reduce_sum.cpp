@@ -33,6 +33,8 @@ int main(int, char**) {
         }
     });
 
+	std::cout << "Setting up to execute kernel..." << std::endl;
+
     // Find out the workgroup size supported by the OpenCL device
     auto wgroup_size = device.get_info<sycl::info::device::max_work_group_size>();
 
@@ -57,11 +59,15 @@ int main(int, char**) {
         throw "Device doesn't have enough local memory!";
     }
 
+	std::cout << "Entering reudction loop..." << std::endl;
+
     // Reduction loop
     auto len = arr.size();
     while (len != 1) {
         // divison rounding up
         auto n_wgroups = (len + part_size - 1) / part_size;
+
+		std::cout << "Submitting kernel..." << std::endl;
 
         // Submit kernel to command queue for execution
         queue.submit([&] (sycl::handler& cgh) {
@@ -111,10 +117,12 @@ int main(int, char**) {
                 }
             });
         });
+		std::cout << "Waiting for kernel execution to end..." << std::endl;
         queue.wait_and_throw();
         len = n_wgroups;
     }
 
+	std::cout << "Exiting..." << std::endl;
     // Get result of reduction and print to screen
     auto acc = buf.get_access<sycl::access::mode::read>();
     std::cout << "Sum: " << acc[0] << std::endl;
