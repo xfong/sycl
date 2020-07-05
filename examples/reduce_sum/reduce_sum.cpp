@@ -9,6 +9,7 @@ namespace sycl = cl::sycl;
 #include <iostream>
 #include <random>
 #include <cassert>
+#include <numeric>
 
 #include "gen_device_queue.hpp"
 #include "reducesum.hpp"
@@ -64,7 +65,8 @@ int main(int argc, char** argv) {
 
 	auto result = reducesum_async<int>(queue, &buf, 0, arr.size(), wgroup_size, wgroup_size);
     // Get result of reduction and print to screen
-    std::cout << "Sum: " << result << std::endl;
+    std::cout << "SYCL sum: " << result << std::endl;
+	std::cout << "Sum: " << std::accumulate(arr.begin(), arr.end(), int32_t(0)) << std::endl;
 
     return 0;
 }

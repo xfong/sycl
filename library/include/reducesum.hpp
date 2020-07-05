@@ -7,12 +7,21 @@ namespace sycl = cl::sycl;
 
 #ifndef REDUCESUM_HPP_
 #define REDUCESUM_HPP_
-#ifndef ARRVECTOR_INC__
-#define ARRVECTOR_INC__
+
+#ifndef VECTOR__
+#define VECTOR__
 #include <vector>
+#endif // VECTOR__
+
+#ifndef ARRAY__
+#define ARRAY__
 #include <array>
+#endif // ARRAY__
+
+#ifndef IOSTREAM__
+#define IOSTREAM__
 #include <iostream>
-#endif // ARRVECTOR_INC__
+#endif // IOSTREAM__
 
 template <typename dataT>
 sycl::buffer<dataT> inline get_out_buffer(
@@ -73,7 +82,7 @@ class reducesum_kernel {
 			}
 			// Write reduced result to output for workgroup
 			if  (lid == 0) {
-				dst[item.get_group(0)] = reduce_local_mem[0];
+				dst[item.get_group(0)] = reduce_local_mem[lid];
 			}
 		}
 	private:
@@ -109,38 +118,20 @@ dataT reducesum_async(sycl::queue funcQueue,
 		sycl::accessor<dataT, 1, sycl::access::mode::read_write,
 				       sycl::access::target::local>;
 
-	size_t num_group = gsize / lsize;
+	size_t num_group = lsize / lsize;
 
+	dataT retVal;
 	std::vector<dataT> out_data(1);
-	sycl::buffer<dataT> out_buffer(out_data.data(), out_data.size());
-	auto temp_buff = get_out_buffer(num_group, out_buffer);
+	sycl::buffer<dataT> out_buffer(out_data.data(), sycl::range<1>{1});
+	out_buffer.set_final_data(nullptr);
+	{
 
-	// submitting the SYCL kernel to the cvengine SYCL queue.
-	funcQueue.submit([&](sycl::handler &cgh) {
-		// getting read access over the sycl buffer A inside the device kernel
-		auto in_acc =
-			src->template get_access<sycl::access::mode::read>(cgh);
-		// getting write access over the sycl buffer C inside the device kernel
-
-		auto out_acc =
-			temp_buff.template get_access<cl::sycl::access::mode::write>(cgh);
-
-		auto local_acc = local_accessor_t(lsize, cgh);
-
-		// constructing the kernel
-		cgh.parallel_for(
-			cl::sycl::nd_range<1>{sycl::range<1>{size_t(gsize)},
-								  sycl::range<1>{size_t(lsize)}},
-			reducesum_kernel<dataT>(out_acc, in_acc, local_acc, initVal, N));
-	});
-	if (num_group > 1) {
-		// launching a new kernel and passing tem_buff as an input
-		funcQueue.submit([&](cl::sycl::handler &cgh) {
+		// submitting the SYCL kernel to the cvengine SYCL queue.
+		funcQueue.submit([&](sycl::handler &cgh) {
 			// getting read access over the sycl buffer A inside the device kernel
 			auto in_acc =
-				temp_buff.template get_access<sycl::access::mode::read>(cgh);
+				src->template get_access<sycl::access::mode::read>(cgh);
 			// getting write access over the sycl buffer C inside the device kernel
-
 			auto out_acc =
 				out_buffer.template get_access<sycl::access::mode::write>(cgh);
 
@@ -148,11 +139,15 @@ dataT reducesum_async(sycl::queue funcQueue,
 
 			// constructing the kernel
 			cgh.parallel_for(
-				cl::sycl::nd_range<1>{sycl::range<1>{size_t(gsize)},
+				cl::sycl::nd_range<1>{sycl::range<1>{size_t(lsize)},
 									  sycl::range<1>{size_t(lsize)}},
-				reducesum_kernel<dataT>(out_acc, in_acc, local_acc, (dataT)(0), num_group));
+				reducesum_kernel<dataT>(out_acc, in_acc, local_acc, initVal, N));
 		});
 	}
-	return out_data[0];
+	{
+		auto h_acc = out_buffer.template get_access<sycl::access::mode::read>();
+		retVal = h_acc[0];
+	}
+	return retVal;
 }
 #endif // REDUCESUM_HPP_
