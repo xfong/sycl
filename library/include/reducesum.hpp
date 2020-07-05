@@ -38,7 +38,7 @@ class reducesum_kernel {
 		    sycl::accessor<dataT, 1, sycl::access::mode::read, sycl::access::target::global_buffer>;
 	    using write_accessor =
 		    sycl::accessor<dataT, 1, sycl::access::mode::write, sycl::access::target::global_buffer>;
-	using local_accessor =
+		using local_accessor =
 			sycl::accessor<dataT, 1, sycl::access::mode::read_write, sycl::access::target::local>;
 		reducesum_kernel(write_accessor dstPtr,
 		             read_accessor srcPtr,
@@ -77,8 +77,8 @@ class reducesum_kernel {
 				dataT myValue = (dataT)(0);
 				if (lid < remaining_num) {
 					myValue = reduce_local_mem[lid + remaining_num];
+					reduce_local_mem[lid] += myValue;
 				}
-				reduce_local_mem[lid] += myValue;
 			}
 			// Write reduced result to output for workgroup
 			if  (lid == 0) {
@@ -107,13 +107,6 @@ dataT reducesum_async(sycl::queue funcQueue,
 				 const size_t gsize,
 				 const size_t lsize) {
 
-	using read_accessor_t =
-		sycl::accessor<dataT, 1, sycl::access::mode::read,
-					   sycl::access::target::global_buffer>;
-	using write_accessor_t =
-		sycl::accessor<dataT, 1, sycl::access::mode::write,
-					   sycl::access::target::global_buffer>;
-
 	using local_accessor_t =
 		sycl::accessor<dataT, 1, sycl::access::mode::read_write,
 				       sycl::access::target::local>;
@@ -128,40 +121,40 @@ dataT reducesum_async(sycl::queue funcQueue,
 
 		sycl::buffer<dataT> temp_buffer = get_out_buffer(num_groups, out_buffer);
 		
-		// submitting the SYCL kernel to the cvengine SYCL queue.
+		// First stage in reduction with maximum number of work-groups
+		// Each work-group will output a result
 		funcQueue.submit([&](sycl::handler &cgh) {
-			// getting read access over the sycl buffer A inside the device kernel
+			// getting read access over the input sycl buffer inside the device kernel
 			auto in_acc =
 				src->template get_access<sycl::access::mode::read>(cgh);
-			// getting write access over the sycl buffer C inside the device kernel
+			// getting write access over the output sycl buffer inside the device kernel
 			auto temp_acc =
 				temp_buffer.template get_access<sycl::access::mode::write>(cgh);
-
+			// getting read/write access over the local buffer inside the device kernel
 			auto local_acc = local_accessor_t(lsize, cgh);
 
 			// constructing the kernel
-			cgh.parallel_for(
-				cl::sycl::nd_range<1>{sycl::range<1>{size_t(gsize)},
-									  sycl::range<1>{size_t(lsize)}},
-				reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, initVal, N));
+			cgh.parallel_for(sycl::nd_range<1>{sycl::range<1>{size_t(gsize)},
+											   sycl::range<1>{size_t(lsize)}},
+							 reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, initVal, N));
 		});
+		// Second stage in reduction with one work-group
+		// Executed only if the first stage consists of several work-groups
 		if (num_groups > 1) {
-			// submitting the SYCL kernel to the cvengine SYCL queue.
 			funcQueue.submit([&](sycl::handler &cgh) {
-				// getting read access over the sycl buffer A inside the device kernel
+				// getting read access over the input sycl buffer inside the device kernel
 				auto in_acc =
 					temp_buffer.template get_access<sycl::access::mode::read>(cgh);
-				// getting write access over the sycl buffer C inside the device kernel
+				// getting write access over the output sycl buffer inside the device kernel
 				auto temp_acc =
 					out_buffer.template get_access<sycl::access::mode::write>(cgh);
-
+				// getting read/write access over the local buffer inside the device kernel
 				auto local_acc = local_accessor_t(lsize, cgh);
 
 				// constructing the kernel
-				cgh.parallel_for(
-					cl::sycl::nd_range<1>{sycl::range<1>{size_t(lsize)},
-										  sycl::range<1>{size_t(lsize)}},
-					reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, initVal, num_groups));
+				cgh.parallel_for(sycl::nd_range<1>{sycl::range<1>{size_t(lsize)},
+												   sycl::range<1>{size_t(lsize)}},
+								 reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, dataT(0), num_groups));
 			});
 		}
 	}
