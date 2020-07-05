@@ -25,9 +25,9 @@ namespace sycl = cl::sycl;
 
 template <typename dataT>
 sycl::buffer<dataT> inline get_out_buffer(
-    const size_t num_group, sycl::buffer<dataT> out_buffer) {
-  return (num_group > 1)
-             ? sycl::buffer<dataT>(sycl::range<1>{size_t(num_group)})
+    const size_t num_groups, sycl::buffer<dataT> out_buffer) {
+  return (num_groups > 1)
+             ? sycl::buffer<dataT>(sycl::range<1>{size_t(num_groups)})
              : out_buffer;
 }
 
@@ -118,7 +118,7 @@ dataT reducesum_async(sycl::queue funcQueue,
 		sycl::accessor<dataT, 1, sycl::access::mode::read_write,
 				       sycl::access::target::local>;
 
-	size_t num_group = lsize / lsize;
+	size_t num_groups = gsize / lsize;
 
 	dataT retVal;
 	std::vector<dataT> out_data(1);
@@ -126,23 +126,44 @@ dataT reducesum_async(sycl::queue funcQueue,
 	out_buffer.set_final_data(nullptr);
 	{
 
+		sycl::buffer<dataT> temp_buffer = get_out_buffer(num_groups, out_buffer);
+		
 		// submitting the SYCL kernel to the cvengine SYCL queue.
 		funcQueue.submit([&](sycl::handler &cgh) {
 			// getting read access over the sycl buffer A inside the device kernel
 			auto in_acc =
 				src->template get_access<sycl::access::mode::read>(cgh);
 			// getting write access over the sycl buffer C inside the device kernel
-			auto out_acc =
-				out_buffer.template get_access<sycl::access::mode::write>(cgh);
+			auto temp_acc =
+				temp_buffer.template get_access<sycl::access::mode::write>(cgh);
 
 			auto local_acc = local_accessor_t(lsize, cgh);
 
 			// constructing the kernel
 			cgh.parallel_for(
-				cl::sycl::nd_range<1>{sycl::range<1>{size_t(lsize)},
+				cl::sycl::nd_range<1>{sycl::range<1>{size_t(gsize)},
 									  sycl::range<1>{size_t(lsize)}},
-				reducesum_kernel<dataT>(out_acc, in_acc, local_acc, initVal, N));
+				reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, initVal, N));
 		});
+		if (num_groups > 1) {
+			// submitting the SYCL kernel to the cvengine SYCL queue.
+			funcQueue.submit([&](sycl::handler &cgh) {
+				// getting read access over the sycl buffer A inside the device kernel
+				auto in_acc =
+					temp_buffer.template get_access<sycl::access::mode::read>(cgh);
+				// getting write access over the sycl buffer C inside the device kernel
+				auto temp_acc =
+					out_buffer.template get_access<sycl::access::mode::write>(cgh);
+
+				auto local_acc = local_accessor_t(lsize, cgh);
+
+				// constructing the kernel
+				cgh.parallel_for(
+					cl::sycl::nd_range<1>{sycl::range<1>{size_t(lsize)},
+										  sycl::range<1>{size_t(lsize)}},
+					reducesum_kernel<dataT>(temp_acc, in_acc, local_acc, initVal, num_groups));
+			});
+		}
 	}
 	{
 		auto h_acc = out_buffer.template get_access<sycl::access::mode::read>();

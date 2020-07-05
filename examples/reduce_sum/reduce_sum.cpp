@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 	int gpu_num = grabOpts(argc, argv);
 
     // Create data array to operate on
-    std::array<int32_t, 16> arr;
+    std::array<int32_t, 2112> arr;
 
     std::mt19937 mt_engine(std::random_device{}());
     std::uniform_int_distribution<int32_t> idist(0, 10);
@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
         throw "Device doesn't have enough local memory!";
     }
 
-	auto result = reducesum_async<int>(queue, &buf, 0, arr.size(), wgroup_size, wgroup_size);
+	auto result = reducesum_async<int>(queue, &buf, 0, arr.size(), wgroup_size * 4, wgroup_size);
     // Get result of reduction and print to screen
     std::cout << "SYCL sum: " << result << std::endl;
 	std::cout << "Sum: " << std::accumulate(arr.begin(), arr.end(), int32_t(0)) << std::endl;
