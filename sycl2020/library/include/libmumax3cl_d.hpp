@@ -15,6 +15,4 @@ class Mumax3clUtil {
                    size_t N);
         sycl::queue getQueue();
         sycl::device getDevice();
-    private :
-        Mumax3clUtil_t<real_t>* obj;
 };
