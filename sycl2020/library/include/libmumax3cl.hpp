@@ -34,6 +34,8 @@ class Mumax3clUtil_t {
             this->mainDev = getGPU(id);
             this->mainQ = sycl::queue(this->mainDev);
         };
+        sycl::queue getQueue() { return this->mainQ; }
+        sycl::device getDevice() { return this->mainDev; }
         void madd2(size_t blocks, size_t threads,
                    dataT* dst,
                    dataT fac1, dataT* src1,
