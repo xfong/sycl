@@ -9,7 +9,7 @@ void madd3_t(size_t blocks, size_t threads, sycl::queue q,
              T fac3, T* src3,
              size_t N) {
     size_t totalThreads = blocks*threads;
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(totalThreads, 1, 1), sycl::range<3>(threads, 1, 1)), [=] (sycl::nd_item<3> idx) {
+    q.parallel_for(sycl::nd_range<1>(sycl::range<1>(totalThreads), sycl::range<1>(threads)), [=] (sycl::nd_item<1> idx) {
         size_t myId = idx.get_global_linear_id();
         for (size_t i = myId; i < N; i += totalThreads) {
             T num1 = src1[i];

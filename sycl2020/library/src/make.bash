@@ -15,4 +15,8 @@ if [ -f ../lib/${FN}.so ]; then
     rm ../lib/${FN}.so
 fi
 
+if [ !-d ../lib ]; then
+    mkdir ../lib
+fi
+
 cp ./${FN}.so ../lib/${FN}.so
