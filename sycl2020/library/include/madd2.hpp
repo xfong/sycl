@@ -4,8 +4,10 @@
 template<typename T>
 void madd2_t(size_t blocks, size_t threads, sycl::queue q,
              T* dst,
-             T fac1, T* src1,
-             T fac2, T* src2,
+             T* src1,
+             T fac1,
+             T* src2,
+             T fac2,
              size_t N) {
     size_t totalThreads = blocks*threads;
     q.parallel_for(sycl::nd_range<1>(sycl::range<1>(totalThreads), sycl::range<1>(threads)), [=] (sycl::nd_item<1> idx) {

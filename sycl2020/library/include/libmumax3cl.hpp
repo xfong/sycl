@@ -13,18 +13,37 @@ class Mumax3clUtil_t {
         sycl::device getDevice() { return this->mainDev; }
         void madd2(size_t blocks, size_t threads,
                    dataT* dst,
-                   dataT fac1, dataT* src1,
-                   dataT fac2, dataT* src2,
+                   dataT* src1,
+                   dataT fac1,
+                   dataT* src2,
+                   dataT fac2,
                    size_t N) {
-                madd2_t<dataT>(blocks, threads, this->mainQ, dst, fac1, src1, fac2, src2, N);
+                madd2_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src1,
+                               fac1,
+                               src2,
+                               fac2,
+                               N);
             };
         void madd3(size_t blocks, size_t threads,
                    dataT* dst,
-                   dataT fac1, dataT* src1,
-                   dataT fac2, dataT* src2,
-                   dataT fac3, dataT* src3,
+                   dataT* src1,
+                   dataT fac1,
+                   dataT* src2,
+                   dataT fac2,
+                   dataT* src3,
+                   dataT fac3,
                    size_t N) {
-                madd3_t<dataT>(blocks, threads, this->mainQ, dst, fac1, src1, fac2, src2, fac3, src3, N);
+                madd3_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src1,
+                               fac1,
+                               src2,
+                               fac2,
+                               src3,
+                               fac3,
+                               N);
             };
 
     private :
