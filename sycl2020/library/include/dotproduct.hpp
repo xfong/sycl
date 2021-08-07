@@ -7,7 +7,7 @@
 template<typename T>
 inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> idx,
                       T* dst,
-                      T prefactor,
+                      T  prefactor,
                       T* src1x,
                       T* src1y,
                       T* src1z,
@@ -35,7 +35,7 @@ inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> idx,
 template<typename T>
 void dotproduct_t(size_t blocks, size_t threads, sycl::queue q,
                   T* dst,
-                  T prefactor,
+                  T  prefactor,
                   T* src1x,
                   T* src1y,
                   T* src1z,
