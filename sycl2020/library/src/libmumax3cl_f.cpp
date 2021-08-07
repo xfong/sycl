@@ -6,6 +6,28 @@ Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
 }
 
+void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
+                              real_t* dst,
+                              real_t  prefactor,
+                              real_t* src1x,
+                              real_t* src1y,
+                              real_t* src1z,
+                              real_t* src2x,
+                              real_t* src2y,
+                              real_t* src2z,
+                              size_t N) {
+    this->obj->dotproduct(blocks, threads,
+                          dst,
+                          prefactor,
+                          src1x,
+                          src1y,
+                          src1z,
+                          src2x,
+                          src2y,
+                          src2z,
+                          N);
+}
+
 void Mumax3clUtil::madd2(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* src1,
@@ -52,6 +74,28 @@ extern "C" {
 
 Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
+}
+
+void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
+                real_t* dst,
+                real_t prefactor,
+                real_t* src1x,
+                real_t* src1y,
+                real_t* src1z,
+                real_t* src2x,
+                real_t* src2y,
+                real_t* src2z,
+                size_t N){
+    obj->dotproduct(blocks, threads,
+                    dst,
+                    prefactor,
+                    src1x,
+                    src1y,
+                    src1z,
+                    src2x,
+                    src2y,
+                    src2z,
+                    N);
 }
 
 void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,

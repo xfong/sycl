@@ -1,4 +1,5 @@
 #include <CL/sycl.hpp>
+#include "dotproduct.hpp"
 #include "madd2.hpp"
 #include "madd3.hpp"
 
@@ -11,6 +12,27 @@ class Mumax3clUtil_t {
         };
         sycl::queue getQueue() { return this->mainQ; }
         sycl::device getDevice() { return this->mainDev; }
+        void dotproduct(size_t blocks, size_t threads,
+                   dataT* dst,
+                   dataT  prefactor,
+                   dataT* src1x,
+                   dataT* src1y,
+                   dataT* src1z,
+                   dataT* src2x,
+                   dataT* src2y,
+                   dataT* src2z,
+                   size_t N) {
+                dotproduct_t<dataT>(blocks, threads, this->mainQ,
+                                    dst,
+                                    prefactor,
+                                    src1x,
+                                    src1y,
+                                    src1z,
+                                    src2x,
+                                    src2y,
+                                    src2z,
+                                    N);
+            };
         void madd2(size_t blocks, size_t threads,
                    dataT* dst,
                    dataT* src1,
