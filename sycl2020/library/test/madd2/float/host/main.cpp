@@ -24,7 +24,7 @@ int main() {
         gold[i] = fac1*input1[i] + fac2*input2[i];
     }
 
-    madd2_t<float>(1, 128, mainQ, dst, fac1, input1, fac2, input2, DATASIZE);
+    madd2_t<float>(1, 128, mainQ, dst, input1, fac1, input2, fac2, DATASIZE);
     mainQ.wait();
 
     size_t chk = 0;

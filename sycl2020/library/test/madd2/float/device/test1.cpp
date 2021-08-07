@@ -3,8 +3,8 @@
 
 #define DATASIZE 1024
 
-void madd2(size_t blocks, size_t threads, Mumax3clUtil* kern, real_t* dst, real_t aFac, real_t* A, real_t bFac, real_t* B, size_t N) {
-    kern->madd2(blocks, threads, dst, aFac, A, bFac, B, N);
+void madd2(size_t blocks, size_t threads, Mumax3clUtil* kern, real_t* dst, real_t* A, real_t aFac, real_t* B, real_t bFac, size_t N) {
+    kern->madd2(blocks, threads, dst, A, aFac, B, bFac, N);
 }
 
 int main() {
@@ -24,7 +24,7 @@ int main() {
         gold[i] = fac1*input1[i] + fac2*input2[i];
     }
 
-    madd2(1, 128, obj, dst, fac1, input1, fac2, input2, DATASIZE);
+    madd2(1, 128, obj, dst, input1, fac1, input2, fac2, DATASIZE);
     obj->getQueue().wait();
 
     size_t chk = 0;

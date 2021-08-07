@@ -8,18 +8,38 @@ Mumax3clUtil::Mumax3clUtil(int id) {
 
 void Mumax3clUtil::madd2(size_t blocks, size_t threads,
                    real_t* dst,
-                   real_t fac1, real_t* src1,
-                   real_t fac2, real_t* src2,
+                   real_t* src1,
+                   real_t fac1,
+                   real_t* src2,
+                   real_t fac2,
                    size_t N) {
-    this->obj->madd2(blocks, threads, dst, fac1, src1, fac2, src2, N);
+    this->obj->madd2(blocks, threads,
+                     dst,
+                     src1,
+                     fac1,
+                     src2,
+                     fac2,
+                     N);
 }
 
 void Mumax3clUtil::madd3(size_t blocks, size_t threads,
                    real_t* dst,
-                   real_t fac1, real_t* src1,
-                   real_t fac2, real_t* src2,
+                   real_t* src1,
+                   real_t fac1,
+                   real_t* src2,
+                   real_t fac2,
+                   real_t* src3,
+                   real_t fac3,
                    size_t N) {
-    this->obj->madd2(blocks, threads, dst, fac1, src1, fac2, src2, N);
+    this->obj->madd3(blocks, threads,
+                     dst,
+                     src1,
+                     fac1,
+                     src2,
+                     fac2,
+                     src3,
+                     fac3,
+                     N);
 }
 
 sycl::queue Mumax3clUtil::getQueue() { return this->obj->getQueue(); }
