@@ -10,8 +10,8 @@
 #define libMumax3clDeviceFcnCallInt(deviceFnName,totalThreads,numThreads,...) \
     q.parallel_for( \
       sycl::nd_range<1>(sycl::range<1>(totalThreads),sycl::range<1>(numThreads)), \
-      [=](sycl::nd_item<1> idx) { \
-          deviceFnName(totalThreads, idx, __VA_ARGS__); \
+      [=](sycl::nd_item<1> item) { \
+          deviceFnName(totalThreads, item, __VA_ARGS__); \
     });
 
 #define libMumax3clDeviceFcnCall(fcnName,...) libMumax3clDeviceFcnCallInt((fcnName),__VA_ARGS__)

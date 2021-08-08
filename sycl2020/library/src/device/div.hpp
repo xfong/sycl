@@ -5,12 +5,12 @@
 // device side function.This is essentially the function of the kernel
 // dst = ax / bx
 template<typename dataT>
-inline void pointwise_div_fcn(size_t totalThreads, sycl::nd_item<1> idx,
-                              dataT*       dst,
-                              const dataT* ax,
-                              const dataT* bx,
-                              size_t       N) {
-    for (size_t gid = idx.get_global_linear_id(); gid < N; gid += totalThreads) {
+inline void pointwise_div_fcn(size_t totalThreads, sycl::nd_item<1> item,
+                              dataT* dst,
+                              dataT* ax,
+                              dataT* bx,
+                              size_t N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += totalThreads) {
         dataT c0 = bx[gid];
         dataT c1 = ax[gid];
         if ((c0 == (dataT)(0.0)) || (c1 == (dataT)(0.0))) {

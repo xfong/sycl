@@ -18,15 +18,15 @@ inline sycl::vec<dataT, 3> vmul(dataT &ax,
                                 dataT  my,
                                 dataT  mz,
                                 int    i) {
-    return make_vec3<dataT>(amul(ax, mx, i),
-                            amul(ay, my, i),
-                            amul(az, mz, i));
+    return make_vec3<dataT>(amul<dataT>(ax, mx, i),
+                            amul<dataT>(ay, my, i),
+                            amul<dataT>(az, mz, i));
 }
 
 // Returns 1/Msat, or 0 when Msat == 0.
 template<typename dataT>
 inline dataT inv_Msat(dataT* Ms_, dataT Ms_mul, int i) {
-    dataT ms = amul(Ms_, Ms_mul, i);
+    dataT ms = amul<dataT>(Ms_, Ms_mul, i);
     if (ms == (dataT)(0.0)) {
         return (dataT)(0.0);
     } else {

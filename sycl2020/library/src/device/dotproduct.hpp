@@ -5,7 +5,7 @@
 // device side function.This is essentially the function of the kernel
 // dst = prefactor*(src1x*src2x + src1y*src2y + src1z*src2z)
 template<typename T>
-inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> idx,
+inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> item,
                       T* dst,
                       T  prefactor,
                       T* src1x,
@@ -15,8 +15,7 @@ inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> idx,
                       T* src2y,
                       T* src2z,
                       size_t N) {
-    size_t myId = idx.get_global_linear_id();
-    for (size_t i = myId; i < N; i += totalThreads) {
+    for (size_t i = item.get_global_linear_id(); i < N; i += totalThreads) {
         T num1 = src1x[i];
         T num2 = src1y[i];
         T num3 = src1z[i];

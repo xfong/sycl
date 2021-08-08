@@ -1,0 +1,96 @@
+// dotproduct kernel
+
+#include "device_function.hpp"
+
+// device side function.This is essentially the function of the kernel
+// dst = prefactor*(src1x*src2x + src1y*src2y + src1z*src2z)
+
+#include "amul.hpp"
+
+template <typename dataT>
+void addcubicanisotropy2_fcn(size_t totalThreads, sycl::nd_item<1> item,
+                             dataT* BX, dataT* BY, dataT* BZ,
+                             dataT* mx, dataT* my, dataT* mz,
+                             dataT* Ms_, dataT Ms_mul,
+                             dataT* k1_, dataT k1_mul,
+                             dataT* k2_, dataT k2_mul,
+                             dataT* k3_, dataT k3_mul,
+                             dataT* c1x, dataT c1x_mul,
+                             dataT* c1y, dataT c1y_mul,
+                             dataT* c1z, dataT c1z_mul,
+                             dataT* c2x, dataT c2x_mul,
+                             dataT* c2y, dataT c2y_mul,
+                             dataT* c2z, dataT c2z_mul,
+                             size_t N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += totalThreads) {
+
+        dataT invMs = inv_Msat(Ms_, Ms_mul, i);
+        dataT    k1 = amul<dataT>(k1_, k1_mul, i);
+        k1         *= invMs;
+        dataT    k2 = amul<dataT>(k2_, k2_mul, i);
+        k2         *= invMs;
+        dataT    k3 = amul<dataT>(k3_, k3_mul, i);
+        k3         *= invMs;
+
+        sycl::vec<dataT, 3> u1 = normalized<dataT>(vmul<dataT>(c1x, c1y, c1z, c1x_mul, c1y_mul, c1z_mul, i));
+        sycl::vec<dataT, 3> u2 = normalized<dataT>(vmul<dataT>(c2x, c2y, c2z, c2x_mul, c2y_mul, c2z_mul, i));
+        sycl::vec<dataT, 3> u3 = sycl::cross(u1, u2); // 3rd axis perpendicular to u1,u2
+        sycl::vec<dataT, 3> m  = make_vec3<dataT>(mx[i], my[i], mz[i]);
+
+        dataT u1m = sycl::dot(u1, m);
+        dataT u2m = sycl::dot(u2, m);
+        dataT u3m = sycl::dot(u3, m);
+
+        sycl::vec<dataT, 3> B = (dataT)(-2.0)*k1*((pow2(u2m) + pow2(u3m)) * (    (u1m) * u1) +
+                                                  (pow2(u1m) + pow2(u3m)) * (    (u2m) * u2) +
+                                                  (pow2(u1m) + pow2(u2m)) * (    (u3m) * u3))-
+                                 (dataT)(2.0)*k2*((pow2(u2m) * pow2(u3m)) * (    (u1m) * u1) +
+                                                  (pow2(u1m) * pow2(u3m)) * (    (u2m) * u2) +
+                                                  (pow2(u1m) * pow2(u2m)) * (    (u3m) * u3))-
+                                 (dataT)(4.0)*k3*((pow4(u2m) + pow4(u3m)) * (pow3(u1m) * u1) +
+                                                  (pow4(u1m) + pow4(u3m)) * (pow3(u2m) * u2) +
+                                                  (pow4(u1m) + pow4(u2m)) * (pow3(u3m) * u3));
+
+        // Store to global buffer
+        BX[gid] = B.x();
+        BY[gid] = B.y();
+        BZ[gid] = B.z();
+    }
+}
+
+// the function that launches the kernel
+template <typename dataT>
+void addcubicanisotropy2_t(size_t blocks, size_t threads, sycl::queue funcQueue,
+                           dataT *BX,
+                           dataT *BY,
+                           dataT *BZ,
+                           dataT *mx,
+                           dataT *my,
+                           dataT *mz,
+                           dataT *Ms_, dataT Ms_mul,
+                           dataT *k1_, dataT k1_mul,
+                           dataT *k2_, dataT k2_mul,
+                           dataT *k3_, dataT k3_mul,
+                           dataT *c1x_, dataT c1x_mul,
+                           dataT *c1y_, dataT c1y_mul,
+                           dataT *c1z_, dataT c1z_mul,
+                           dataT *c2x_, dataT c2x_mul,
+                           dataT *c2y_, dataT c2y_mul,
+                           dataT *c2z_, dataT c2z_mul,
+                           size_t N) {
+    size_t totalThreads = blocks*threads;
+    libMumax3clDeviceFcnCall(addcubicanisotropy2_fcn<dataT>, totalThreads, threads,
+                             BX, BY, BZ,
+                             mx, my, mz,
+                             Ms_, Ms_mul,
+                             k1_, k1_mul,
+                             k2_, k2_mul,
+                             k3_, k3_mul,
+                             c1x, c1x_mul,
+                             c1y, c1y_mul,
+                             c1z, c1z_mul,
+                             c2x, c2x_mul,
+                             c2y, c2y_mul,
+                             c2z, c2z_mul,
+                             N);
+}
