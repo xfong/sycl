@@ -1,10 +1,8 @@
-// dotproduct kernel
+// cubicanisotropy2 kernel
 
 #include "device_function.hpp"
 
 // device side function.This is essentially the function of the kernel
-// dst = prefactor*(src1x*src2x + src1y*src2y + src1z*src2z)
-
 #include "amul.hpp"
 
 template <typename dataT>

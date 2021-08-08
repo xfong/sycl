@@ -1,4 +1,4 @@
-// dotproduct kernel
+// addexchange kernel
 
 #include "device_function.hpp"
 
@@ -97,7 +97,7 @@ void addexchange_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void addexchange_t(size_t gsize[3], size_t lsize[3], sycl::queue q,
+void addexchange_t(size_t blocks[3], size_t threads[3], sycl::queue q,
                    dataT* Bx, dataT* By, dataT* Bz,
                    dataT* mx, dataT* my, dataT* mz,
                    dataT* Ms, dataT Ms_mul,
@@ -107,9 +107,9 @@ void addexchange_t(size_t gsize[3], size_t lsize[3], sycl::queue q,
                    size_t Nx, size_t Ny, size_t Nz,
                    uint8_t PBC) {
 
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(gsize[0], gsize[1], gsize[2]),
-                   sycl::range<3>(lsize[0], lsize[1], lsize[2])),
-                   [=] (sycl::nd_item<3> item){
+    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
+                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
+        [=] (sycl::nd_item<3> item){
         addexchange_fcn<dataT>(item,
                                Bx, By, Bz,
                                mx, my, mz,

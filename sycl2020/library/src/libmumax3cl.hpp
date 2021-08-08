@@ -1,5 +1,6 @@
 #include <CL/sycl.hpp>
 #include "device/addexchange.hpp"
+#include "device/copypadmul2.hpp"
 #include "device/cubicanisotropy2.hpp"
 #include "device/div.hpp"
 #include "device/dotproduct.hpp"
@@ -62,6 +63,21 @@ class Mumax3clUtil_t {
                    wx, wy, wz,
                    Nx, Ny, Nz,
                    PBC);
+                };
+        void copypadmul2(size_t blocks[3], size_t threads[3],
+                   dataT* dst,
+                   size_t Dx, size_t Dy, size_t Dz,
+                   dataT* src,
+                   size_t Sx, size_t Sy, size_t Sz,
+                   dataT* Ms_, size_t Ms_mul,
+                   dataT* vol) {
+                copypadmul2_t<dataT>(blocks, threads, this->mainQ,
+                   dst,
+                   Dx, Dy, Dz,
+                   src,
+                   Sx, Sy, Sz,
+                   Ms_, Ms_mul,
+                   vol);
                 };
         void pointwise_div(size_t blocks, size_t threads,
                    dataT* dst,

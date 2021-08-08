@@ -26,6 +26,13 @@ class Mumax3clUtil {
                    real_t* c2y_, real_t c2y_mul,
                    real_t* c2z_, real_t c2z_mul,
                    size_t N);
+        void copypadmul2(size_t blocks[3], size_t threads[3],
+                   real_t* dst,
+                   size_t  Dx, size_t Dy, size_t Dz,
+                   real_t* src,
+                   size_t  Sx, size_t Sy, size_t Sz,
+                   real_t* Ms_, size_t Ms_mul,
+                   real_t* vol);
         void pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -93,6 +100,14 @@ extern "C" {
              real_t* c2y_, real_t c2y_mul,
              real_t* c2z_, real_t c2z_mul,
              size_t N);
+
+  void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+             real_t* dst,
+             size_t  Dx, size_t Dy, size_t Dz,
+             real_t* src,
+             size_t  Sx, size_t Sy, size_t Sz,
+             real_t* Ms_, size_t Ms_mul,
+             real_t* vol);
 
   void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
              real_t* dst,

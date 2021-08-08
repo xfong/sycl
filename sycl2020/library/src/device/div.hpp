@@ -1,4 +1,4 @@
-// dotproduct kernel
+// pointwise_div kernel
 
 #include "device_function.hpp"
 

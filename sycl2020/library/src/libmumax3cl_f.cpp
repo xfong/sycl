@@ -55,6 +55,22 @@ void Mumax3clUtil::addcubicanisotropy2(size_t blocks, size_t threads,
                    N);
 }
 
+void Mumax3clUtil::copypadmul2(size_t blocks[3], size_t threads[3],
+                   real_t* dst,
+                   size_t  Dx, size_t Dy, size_t Dz,
+                   real_t* src,
+                   size_t  Sx, size_t Sy, size_t Sz,
+                   real_t* Ms_, size_t Ms_mul,
+                   real_t* vol) {
+    this->obj->copypadmul2(blocks, threads,
+                           dst,
+                           Dx, Dy, Dz,
+                           src,
+                           Sx, Sy, Sz,
+                           Ms_, Ms_mul,
+                           vol);
+}
+
 void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -184,6 +200,22 @@ void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                              c2y_, c2y_mul,
                              c2z_, c2z_mul,
                              N);
+}
+
+void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+                 real_t* dst,
+                 size_t  Dx, size_t Dy, size_t Dz,
+                 real_t* src,
+                 size_t  Sx, size_t Sy, size_t Sz,
+                 real_t* Ms_, size_t Ms_mul,
+                 real_t* vol) {
+    obj->copypadmul2(blocks, threads,
+                     dst,
+                     Dx, Dy, Dz,
+                     src,
+                     Sx, Sy, Sz,
+                     Ms_, Ms_mul,
+                     vol);
 }
 
 void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
