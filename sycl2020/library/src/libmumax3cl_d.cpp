@@ -71,6 +71,18 @@ void Mumax3clUtil::copypadmul2(size_t blocks[3], size_t threads[3],
                            vol);
 }
 
+void Mumax3clUtil::copyunpad(size_t blocks[3], size_t threads[3],
+                   real_t* dst,
+                   size_t  Dx, size_t Dy, size_t Dz,
+                   real_t* src,
+                   size_t  Sx, size_t Sy, size_t Sz) {
+    this->obj->copyunpad(blocks, threads,
+                           dst,
+                           Dx, Dy, Dz,
+                           src,
+                           Sx, Sy, Sz);
+}
+
 void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -216,6 +228,18 @@ void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                      Sx, Sy, Sz,
                      Ms_, Ms_mul,
                      vol);
+}
+
+void copyunpad(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+                 real_t* dst,
+                 size_t  Dx, size_t Dy, size_t Dz,
+                 real_t* src,
+                 size_t  Sx, size_t Sy, size_t Sz) {
+    obj->copyunpad(blocks, threads,
+                     dst,
+                     Dx, Dy, Dz,
+                     src,
+                     Sx, Sy, Sz);
 }
 
 void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,

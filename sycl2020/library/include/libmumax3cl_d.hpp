@@ -34,6 +34,11 @@ typedef double real_t;
                  size_t  Sx, size_t Sy, size_t Sz,
                  real_t* Ms_, size_t Ms_mul,
                  real_t* vol);
+      void copyunpad(size_t blocks[3], size_t threads[3],
+                 real_t* dst,
+                 size_t  Dx, size_t Dy, size_t Dz,
+                 real_t* src,
+                 size_t  Sx, size_t Sy, size_t Sz);
       void pointwise_div(size_t blocks, size_t threads,
                  real_t* dst,
                  real_t* ax,
@@ -91,7 +96,7 @@ extern "C" {
                size_t Nx, size_t Ny, size_t Nz,
                uint8_t PBC);
 
-  void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+  extern void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                real_t* BX, real_t* BY, real_t* BZ,
                real_t* mx, real_t* my, real_t* mz,
                real_t* Ms_, real_t Ms_mul,
@@ -106,13 +111,19 @@ extern "C" {
                real_t* c2z_, real_t c2z_mul,
                size_t N);
 
-  void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+  extern void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                real_t* dst,
                size_t  Dx, size_t Dy, size_t Dz,
                real_t* src,
                size_t  Sx, size_t Sy, size_t Sz,
                real_t* Ms_, size_t Ms_mul,
                real_t* vol);
+
+  extern void copyunpad(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+               real_t* dst,
+               size_t  Dx, size_t Dy, size_t Dz,
+               real_t* src,
+               size_t  Sx, size_t Sy, size_t Sz);
 
   extern void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                real_t* dst,
