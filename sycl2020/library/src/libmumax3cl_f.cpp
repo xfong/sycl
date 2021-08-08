@@ -186,7 +186,6 @@ void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                              N);
 }
 
-
 void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
