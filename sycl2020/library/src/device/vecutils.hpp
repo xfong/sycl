@@ -46,7 +46,7 @@ inline dataT pow4(dataT x){
 
 template<typename dataT>
 inline bool is0(sycl::vec<dataT, 3> m) {
-    return ( (m.x == (dataT)(0.0)) || (m.y == (dataT)(0.0)) || (m.z == (dataT)(0.0)));
+    return ( (m.x() == (dataT)(0.0)) || (m.y() == (dataT)(0.0)) || (m.z() == (dataT)(0.0)));
 }
 
 #endif

@@ -14,6 +14,14 @@
 #define PBCy (PBC & 2)
 #define PBCz (PBC & 4)
 
+int min(int a, int b) {
+    return (a < b) ? a : b;
+}
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
 // clamp or wrap index at boundary, depending on PBC
 // hclamp*: clamps on upper side (index+1)
 // lclamp*: clamps on lower side (index-1)

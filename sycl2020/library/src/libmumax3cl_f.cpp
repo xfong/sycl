@@ -6,6 +6,25 @@ Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
 }
 
+void Mumax3clUtil::addexchange(size_t blocks[3], size_t threads[3],
+                   real_t* Bx, real_t* By, real_t* Bz,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms, real_t Ms_mul,
+                   real_t* aLUT2d,
+                   uint8_t* regions,
+                   real_t wx, real_t wy, real_t wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+    this->obj->addexchange(blocks, threads,
+                           Bx, By, Bz,
+                           mx, my, mz,
+                           Ms, Ms_mul,
+                           aLUT2d, regions,
+                           wx, wy, wz,
+                           Nx, Ny, Nz,
+                           PBC);
+}
+
 void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -88,6 +107,24 @@ Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
 }
 
+void addexchange(Mumax3clUtil* obj,size_t blocks[3], size_t threads[3],
+                 real_t* Bx, real_t* By, real_t* Bz,
+                 real_t* mx, real_t* my, real_t* mz,
+                 real_t* Ms, real_t Ms_mul,
+                 real_t* aLUT2d,
+                 uint8_t* regions,
+                 real_t wx, real_t wy, real_t wz,
+                 size_t Nx, size_t Ny, size_t Nz,
+                 uint8_t PBC) {
+    obj->addexchange(blocks, threads,
+                     Bx, By, Bz,
+                     mx, my, mz,
+                     Ms, Ms_mul,
+                     aLUT2d, regions,
+                     wx, wy, wz,
+                     Nx, Ny, Nz,
+                     PBC);
+}
 void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,

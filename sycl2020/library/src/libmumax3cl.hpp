@@ -1,4 +1,5 @@
 #include <CL/sycl.hpp>
+#include "device/addexchange.hpp"
 #include "device/div.hpp"
 #include "device/dotproduct.hpp"
 #include "device/madd2.hpp"
@@ -13,6 +14,25 @@ class Mumax3clUtil_t {
         };
         sycl::queue getQueue() { return this->mainQ; }
         sycl::device getDevice() { return this->mainDev; }
+        void addexchange(size_t blocks[3], size_t threads[3],
+                   dataT* Bx, dataT* By, dataT* Bz,
+                   dataT* mx, dataT* my, dataT* mz,
+                   dataT* Ms, dataT Ms_mul,
+                   dataT* aLUT2d,
+                   uint8_t* regions,
+                   dataT wx, dataT wy, dataT wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+                addexchange_t<dataT>(blocks, threads, this->mainQ,
+                   Bx, By, Bz,
+                   mx, my, mz,
+                   Ms, Ms_mul,
+                   aLUT2d,
+                   regions,
+                   wx, wy, wz,
+                   Nx, Ny, Nz,
+                   PBC);
+                };
         void pointwise_div(size_t blocks, size_t threads,
                    dataT* dst,
                    dataT* ax,

@@ -3,6 +3,15 @@ typedef float real_t;
 class Mumax3clUtil {
     public :
         Mumax3clUtil(int id);
+        void addexchange(size_t blocks[3], size_t threads[3],
+                   real_t* Bx, real_t* By, real_t* Bz,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms, real_t Ms_mul,
+                   real_t* aLUT2d,
+                   uint8_t* regions,
+                   real_t wx, real_t wy, real_t wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC);
         void pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -45,6 +54,16 @@ extern "C" {
 #endif
 
   Mumax3clUtil* newMumax3clUtil(int id);
+
+  void addexchange(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+             real_t* Bx, real_t* By, real_t* Bz,
+             real_t* mx, real_t* my, real_t* mz,
+             real_t* Ms, real_t Ms_mul,
+             real_t* aLUT2d,
+             uint8_t* regions,
+             real_t wx, real_t wy, real_t wz,
+             size_t Nx, size_t Ny, size_t Nz,
+             uint8_t PBC);
 
   void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
              real_t* dst,

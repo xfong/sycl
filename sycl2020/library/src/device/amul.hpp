@@ -25,7 +25,7 @@ inline sycl::vec<dataT, 3> vmul(dataT &ax,
 
 // Returns 1/Msat, or 0 when Msat == 0.
 template<typename dataT>
-inline dataT inv_Msat(dataT& Ms_, dataT Ms_mul, int i) {
+inline dataT inv_Msat(dataT* Ms_, dataT Ms_mul, int i) {
     dataT ms = amul(Ms_, Ms_mul, i);
     if (ms == (dataT)(0.0)) {
         return (dataT)(0.0);
