@@ -83,16 +83,30 @@ void Mumax3clUtil::copyunpad(size_t blocks[3], size_t threads[3],
                            Sx, Sy, Sz);
 }
 
+void Mumax3clUtil::crop(size_t blocks[3], size_t threads[3],
+          real_t* dst,
+          size_t   Dx, size_t   Dy, size_t   Dz,
+          real_t* src,
+          size_t   Sx, size_t   Sy, size_t   Sz,
+          size_t Offx, size_t Offy, size_t Offz) {
+    this->obj->crop(blocks, threads,
+                    dst,
+                    Dx, Dy, Dz,
+                    src,
+                    Sx, Sy, Sz,
+                    Offx, Offy, Offz);
+}
+
 void Mumax3clUtil::crossproduct(size_t blocks, size_t threads,
                    real_t* dstX, real_t* dstY, real_t* dstZ,
                    real_t*   a0, real_t*   a1, real_t*   a2,
                    real_t*   b0, real_t*   b1, real_t*   b2,
                    size_t  N) {
     this->obj->crossproduct(blocks, threads,
-                           dstX, dstY, dstZ,
-                             a0,   a1,   a2,
-                             b0,   b1,   b2,
-                           N);
+                            dstX, dstY, dstZ,
+                              a0,   a1,   a2,
+                              b0,   b1,   b2,
+                            N);
 }
 
 void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
@@ -272,6 +286,20 @@ void copyunpad(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                      Dx, Dy, Dz,
                      src,
                      Sx, Sy, Sz);
+}
+
+void crop(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+          real_t* dst,
+          size_t   Dx, size_t   Dy, size_t   Dz,
+          real_t* src,
+          size_t   Sx, size_t   Sy, size_t   Sz,
+          size_t Offx, size_t Offy, size_t Offz) {
+    obj->crop(blocks, threads,
+              dst,
+              Dx, Dy, Dz,
+              src,
+              Sx, Sy, Sz,
+              Offx, Offy, Offz);
 }
 
 void crossproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,

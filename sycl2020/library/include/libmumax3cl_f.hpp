@@ -39,6 +39,12 @@ typedef float real_t;
                  size_t  Dx, size_t Dy, size_t Dz,
                  real_t* src,
                  size_t  Sx, size_t Sy, size_t Sz);
+      void crop(size_t blocks[3], size_t threads[3],
+                 real_t* dst,
+                 size_t   Dx, size_t   Dy, size_t   Dz,
+                 real_t* src,
+                 size_t   Sx, size_t   Sy, size_t   Sz,
+                 size_t Offx, size_t Offy, size_t Offz);
       void crossproduct(size_t blocks, size_t threads,
                  real_t* dstX, real_t* dstY, real_t* dstZ,
                  real_t*   a0, real_t*   a1, real_t*   a2,
@@ -138,6 +144,13 @@ extern "C" {
                size_t  Dx, size_t Dy, size_t Dz,
                real_t* src,
                size_t  Sx, size_t Sy, size_t Sz);
+
+  extern void crop(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+               real_t* dst,
+               size_t   Dx, size_t   Dy, size_t   Dz,
+               real_t* src,
+               size_t   Sx, size_t   Sy, size_t   Sz,
+               size_t Offx, size_t Offy, size_t Offz);
 
   extern void crossproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
                real_t* dstX, real_t* dstY, real_t* dstZ,
