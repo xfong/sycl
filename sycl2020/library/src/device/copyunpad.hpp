@@ -1,7 +1,5 @@
 // copypadmul2 kernel
 
-#include "device_function.hpp"
-
 // device side function.This is essentially the function of the kernel
 // Copy src (size S, larger) to dst (size D, smaller)
 #include "stencil.hpp"

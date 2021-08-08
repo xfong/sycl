@@ -1,7 +1,5 @@
 // addexchange kernel
 
-#include "device_function.hpp"
-
 // Additional includes
 #include "amul.hpp"
 #include "exchange.hpp"

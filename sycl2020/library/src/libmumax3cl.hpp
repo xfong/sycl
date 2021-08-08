@@ -2,6 +2,7 @@
 #include "device/addexchange.hpp"
 #include "device/copypadmul2.hpp"
 #include "device/copyunpad.hpp"
+#include "device/crossproduct.hpp"
 #include "device/cubicanisotropy2.hpp"
 #include "device/div.hpp"
 #include "device/dotproduct.hpp"
@@ -90,6 +91,17 @@ class Mumax3clUtil_t {
                    Dx, Dy, Dz,
                    src,
                    Sx, Sy, Sz);
+                };
+        void crossproduct(size_t blocks, size_t threads,
+                   dataT* dstX, dataT* dstY, dataT* dstZ,
+                   dataT*   a0, dataT*   a1, dataT*   a2,
+                   dataT*   b0, dataT*   b1, dataT*   b2,
+                   size_t N) {
+                crossproduct_t<dataT>(blocks, threads, this->mainQ,
+                   dstX, dstY, dstZ,
+                   a0, a1, a2,
+                   b0, b1, b2,
+                   N);
                 };
         void pointwise_div(size_t blocks, size_t threads,
                    dataT* dst,
