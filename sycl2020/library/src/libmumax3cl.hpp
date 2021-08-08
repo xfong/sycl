@@ -1,7 +1,7 @@
 #include <CL/sycl.hpp>
-#include "dotproduct.hpp"
-#include "madd2.hpp"
-#include "madd3.hpp"
+#include "device/dotproduct.hpp"
+#include "device/madd2.hpp"
+#include "device/madd3.hpp"
 
 template <typename dataT>
 class Mumax3clUtil_t {
