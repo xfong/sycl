@@ -107,6 +107,26 @@ void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                              N);
 }
 
+void Mumax3clUtil::adddmi(size_t blocks[3], size_t threads[3],
+                   real_t* Hx, real_t* Hy, real_t* Hz,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* aLUT2d, real_t* dLUT2d,
+                   uint8_t* regions,
+                   size_t cx, size_t cy, size_t cz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC, uint8_t OpenBC){
+    this->obj->adddmi(blocks, threads,
+                      Hx, Hy, Hz,
+                      mx, my, mz,
+                      Ms_, Ms_mul,
+                      aLUT2d, dLUT2d,
+                      regions,
+                      cx, cy, cz,
+                      Nx, Ny, Nz,
+                      PBC, OpenBC);
+}
+
 void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t  prefactor,
@@ -276,6 +296,26 @@ void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                        ax,
                        bx,
                        N);
+}
+
+void adddmi(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+                real_t* Hx, real_t* Hy, real_t* Hz,
+                real_t* mx, real_t* my, real_t* mz,
+                real_t* Ms_, real_t Ms_mul,
+                real_t* aLUT2d, real_t* dLUT2d,
+                uint8_t* regions,
+                size_t cx, size_t cy, size_t cz,
+                size_t Nx, size_t Ny, size_t Nz,
+                uint8_t PBC, uint8_t OpenBC){
+    obj->adddmi(blocks, threads,
+                Hx, Hy, Hz,
+                mx, my, mz,
+                Ms_, Ms_mul,
+                aLUT2d, dLUT2d,
+                regions,
+                cx, cy, cz,
+                Nx, Ny, Nz,
+                PBC, OpenBC);
 }
 
 void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,

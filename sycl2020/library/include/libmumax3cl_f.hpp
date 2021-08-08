@@ -49,6 +49,15 @@ typedef float real_t;
                  real_t* ax,
                  real_t* bx,
                  real_t  N);
+      void adddmi(size_t blocks[3], size_t threads[3],
+                 real_t* Hx, real_t* Hy, real_t* Hz,
+                 real_t* mx, real_t* my, real_t* mz,
+                 real_t* Ms_, real_t Ms_mul,
+                 real_t* aLUT2d, real_t* dLUT2d,
+                 uint8_t* regions,
+                 size_t cx, size_t cy, size_t cz,
+                 size_t Nx, size_t Ny, size_t Nz,
+                 uint8_t PBC, uint8_t OpenBC);
       void dotproduct(size_t blocks, size_t threads,
                  real_t* dst,
                  real_t  prefactor,
@@ -141,6 +150,16 @@ extern "C" {
                real_t* ax,
                real_t* bx,
                size_t  N);
+
+  extern void adddmi(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+               real_t* Hx, real_t* Hy, real_t* Hz,
+               real_t* mx, real_t* my, real_t* mz,
+               real_t* Ms_, real_t Ms_mul,
+               real_t* aLUT2d, real_t* dLUT2d,
+               uint8_t* regions,
+               size_t cx, size_t cy, size_t cz,
+               size_t Nx, size_t Ny, size_t Nz,
+               uint8_t PBC, uint8_t OpenBC);
 
   extern void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
                real_t* dst,
