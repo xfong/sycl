@@ -1,4 +1,5 @@
 #include <CL/sycl.hpp>
+#include "device/div.hpp"
 #include "device/dotproduct.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
@@ -12,6 +13,17 @@ class Mumax3clUtil_t {
         };
         sycl::queue getQueue() { return this->mainQ; }
         sycl::device getDevice() { return this->mainDev; }
+        void pointwise_div(size_t blocks, size_t threads,
+                   dataT* dst,
+                   dataT* ax,
+                   dataT* bx,
+                   size_t N) {
+                pointwise_div_t<dataT>(blocks, threads, this->mainQ,
+                                       dst,
+                                       ax,
+                                       bx,
+                                       N);
+                };
         void dotproduct(size_t blocks, size_t threads,
                    dataT* dst,
                    dataT  prefactor,
