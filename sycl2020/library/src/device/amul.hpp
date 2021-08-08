@@ -11,9 +11,9 @@ inline dataT amul(dataT *arr, dataT mul, int i) {
 
 // Returns m * a[i], or m when a == NULL;
 template<typename dataT>
-inline sycl::vec<dataT, 3> vmul(dataT &ax,
-                                dataT &ay,
-                                dataT &az,
+inline sycl::vec<dataT, 3> vmul(dataT* ax,
+                                dataT* ay,
+                                dataT* az,
                                 dataT  mx,
                                 dataT  my,
                                 dataT  mz,

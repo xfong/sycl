@@ -25,6 +25,36 @@ void Mumax3clUtil::addexchange(size_t blocks[3], size_t threads[3],
                            PBC);
 }
 
+void Mumax3clUtil::addcubicanisotropy2(size_t blocks, size_t threads,
+                   real_t* BX, real_t* BY, real_t* BZ,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* k1_, real_t k1_mul,
+                   real_t* k2_, real_t k2_mul,
+                   real_t* k3_, real_t k3_mul,
+                   real_t* c1x_, real_t c1x_mul,
+                   real_t* c1y_, real_t c1y_mul,
+                   real_t* c1z_, real_t c1z_mul,
+                   real_t* c2x_, real_t c2x_mul,
+                   real_t* c2y_, real_t c2y_mul,
+                   real_t* c2z_, real_t c2z_mul,
+                   size_t N) {
+    this->obj->addcubicanisotropy2(blocks, threads,
+                   BX, BY, BZ,
+                   mx, my, mz,
+                   Ms_, Ms_mul,
+                   k1_, k1_mul,
+                   k2_, k2_mul,
+                   k3_, k3_mul,
+                   c1x_, c1x_mul,
+                   c1y_, c1y_mul,
+                   c1z_, c1z_mul,
+                   c2x_, c2x_mul,
+                   c2y_, c2y_mul,
+                   c2z_, c2z_mul,
+                   N);
+}
+
 void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
@@ -107,7 +137,7 @@ Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
 }
 
-void addexchange(Mumax3clUtil* obj,size_t blocks[3], size_t threads[3],
+void addexchange(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                  real_t* Bx, real_t* By, real_t* Bz,
                  real_t* mx, real_t* my, real_t* mz,
                  real_t* Ms, real_t Ms_mul,
@@ -125,6 +155,38 @@ void addexchange(Mumax3clUtil* obj,size_t blocks[3], size_t threads[3],
                      Nx, Ny, Nz,
                      PBC);
 }
+
+void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+                   real_t* BX, real_t* BY, real_t* BZ,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* k1_, real_t k1_mul,
+                   real_t* k2_, real_t k2_mul,
+                   real_t* k3_, real_t k3_mul,
+                   real_t* c1x_, real_t c1x_mul,
+                   real_t* c1y_, real_t c1y_mul,
+                   real_t* c1z_, real_t c1z_mul,
+                   real_t* c2x_, real_t c2x_mul,
+                   real_t* c2y_, real_t c2y_mul,
+                   real_t* c2z_, real_t c2z_mul,
+                   size_t N) {
+    obj->addcubicanisotropy2(blocks, threads,
+                             BX, BY, BZ,
+                             mx, my, mz,
+                             Ms_, Ms_mul,
+                             k1_, k1_mul,
+                             k2_, k2_mul,
+                             k3_, k3_mul,
+                             c1x_, c1x_mul,
+                             c1y_, c1y_mul,
+                             c1z_, c1z_mul,
+                             c2x_, c2x_mul,
+                             c2y_, c2y_mul,
+                             c2z_, c2z_mul,
+                             N);
+}
+
+
 void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* ax,
