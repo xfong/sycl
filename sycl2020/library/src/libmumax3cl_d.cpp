@@ -141,6 +141,26 @@ void Mumax3clUtil::adddmi(size_t blocks[3], size_t threads[3],
                       PBC, OpenBC);
 }
 
+void Mumax3clUtil::adddmibulk(size_t blocks[3], size_t threads[3],
+                   real_t* Hx, real_t* Hy, real_t* Hz,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* aLUT2d, real_t* DLUT2d,
+                   uint8_t* regions,
+                   size_t cx, size_t cy, size_t cz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC, uint8_t OpenBC){
+    this->obj->adddmibulk(blocks, threads,
+                      Hx, Hy, Hz,
+                      mx, my, mz,
+                      Ms_, Ms_mul,
+                      aLUT2d, DLUT2d,
+                      regions,
+                      cx, cy, cz,
+                      Nx, Ny, Nz,
+                      PBC, OpenBC);
+}
+
 void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t  prefactor,
@@ -340,6 +360,26 @@ void adddmi(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                 mx, my, mz,
                 Ms_, Ms_mul,
                 aLUT2d, dLUT2d,
+                regions,
+                cx, cy, cz,
+                Nx, Ny, Nz,
+                PBC, OpenBC);
+}
+
+void adddmibulk(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+                real_t* Hx, real_t* Hy, real_t* Hz,
+                real_t* mx, real_t* my, real_t* mz,
+                real_t* Ms_, real_t Ms_mul,
+                real_t* aLUT2d, real_t* DLUT2d,
+                uint8_t* regions,
+                size_t cx, size_t cy, size_t cz,
+                size_t Nx, size_t Ny, size_t Nz,
+                uint8_t PBC, uint8_t OpenBC){
+    obj->adddmibulk(blocks, threads,
+                Hx, Hy, Hz,
+                mx, my, mz,
+                Ms_, Ms_mul,
+                aLUT2d, DLUT2d,
                 regions,
                 cx, cy, cz,
                 Nx, Ny, Nz,
