@@ -13,6 +13,7 @@
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
 #include "device/normalize2.hpp"
+#include "device/vecnorm.hpp"
 
 template <typename dataT>
 class Mumax3clUtil_t {
@@ -248,6 +249,16 @@ class Mumax3clUtil_t {
                                vx, vy, vz,
                                vol,
                                N);
+            };
+
+        void vecnorm(size_t blocks, size_t threads,
+                   dataT* dst,
+                   dataT* a0, dataT* a1, dataT* a2,
+                   size_t N) {
+                vecnorm_t<dataT>(blocks, threads, this->mainQ,
+                                 dst,
+                                 a0, a1, a2,
+                                 N);
             };
 
     private :

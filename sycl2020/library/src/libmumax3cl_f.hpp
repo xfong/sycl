@@ -109,6 +109,10 @@ class Mumax3clUtil {
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,
                    size_t N);
+        void vecnorm(size_t blocks, size_t threads,
+                   real_t* dst,
+                   real_t* a0, real_t* a1, real_t* a2,
+                   size_t N);
         sycl::queue getQueue();
         sycl::device getDevice();
     private :
@@ -238,6 +242,10 @@ extern "C" {
   void normalize2(Mumax3clUtil* obj, size_t blocks, size_t threads,
              real_t* vx, real_t* vy, real_t* vz,
              real_t* vol,
+             size_t N);
+  void vecnorm(Mumax3clUtil* obj, size_t blocks, size_t threads,
+             real_t* dst,
+             real_t* a0, real_t* a1, real_t* a2,
              size_t N);
 
 #ifdef __cplusplus

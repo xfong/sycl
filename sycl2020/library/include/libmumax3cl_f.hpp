@@ -110,6 +110,11 @@ typedef float real_t;
                  real_t* vx, real_t* vy, real_t* vz,
                  real_t* vol,
                  size_t  N);
+      void vecnorm(size_t blocks, size_t threads,
+                 real_t* dst,
+                 real_t* vx, real_t* vy, real_t* vz,
+                 size_t  N);
+
       sycl::queue getQueue();
       sycl::device getDevice();
   };
@@ -244,6 +249,11 @@ extern "C" {
   extern void normalize2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                real_t* vx, real_t* vy, real_t* vz,
                real_t* vol,
+               size_t  N);
+
+  extern void vecnorm(Mumax3clUtil* obj, size_t blocks, size_t threads,
+               real_t* dst,
+               real_t* vx, real_t* vy, real_t* vz,
                size_t  N);
 
 #ifdef __cplusplus
