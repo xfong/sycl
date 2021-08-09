@@ -12,6 +12,7 @@
 #include "device/exchangedecode.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
+#include "device/normalize2.hpp"
 
 template <typename dataT>
 class Mumax3clUtil_t {
@@ -237,6 +238,15 @@ class Mumax3clUtil_t {
                                fac2,
                                src3,
                                fac3,
+                               N);
+            };
+        void normalize2(size_t blocks, size_t threads,
+                   dataT* vx, dataT* vy, dataT* vz,
+                   dataT* vol,
+                   size_t N) {
+                normalize2_t<dataT>(blocks, threads, this->mainQ,
+                               vx, vy, vz,
+                               vol,
                                N);
             };
 

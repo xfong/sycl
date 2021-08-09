@@ -235,6 +235,16 @@ void Mumax3clUtil::madd3(size_t blocks, size_t threads,
                      N);
 }
 
+void Mumax3clUtil::normalize2(size_t blocks, size_t threads,
+                   real_t* vx, real_t* vy, real_t* vz,
+                   real_t* vol,
+                   size_t N) {
+    this->obj->normalize2(blocks, threads,
+                          vx, vy, vz,
+                          vol,
+                          N);
+}
+
 sycl::queue Mumax3clUtil::getQueue() { return this->obj->getQueue(); }
 sycl::device Mumax3clUtil::getDevice() { return this->obj->getDevice(); }
 
@@ -474,6 +484,16 @@ void madd3(Mumax3clUtil* obj, size_t blocks, size_t threads,
                src3,
                fac3,
                N);
+}
+
+void normalize2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+                   real_t* vx, real_t* vy, real_t* vz,
+                   real_t* vol,
+                   size_t N) {
+    obj->normalize2(blocks, threads,
+                    vx, vy, vz,
+                    vol,
+                    N);
 }
 
 #ifdef __cplusplus
