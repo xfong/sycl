@@ -1,4 +1,7 @@
 // adddmi kernel
+#include "include/amul.hpp"
+#include "include/exchange.hpp"
+#include "include/stencil.hpp"
 
 // device side function.This is essentially the function of the kernel
 // Exchange + Dzyaloshinskii-Moriya interaction according to

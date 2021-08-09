@@ -94,6 +94,12 @@ class Mumax3clUtil {
                    real_t* mx_, real_t* my_, real_t* mz_,
                    real_t* hx_, real_t* hy_, real_t* hz_,
                    size_t N);
+        void lltorque2(size_t blocks, size_t threads,
+                   real_t*  tx, real_t*  ty, real_t*  tz,
+                   real_t* mx_, real_t* my_, real_t* mz_,
+                   real_t* hx_, real_t* hy_, real_t* hz_,
+                   real_t* alpha_, real_t alpha_mul,
+                   size_t N);
         void madd2(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* src1,
@@ -231,6 +237,13 @@ extern "C" {
              real_t*  tx, real_t*  ty, real_t*  tz,
              real_t* mx_, real_t* my_, real_t* mz_,
              real_t* hx_, real_t* hy_, real_t* hz_,
+             size_t N);
+
+  void lltorque2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+             real_t*  tx, real_t*  ty, real_t*  tz,
+             real_t* mx_, real_t* my_, real_t* mz_,
+             real_t* hx_, real_t* hy_, real_t* hz_,
+             real_t* alpha_, real_t alpha_mul,
              size_t N);
 
   void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,

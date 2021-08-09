@@ -1,4 +1,7 @@
 // adddmibulk kernel
+#include "include/amul.hpp"
+#include "include/exchange.hpp"
+#include "include/stencil.hpp"
 
 // Exchange + Dzyaloshinskii-Moriya interaction for bulk material.
 // Energy:

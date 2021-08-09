@@ -1,6 +1,6 @@
 // crop kernel
 
-#include "stencil.hpp"
+#include "include/stencil.hpp"
 
 // device side function.This is essentially the function of the kernel
 // Crop stores in dst a rectangle cropped from src at given offset position.

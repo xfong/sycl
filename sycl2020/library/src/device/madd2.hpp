@@ -1,6 +1,6 @@
 // madd2 kernel
 
-#include "device_function.hpp"
+#include "include/device_function.hpp"
 
 // device side function.This is essentially the function of the kernel
 // dst = fac1*src1 + fac2*src2

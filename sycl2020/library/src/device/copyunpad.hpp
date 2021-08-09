@@ -2,7 +2,7 @@
 
 // device side function.This is essentially the function of the kernel
 // Copy src (size S, larger) to dst (size D, smaller)
-#include "stencil.hpp"
+#include "include/stencil.hpp"
 
 template <typename dataT>
 void copyunpad_fcn(sycl::nd_item<3> item,

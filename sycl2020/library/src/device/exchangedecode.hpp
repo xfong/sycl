@@ -1,8 +1,8 @@
 // exchangedecode kernel
 
-#include "amul.hpp"
-#include "exchange.hpp"
-#include "stencil.hpp"
+#include "include/amul.hpp"
+#include "include/exchange.hpp"
+#include "include/stencil.hpp"
 
 // device side function.This is essentially the function of the kernel
 // Finds the average exchange strength around each cell, for debugging.

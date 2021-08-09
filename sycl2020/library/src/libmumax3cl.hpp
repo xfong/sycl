@@ -1,5 +1,4 @@
 #include <CL/sycl.hpp>
-#include "device/addexchange.hpp"
 #include "device/copypadmul2.hpp"
 #include "device/copyunpad.hpp"
 #include "device/crop.hpp"
@@ -9,8 +8,10 @@
 #include "device/dmi.hpp"
 #include "device/dmibulk.hpp"
 #include "device/dotproduct.hpp"
+#include "device/exchange.hpp"
 #include "device/exchangedecode.hpp"
 #include "device/llnoprecess.hpp"
+#include "device/lltorque2.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
 #include "device/normalize2.hpp"
@@ -217,6 +218,19 @@ class Mumax3clUtil_t {
                                       tx,  ty,  tz,
                                      mx_, my_, mz_,
                                      hx_, hy_, hz_,
+                                     N);
+            };
+        void lltorque2(size_t blocks, size_t threads,
+                   dataT*  tx, dataT*  ty, dataT*  tz,
+                   dataT* mx_, dataT* my_, dataT* mz_,
+                   dataT* hx_, dataT* hy_, dataT* hz_,
+                   dataT* alpha_, dataT alpha_mul,
+                   size_t N) {
+                lltorque2_t<dataT>(blocks, threads, this->mainQ,
+                                      tx,  ty,  tz,
+                                     mx_, my_, mz_,
+                                     hx_, hy_, hz_,
+                                     alpha_, alpha_mul,
                                      N);
             };
         void madd2(size_t blocks, size_t threads,

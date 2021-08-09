@@ -1,9 +1,9 @@
 // cubicanisotropy2 kernel
 
-#include "device_function.hpp"
+#include "include/device_function.hpp"
 
 // device side function.This is essentially the function of the kernel
-#include "amul.hpp"
+#include "include/amul.hpp"
 
 template <typename dataT>
 void addcubicanisotropy2_fcn(size_t totalThreads, sycl::nd_item<1> item,

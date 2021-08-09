@@ -1,6 +1,6 @@
 // dotproduct kernel
 
-#include "device_function.hpp"
+#include "include/device_function.hpp"
 
 // device side function.This is essentially the function of the kernel
 // dst = sqrt(dot(A,A))

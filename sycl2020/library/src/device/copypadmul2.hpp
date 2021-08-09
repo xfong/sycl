@@ -2,9 +2,9 @@
 
 // device side function.This is essentially the function of the kernel
 // Copy src (size S, larger) to dst (size D, smaller)
-#include "amul.hpp"
-#include "constants.hpp"
-#include "stencil.hpp"
+#include "include/amul.hpp"
+#include "include/constants.hpp"
+#include "include/stencil.hpp"
 
 template <typename dataT>
 void copypadmul2_fcn(sycl::nd_item<3> item,
