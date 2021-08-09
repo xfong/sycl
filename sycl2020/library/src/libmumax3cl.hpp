@@ -9,6 +9,7 @@
 #include "device/dmi.hpp"
 #include "device/dmibulk.hpp"
 #include "device/dotproduct.hpp"
+#include "device/exchangedecode.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
 
@@ -188,6 +189,21 @@ class Mumax3clUtil_t {
                                     src2y,
                                     src2z,
                                     N);
+            };
+        void exchangedecode(size_t blocks[3], size_t threads[3],
+                   dataT* dst,
+                   dataT* aLUT2d,
+                   uint8_t* regions,
+                   dataT wx, dataT wy, dataT wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+                exchangedecode_t<dataT>(blocks, threads, this->mainQ,
+                                        dst,
+                                        aLUT2d,
+                                        regions,
+                                        wx, wy, wz,
+                                        Nx, Ny, Nz,
+                                        PBC);
             };
         void madd2(size_t blocks, size_t threads,
                    dataT* dst,

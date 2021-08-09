@@ -82,6 +82,13 @@ class Mumax3clUtil {
                    real_t* src2y,
                    real_t* src2z,
                    size_t  N);
+        void exchangedecode(size_t blocks[3], size_t threads[3],
+                   real_t* dst,
+                   real_t* aLUT2d,
+                   uint8_t* regions,
+                   real_t wx, real_t wy, real_t wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC);
         void madd2(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* src1,
@@ -198,6 +205,14 @@ extern "C" {
              real_t* src2y,
              real_t* src2z,
              size_t  N);
+
+  void exchangedecode(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+             real_t* dst,
+             real_t* aLUT2d,
+             uint8_t* regions,
+             real_t wx, real_t wy, real_t wz,
+             size_t Nx, size_t Ny, size_t Nz,
+             uint8_t PBC);
 
   void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,
              real_t* dst,

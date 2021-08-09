@@ -183,6 +183,22 @@ void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
                           N);
 }
 
+void Mumax3clUtil::exchangedecode(size_t blocks[3], size_t threads[3],
+                   real_t* dst,
+                   real_t* aLUT2d,
+                   uint8_t* regions,
+                   real_t wx, real_t wy, real_t wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+    this->obj->exchangedecode(blocks, threads,
+                              dst,
+                              aLUT2d,
+                              regions,
+                              wx, wy, wz,
+                              Nx, Ny, Nz,
+                              PBC);
+}
+
 void Mumax3clUtil::madd2(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* src1,
@@ -406,6 +422,22 @@ void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
                     src2y,
                     src2z,
                     N);
+}
+
+void exchangedecode(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+      real_t* dst,
+      real_t* aLUT2d,
+      uint8_t* regions,
+      real_t wx, real_t wy, real_t wz,
+      size_t Nx, size_t Ny, size_t Nz,
+      uint8_t PBC) {
+    obj->exchangedecode(blocks, threads,
+                        dst,
+                        aLUT2d,
+                        regions,
+                        wx, wy, wz,
+                        Nx, Ny, Nz,
+                        PBC);
 }
 
 void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,
