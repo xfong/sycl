@@ -3,6 +3,7 @@
 #include "include/exchange.hpp"
 #include "include/stencil.hpp"
 
+// device side function. This is essentially the function of the kernel
 // Exchange + Dzyaloshinskii-Moriya interaction for bulk material.
 // Energy:
 //
@@ -203,7 +204,7 @@ void adddmibulk_fcn(sycl::nd_item<3> item,
     }
 
     // write back, result is H + Hdmi + Hex
-    dataT invMs = inv_Msat(Ms_, Ms_mul, I);
+    dataT invMs = inv_Msat<dataT>(Ms_, Ms_mul, I);
     Hx[I] += h.x()*invMs;
     Hy[I] += h.y()*invMs;
     Hz[I] += h.z()*invMs;

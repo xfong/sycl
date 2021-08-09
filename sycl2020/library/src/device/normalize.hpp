@@ -1,11 +1,11 @@
-// normalize2 kernel
+// normalize kernel
 
 #include "include/device_function.hpp"
 
 // device side function.This is essentially the function of the kernel
 // normalize vector {vx, vy, vz} to unit length, unless length or vol are zero.
 template <typename dataT>
-void normalize2_fcn(size_t totalThreads, sycl::nd_item<1> item,
+void normalize_fcn(size_t totalThreads, sycl::nd_item<1> item,
                     dataT* vx, dataT* vy, dataT* vz,
                     dataT* vol,
                     size_t N) {
@@ -26,12 +26,12 @@ void normalize2_fcn(size_t totalThreads, sycl::nd_item<1> item,
 }
 
 template <typename dataT>
-void normalize2_t(size_t blocks, size_t threads, sycl::queue q,
+void normalize_t(size_t blocks, size_t threads, sycl::queue q,
                   dataT* vx, dataT* vy, dataT* vz,
                   dataT* vol,
                   size_t N) {
     size_t totalThreads = blocks*threads;
-    libMumax3clDeviceFcnCall(normalize2_fcn<dataT>, totalThreads, threads,
+    libMumax3clDeviceFcnCall(normalize_fcn<dataT>, totalThreads, threads,
                              vx, vy, vz,
                              vol,
                              N);

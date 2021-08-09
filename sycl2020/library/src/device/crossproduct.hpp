@@ -2,7 +2,7 @@
 
 #include "include/device_function.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // dstX = a1 * b2 - a2 * b1
 // dstY = a2 * b0 - a0 * b2
 // dstZ = a0 * b1 - a1 * b0

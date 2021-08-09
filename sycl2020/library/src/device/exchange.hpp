@@ -5,7 +5,7 @@
 #include "include/exchange.hpp"
 #include "include/stencil.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // Add exchange field to Beff.
 //      m: normalized magnetization
 //      B: effective field in Tesla

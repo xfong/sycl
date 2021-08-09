@@ -2,7 +2,7 @@
 
 #include "include/device_function.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // Landau-Lifshitz torque.
 #include "include/amul.hpp"
 

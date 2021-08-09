@@ -1,6 +1,6 @@
 // copypadmul2 kernel
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // Copy src (size S, larger) to dst (size D, smaller)
 #include "include/amul.hpp"
 #include "include/constants.hpp"

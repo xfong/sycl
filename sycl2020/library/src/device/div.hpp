@@ -2,7 +2,7 @@
 
 #include "include/device_function.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // dst = ax / bx
 template<typename dataT>
 inline void pointwise_div_fcn(size_t totalThreads, sycl::nd_item<1> item,

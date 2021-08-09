@@ -2,7 +2,7 @@
 
 #include "include/device_function.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 #include "include/amul.hpp"
 
 template <typename dataT>
@@ -22,7 +22,7 @@ void addcubicanisotropy2_fcn(size_t totalThreads, sycl::nd_item<1> item,
                              size_t N) {
     for (size_t gid = item.get_global_linear_id(); gid < N; gid += totalThreads) {
 
-        dataT invMs = inv_Msat(Ms_, Ms_mul, gid);
+        dataT invMs = inv_Msat<dataT>(Ms_, Ms_mul, gid);
         dataT    k1 = amul<dataT>(k1_, k1_mul, gid);
         k1         *= invMs;
         dataT    k2 = amul<dataT>(k2_, k2_mul, gid);

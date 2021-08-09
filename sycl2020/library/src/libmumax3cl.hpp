@@ -14,7 +14,7 @@
 #include "device/lltorque2.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
-#include "device/normalize2.hpp"
+#include "device/normalize.hpp"
 #include "device/vecnorm.hpp"
 
 template <typename dataT>
@@ -267,11 +267,11 @@ class Mumax3clUtil_t {
                                fac3,
                                N);
             };
-        void normalize2(size_t blocks, size_t threads,
+        void normalize(size_t blocks, size_t threads,
                    dataT* vx, dataT* vy, dataT* vz,
                    dataT* vol,
                    size_t N) {
-                normalize2_t<dataT>(blocks, threads, this->mainQ,
+                normalize_t<dataT>(blocks, threads, this->mainQ,
                                vx, vy, vz,
                                vol,
                                N);

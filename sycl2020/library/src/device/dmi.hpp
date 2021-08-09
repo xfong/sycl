@@ -3,7 +3,7 @@
 #include "include/exchange.hpp"
 #include "include/stencil.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // Exchange + Dzyaloshinskii-Moriya interaction according to
 // Bagdanov and R    ler, PRL 87, 3, 2001. eq.8 (out-of-plane symmetry breaking).
 // Taking into account proper boundary conditions.
@@ -154,7 +154,7 @@ void adddmi_fcn(sycl::nd_item<3> item,
     }
 
     // write back, result is H + Hdmi + Hex
-    dataT invMs = inv_Msat(Ms_, Ms_mul, I);
+    dataT invMs = inv_Msat<dataT>(Ms_, Ms_mul, I);
     Hx[I] += h.x()*invMs;
     Hy[I] += h.y()*invMs;
     Hz[I] += h.z()*invMs;

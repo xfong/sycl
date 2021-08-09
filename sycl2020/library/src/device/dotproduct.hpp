@@ -2,7 +2,7 @@
 
 #include "include/device_function.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // dst = prefactor*(src1x*src2x + src1y*src2y + src1z*src2z)
 template<typename T>
 inline void dotproduct_fcn(size_t totalThreads, sycl::nd_item<1> item,

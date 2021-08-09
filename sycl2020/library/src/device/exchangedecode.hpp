@@ -4,7 +4,7 @@
 #include "include/exchange.hpp"
 #include "include/stencil.hpp"
 
-// device side function.This is essentially the function of the kernel
+// device side function. This is essentially the function of the kernel
 // Finds the average exchange strength around each cell, for debugging.
 template <typename dataT>
 void exchangedecode_fcn(sycl::nd_item<3> item,
