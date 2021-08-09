@@ -199,6 +199,18 @@ void Mumax3clUtil::exchangedecode(size_t blocks[3], size_t threads[3],
                               PBC);
 }
 
+void Mumax3clUtil::llnoprecess(size_t blocks, size_t threads,
+                   real_t*  tx, real_t*  ty, real_t*  tz,
+                   real_t* mx_, real_t* my_, real_t* mz_,
+                   real_t* hx_, real_t* hy_, real_t* hz_,
+                   size_t N) {
+    this->obj->llnoprecess(blocks, threads,
+                            tx,  ty,  tz,
+                           mx_, my_, mz_,
+                           hx_, hy_, hz_,
+                           N);
+}
+
 void Mumax3clUtil::madd2(size_t blocks, size_t threads,
                    real_t* dst,
                    real_t* src1,
@@ -458,6 +470,18 @@ void exchangedecode(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                         wx, wy, wz,
                         Nx, Ny, Nz,
                         PBC);
+}
+
+void llnoprecess(Mumax3clUtil* obj, size_t blocks, size_t threads,
+      real_t*  tx, real_t*  ty, real_t*  tz,
+      real_t* mx_, real_t* my_, real_t* mz_,
+      real_t* hx_, real_t* hy_, real_t* hz_,
+      size_t N) {
+    obj->llnoprecess(blocks, threads,
+                            tx,  ty,  tz,
+                           mx_, my_, mz_,
+                           hx_, hy_, hz_,
+                           N);
 }
 
 void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,

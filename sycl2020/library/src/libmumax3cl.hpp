@@ -10,6 +10,7 @@
 #include "device/dmibulk.hpp"
 #include "device/dotproduct.hpp"
 #include "device/exchangedecode.hpp"
+#include "device/llnoprecess.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
 #include "device/normalize2.hpp"
@@ -206,6 +207,17 @@ class Mumax3clUtil_t {
                                         wx, wy, wz,
                                         Nx, Ny, Nz,
                                         PBC);
+            };
+        void llnoprecess(size_t blocks, size_t threads,
+                   dataT*  tx, dataT*  ty, dataT*  tz,
+                   dataT* mx_, dataT* my_, dataT* mz_,
+                   dataT* hx_, dataT* hy_, dataT* hz_,
+                   size_t N) {
+                llnoprecess_t<dataT>(blocks, threads, this->mainQ,
+                                      tx,  ty,  tz,
+                                     mx_, my_, mz_,
+                                     hx_, hy_, hz_,
+                                     N);
             };
         void madd2(size_t blocks, size_t threads,
                    dataT* dst,
