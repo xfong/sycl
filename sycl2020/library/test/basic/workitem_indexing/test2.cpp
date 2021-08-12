@@ -1,15 +1,15 @@
 #include <CL/sycl.hpp>
 
-void simple_workitem_indexing(sycl::nd_item<3> item,
+void simple_workitem_ranging(sycl::nd_item<3> item,
                      size_t* grpx, size_t* grpy, size_t* grpz,
                      size_t* thdx, size_t* thdy, size_t* thdz) {
     size_t gid = item.get_global_linear_id();
-    thdx[gid] = item.get_global_id(0); // global thread id along x-dimension
-    thdy[gid] = item.get_global_id(1); // global thread id along y-dimension
-    thdz[gid] = item.get_global_id(2); // global thread id along z-dimension
-    grpx[gid] = item.get_group(0);     // workgroup id along x-dimension for corresponding thread
-    grpy[gid] = item.get_group(1);     // workgroup id along y-dimension for corresponding thread
-    grpz[gid] = item.get_group(2);     // workgroup id along z-dimension for corresponding thread
+    thdx[gid] = item.get_group_range(0); // number of groups along x-dimension
+    thdy[gid] = item.get_group_range(1); // number of groups along y-dimension
+    thdz[gid] = item.get_group_range(2); // number of groups along z-dimension
+    grpx[gid] = item.get_local_range(0); // number of workitems along x-dimension
+    grpy[gid] = item.get_local_range(1); // number of workitems along y-dimension
+    grpz[gid] = item.get_local_range(2); // number of workitems along z-dimension
 }
 
 int main() {
@@ -43,9 +43,9 @@ int main() {
     queue.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
                                          sycl::range<3>(          threads[0],           threads[1],           threads[2])),
         [=](sycl::nd_item<3> item){
-            simple_workitem_indexing(item,
-                                     grpx, grpy, grpz,
-                                     thdx, thdy, thdz);
+            simple_workitem_ranging(item,
+                                    grpx, grpy, grpz,
+                                    thdx, thdy, thdz);
     });
 
     queue.wait();
