@@ -1,3 +1,5 @@
+#include "utils.h"
+
 typedef double real_t;
 
 #ifdef __cplusplus
