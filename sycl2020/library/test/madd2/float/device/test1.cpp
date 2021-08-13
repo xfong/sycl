@@ -1,9 +1,10 @@
 #include <CL/sycl.hpp>
+#include "utils.h"
 #include "libmumax3cl_f.hpp"
 
 #define DATASIZE 1024
 
-void madd2(size_t blocks, size_t threads, Mumax3clUtil* kern, real_t* dst, real_t* A, real_t aFac, real_t* B, real_t bFac, size_t N) {
+void madd2(dim3 blocks, dim3 threads, Mumax3clUtil* kern, real_t* dst, real_t* A, real_t aFac, real_t* B, real_t bFac, size_t N) {
     kern->madd2(blocks, threads, dst, A, aFac, B, bFac, N);
 }
 
@@ -24,7 +25,7 @@ int main() {
         gold[i] = fac1*input1[i] + fac2*input2[i];
     }
 
-    madd2(1, 128, obj, dst, input1, fac1, input2, fac2, DATASIZE);
+    madd2(dim3(1), dim3(128), obj, dst, input1, fac1, input2, fac2, DATASIZE);
     obj->getQueue().wait();
 
     size_t chk = 0;
