@@ -1,4 +1,4 @@
-#include <CL/sycl.hpp>
+#include "utils.h"
 
 void simple_workitem_indexing(sycl::nd_item<3> item,
                      size_t* grpx, size_t* grpy, size_t* grpz,
@@ -30,9 +30,9 @@ int main() {
     std::cout << "  Global cache memory size (bytes): " << queue.get_device().get_info<sycl::info::device::global_mem_cache_size>() << std::endl;
     std::cout << "  Global cache line size (bytes): " << queue.get_device().get_info<sycl::info::device::global_mem_cache_line_size>() << std::endl;
 
-    size_t blocks[3] = {4, 2, 1};
-    size_t threads[3] = {2, 4, 8};
-    size_t total_size = blocks[0]*threads[0] * blocks[1]*threads[1] * blocks[2]*threads[2];
+    dim3 blocks = dim3(4, 2, 1);
+    dim3 threads = dim3(2, 4, 8);
+    size_t total_size = blocks.x*threads.x * blocks.y*threads.y * blocks.z*threads.z;
 
     auto grpx = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
     auto grpy = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
@@ -40,8 +40,7 @@ int main() {
     auto thdx = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
     auto thdy = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
     auto thdz = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
-    queue.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                         sycl::range<3>(          threads[0],           threads[1],           threads[2])),
+    queue.parallel_for(syclKernelLaunchGrid(blocks, threads),
         [=](sycl::nd_item<3> item){
             simple_workitem_indexing(item,
                                      grpx, grpy, grpz,

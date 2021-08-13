@@ -1,4 +1,4 @@
-#include <CL/sycl.hpp>
+#include "utils.h"
 
 void simple_workitem_ranging(sycl::nd_item<3> item,
                      size_t* grpx, size_t* grpy, size_t* grpz,
@@ -40,8 +40,7 @@ int main() {
     auto thdx = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
     auto thdy = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
     auto thdz = static_cast<size_t*>(sycl::malloc_shared(total_size*sizeof(size_t), queue));
-    queue.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                         sycl::range<3>(          threads[0],           threads[1],           threads[2])),
+    queue.parallel_for(syclKernelLaunchGrid(blocks, threads),
         [=](sycl::nd_item<3> item){
             simple_workitem_ranging(item,
                                     grpx, grpy, grpz,
