@@ -1,5 +1,4 @@
 #include <CL/sycl.hpp>
-#include "utils.h"
 #include "libmumax3cl_f.hpp"
 
 #define DATASIZE 1024
