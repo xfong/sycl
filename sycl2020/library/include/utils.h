@@ -29,6 +29,8 @@ typedef struct dim3 dim3;
 #define    syclThreadIdx_y     item.get_local_id(1)
 #define    syclThreadIdx_z     item.get_local_id(0)
 
+#define    syclThreadCount     item.get_group_range(0)*item.get_local_range(0)*item.get_group_range(1)*item.get_local_range(1)*item.get_group_range(2)*item.get_local_range(2)
+
 #if defined(__cplusplus)
 sycl::nd_range<3> syclKernelLaunchGrid(dim3 blocks, dim3 threads) {
     return sycl::nd_range<3>(sycl::range<3>(blocks.x*threads.x, blocks.y*threads.y, blocks.z*threads.z),
