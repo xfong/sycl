@@ -1,26 +1,28 @@
 // getmagnetoelasticfield kernel
 #include "include/amul.hpp"
 #include "include/constants.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // device side function. This is essentially the function of the kernel
 // Add magneto-elastic coupling field to B.
 // H = - δUmel / δM,
 // where Umel is magneto-elastic energy denstiy given by the eq. (12.18) of Gurevich&Melkov "Magnetization Oscillations and Waves", CRC Press, 1996
 template <typename dataT>
-void getmagnetoelasticfield_fcn(size_t totalThreads, sycl::nd_item<1> item,
-                                dataT*  Bx, dataT*     By, dataT* Bz,
-                                dataT*  mx, dataT*     my, dataT* mz,
-                                dataT* exx, dataT exx_mul,
-                                dataT* eyy, dataT eyy_mul,
-                                dataT* ezz, dataT ezz_mul,
-                                dataT* exy, dataT exy_mul,
-                                dataT* exz, dataT exz_mul,
-                                dataT* eyz, dataT eyz_mul,
-                                dataT*  B1, dataT  B1_mul,
-                                dataT*  B2, dataT  B2_mul,
-                                dataT*  Ms, dataT  Ms_mul,
-                                size_t   N) {
-    for (size_t gid = item.get_global_linear_id(); gid < N; gid += stride) {
+inline void getmagnetoelasticfield_fcn(sycl::nd_item<3> item,
+                                       dataT*  Bx, dataT*     By, dataT* Bz,
+                                       dataT*  mx, dataT*     my, dataT* mz,
+                                       dataT* exx, dataT exx_mul,
+                                       dataT* eyy, dataT eyy_mul,
+                                       dataT* ezz, dataT ezz_mul,
+                                       dataT* exy, dataT exy_mul,
+                                       dataT* exz, dataT exz_mul,
+                                       dataT* eyz, dataT eyz_mul,
+                                       dataT*  B1, dataT  B1_mul,
+                                       dataT*  B2, dataT  B2_mul,
+                                       dataT*  Ms, dataT  Ms_mul,
+                                       size_t   N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
 
         dataT Exx = amul<dataT>(exx_, exx_mul, gid);
         dataT Eyy = amul<dataT>(eyy_, eyy_mul, gid);
@@ -50,7 +52,7 @@ void getmagnetoelasticfield_fcn(size_t totalThreads, sycl::nd_item<1> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void getmagnetoelasticfield_t(size_t blocks, size_t threads, sycl::queue q,
+void getmagnetoelasticfield_t(dim3 blocks, dim3 threads, sycl::queue q,
                               dataT*  Bx, dataT*     By, dataT* Bz,
                               dataT*  mx, dataT*     my, dataT* mz,
                               dataT* exx, dataT exx_mul,
@@ -63,8 +65,7 @@ void getmagnetoelasticfield_t(size_t blocks, size_t threads, sycl::queue q,
                               dataT*  B2, dataT  B2_mul,
                               dataT*  Ms, dataT  Ms_mul,
                               size_t   N) {
-    size_t totalThreads = blocks*threads;
-    libMumax3clDeviceFcnCall(getmagnetoelasticfield_fcn<dataT>, totalThreads, threads,
+    libMumax3clDeviceFcnCall(getmagnetoelasticfield_fcn<dataT>, blocks, threads,
                               Bx,      By,  Bz,
                               mx,      my,  mz,
                              exx, exx_mul,

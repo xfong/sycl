@@ -6,6 +6,8 @@
 #define PREFACTOR ((MUB) / (2 * QE * GAMMA0))
 
 #include "include/stencil.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // spatial derivatives without dividing by cell size
 #define deltax(in) (in[idx(hclampx(ix+1), iy, iz)] - in[idx(lclampx(ix-1), iy, iz)])
@@ -14,22 +16,22 @@
 
 // device side function. This is essentially the function of the kernel
 template <typename dataT>
-void addzhanglitorque2_fcn(sycl::nd_item<3> item,
-                           dataT* TX, dataT* TY, dataT* TZ,
-                           dataT* mx, dataT* my, dataT* mz,
-                           dataT* Ms_, dataT Ms_mul,
-                           dataT* jx_, dataT jx_mul,
-                           dataT* jy_, dataT jy_mul,
-                           dataT* jz_, dataT jz_mul,
-                           dataT* alpha_, dataT alpha_mul,
-                           dataT* xi_, dataT xi_mul,
-                           dataT* pol_, dataT pol_mul,
-                           dataT cx, dataT cy, dataT cz,
-                           size_t Nx, size_t Ny, size_t Nz,
-                           uint8_t PBC) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
-    size_t iz = item.get_group(2) * item.get_local_range(2) + item.get_local_id(2);
+inline void addzhanglitorque2_fcn(sycl::nd_item<3> item,
+                                  dataT*     TX, dataT*       TY, dataT* TZ,
+                                  dataT*     mx, dataT*       my, dataT* mz,
+                                  dataT*    Ms_, dataT    Ms_mul,
+                                  dataT*    jx_, dataT    jx_mul,
+                                  dataT*    jy_, dataT    jy_mul,
+                                  dataT*    jz_, dataT    jz_mul,
+                                  dataT* alpha_, dataT alpha_mul,
+                                  dataT*    xi_, dataT    xi_mul,
+                                  dataT*   pol_, dataT   pol_mul,
+                                  dataT      cx, dataT        cy, dataT  cz,
+                                  size_t     Nx, size_t       Ny, size_t Nz,
+                                  uint8_t   PBC) {
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
+    size_t iz = syclBlockIdx_z * syclBlockDim_z + syclThreadIdx_z;
 
     if ((ix >= Nx) || (iy >= Ny) || (iz >= Nz)) {
         return;
@@ -69,32 +71,29 @@ void addzhanglitorque2_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void addzhanglitorque2_t(size_t blocks[3], size_t threads[3], sycl::queue q,
-                 dataT* TX, dataT* TY, dataT* TZ,
-                 dataT* mx, dataT* my, dataT* mz,
-                 dataT* Ms_, dataT Ms_mul,
-                 dataT* jx_, dataT jx_mul,
-                 dataT* jy_, dataT jy_mul,
-                 dataT* jz_, dataT jz_mul,
-                 dataT* alpha_, dataT alpha_mul,
-                 dataT* xi_, dataT xi_mul,
-                 dataT* pol_, dataT pol_mul,
-                 dataT cx, dataT cy, dataT cz,
-                 size_t Nx, size_t Ny, size_t Nz,
-                 uint8_t PBC) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item){
-            addzhanglitorque2_fcn<dataT>(    TX,        TY, TZ,
-                                             mx,        my, mz,
-                                            Ms_,    Ms_mul,
-                                            jx_,    jx_mul,
-                                            jy_,    jy_mul,
-                                            jz_,    jz_mul,
-                                         alpha_, alpha_mul,
-                                            xi_,    xi_mul,
-                                           pol_,   pol_mul,
-                                             cx,        cy, cz,
-                                             Nx,        Ny, Nz);
-    });
+void addzhanglitorque2_t(dim3 blocks, dim3 threads, sycl::queue q,
+                         dataT*     TX, dataT*       TY, dataT* TZ,
+                         dataT*     mx, dataT*       my, dataT* mz,
+                         dataT*    Ms_, dataT    Ms_mul,
+                         dataT*    jx_, dataT    jx_mul,
+                         dataT*    jy_, dataT    jy_mul,
+                         dataT*    jz_, dataT    jz_mul,
+                         dataT* alpha_, dataT alpha_mul,
+                         dataT*    xi_, dataT    xi_mul,
+                         dataT*   pol_, dataT   pol_mul,
+                         dataT      cx, dataT        cy, dataT  cz,
+                         size_t     Nx, size_t       Ny, size_t Nz,
+                         uint8_t   PBC) {
+    libMumax3clDeviceFcnCall(addzhanglitorque2_fcn<dataT>, blocks, threads,
+                                 TX,        TY, TZ,
+                                 mx,        my, mz,
+                                Ms_,    Ms_mul,
+                                jx_,    jx_mul,
+                                jy_,    jy_mul,
+                                jz_,    jz_mul,
+                             alpha_, alpha_mul,
+                                xi_,    xi_mul,
+                               pol_,   pol_mul,
+                                 cx,        cy, cz,
+                                 Nx,        Ny, Nz);
 }

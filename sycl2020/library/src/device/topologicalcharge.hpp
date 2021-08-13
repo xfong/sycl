@@ -2,21 +2,23 @@
 
 #include "include/amul.hpp"
 #include "include/constants.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // Original implementation by Mykola Dvornik for mumax2
 // Modified for mumax3 by Arne Vansteenkiste, 2013, 2016
 
 // device side function. This is essentially the function of the kernel
 template <typename dataT>
-void settopologicalcharge_fcn(sycl::nd_item<3> item,
-                              dataT* s,
-                              dataT* mx, dataT* my, dataT* mz,
-                              dataT icxcy,
-                              size_t Nx, size_t Ny, size_t Nz,
-                              uint8_t PBC) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
-    size_t iz = item.get_group(2) * item.get_local_range(2) + item.get_local_id(2);
+inline void settopologicalcharge_fcn(sycl::nd_item<3> item,
+                                     dataT*    s,
+                                     dataT*   mx, dataT* my, dataT* mz,
+                                     dataT icxcy,
+                                     size_t   Nx, size_t Ny, size_t Nz,
+                                     uint8_t PBC) {
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
+    size_t iz = syclBlockIdx_z * syclBlockDim_z + syclThreadIdx_z;
 
     if ((ix >= Nx) || (iy >= Ny) || (iz >= Nz)) {
         return;
@@ -24,9 +26,9 @@ void settopologicalcharge_fcn(sycl::nd_item<3> item,
 
     int I = idx(ix, iy, iz);                      // central cell index
 
-    sycl::vec<dataT, 3> m0 = make_vec3<dataT>(mx[I], my[I], mz[I]); // +0
-    sycl::vec<dataT, 3> dmdx = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0));  // ∂m/∂x
-    sycl::vec<dataT, 3> dmdy = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0));  // ∂m/∂y
+    sycl::vec<dataT, 3>          m0 = make_vec3<dataT>(mx[I], my[I], mz[I]); // +0
+    sycl::vec<dataT, 3>        dmdx = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0));  // ∂m/∂x
+    sycl::vec<dataT, 3>        dmdy = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0));  // ∂m/∂y
     sycl::vec<dataT, 3> dmdx_x_dmdy = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0)); // ∂m/∂x ❌ ∂m/∂y
     int i_;                                       // neighbor index
 
@@ -162,20 +164,16 @@ void settopologicalcharge_fcn(sycl::nd_item<3> item,
 
 // device side function. This is essentially the function of the kernel
 template <typename dataT>
-void settopologicalcharge_t(size_t blocks, size_t threads, sycl::queue q,
-                            dataT* s,
-                            dataT* mx, dataT* my, dataT* mz,
+void settopologicalcharge_t(dim3 blocks, dim3 threads, sycl::queue q,
+                            dataT*    s,
+                            dataT*   mx, dataT* my, dataT* mz,
                             dataT icxcy,
-                            size_t Nx, size_t Ny, size_t Nz,
+                            size_t   Nx, size_t Ny, size_t Nz,
                             uint8_t PBC) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item) {
-            settopologicalcharge_fcn<dataT>(item,
-                                            s,
-                                            mx, my, mz,
-                                            icxcy,
-                                            Nx, Ny, Nz,
-                                            PBC);
-    });
+    libMumax3clDeviceFcnCall(settopologicalcharge_fcn<dataT>, blocks, threads,
+                                 s,
+                                mx, my, mz,
+                             icxcy,
+                                Nx, Ny, Nz,
+                               PBC);
 }

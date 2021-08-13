@@ -1,7 +1,10 @@
 // adddmi kernel
+
 #include "include/amul.hpp"
 #include "include/exchange.hpp"
 #include "include/stencil.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // device side function. This is essentially the function of the kernel
 // Exchange + Dzyaloshinskii-Moriya interaction according to
@@ -12,18 +15,18 @@
 // D: dmi strength / Msat, in Tesla*m
 // A: Aex/Msat
 template <typename dataT>
-void adddmi_fcn(sycl::nd_item<3> item,
-                dataT* Hx, dataT* Hy, dataT* Hz,
-                dataT* mx, dataT* my, dataT* mz,
-                dataT*    Ms_, dataT  Ms_mul,
-                dataT* aLUT2d, dataT* dLUT2d,
-                uint8_t* regions,
-                dataT  cx, dataT  cy, dataT  cz,
-                size_t Nx, size_t Ny, size_t Nz,
-                uint8_t PBC, uint8_t OpenBC) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
-    size_t iz = item.get_group(2) * item.get_local_range(2) + item.get_local_id(2);
+inline void adddmi_fcn(sycl::nd_item<3> item,
+                       dataT*        Hx, dataT*      Hy, dataT* Hz,
+                       dataT*        mx, dataT*      my, dataT* mz,
+                       dataT*       Ms_, dataT   Ms_mul,
+                       dataT*    aLUT2d, dataT*  dLUT2d,
+                       uint8_t* regions,
+                       dataT         cx, dataT       cy, dataT  cz,
+                       size_t        Nx, size_t      Ny, size_t Nz,
+                       uint8_t      PBC, uint8_t OpenBC) {
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
+    size_t iz = syclBlockIdx_z * syclBlockDim_z + syclThreadIdx_z;
 
     if ((ix >= Nx) || (iy >= Ny) || (iz >= Nz)) {
         return;
@@ -162,28 +165,24 @@ void adddmi_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template<typename dataT>
-void adddmi_t(size_t blocks[3], size_t threads[3], sycl::queue q,
-              dataT* Hx, dataT* Hy, dataT* Hz,
-              dataT* mx, dataT* my, dataT* mz,
-              dataT* Ms_, dataT Ms_mul,
-              dataT* aLUT2d, dataT* dLUT2d,
+void adddmi_t(dim3 blocks, dim3 threads, sycl::queue q,
+              dataT*        Hx, dataT*      Hy, dataT* Hz,
+              dataT*        mx, dataT*      my, dataT* mz,
+              dataT*       Ms_, dataT   Ms_mul,
+              dataT*    aLUT2d, dataT*  dLUT2d,
               uint8_t* regions,
-              size_t cx, size_t cy, size_t cz,
-              size_t Nx, size_t Ny, size_t Nz,
-              uint8_t PBC, uint8_t OpenBC) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item){
-        adddmi_fcn<dataT>(item,
-                          Hx, Hy, Hz,
-                          mx, my, mz,
-                          Ms_, Ms_mul,
-                          aLUT2d, dLUT2d,
-                          regions,
-                          cx, cy, cz,
-                          Nx, Ny, Nz,
-                          PBC, OpenBC);
-    });
+              size_t        cx, size_t      cy, size_t cz,
+              size_t        Nx, size_t      Ny, size_t Nz,
+              uint8_t      PBC, uint8_t OpenBC) {
+    libMumax3clDeviceFcnCall(adddmi_fcn<dataT>, blocks, threads,
+                                  Hx,     Hy, Hz,
+                                  mx,     my, mz,
+                                 Ms_, Ms_mul,
+                              aLUT2d, dLUT2d,
+                             regions,
+                                  cx,     cy, cz,
+                                  Nx,     Ny, Nz,
+                                 PBC, OpenBC);
 }
 
 // Note on boundary conditions.

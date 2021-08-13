@@ -1,17 +1,20 @@
 // kernmulrsymm2dxy kernel
 
+#include "include/utils.h"
+#include "include/device_function.hpp"
+
 // device side function. This is essentially the function of the kernel
 // 2D XY (in-plane) micromagnetic kernel multiplication:
 // |Mx| = |Kxx Kxy| * |Mx|
 // |My|   |Kyx Kyy|   |My|
 // Using the same symmetries as kernmulrsymm3d
 template <typename dataT>
-void kernmulrsymm2dxy_fcn(sycl::nd_item<3> item,
-                          dataT*  fftMx, dataT*  fftMy,
-                          dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
-                          size_t Nx, size_t Ny) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
+inline void kernmulrsymm2dxy_fcn(sycl::nd_item<3> item,
+                                 dataT*  fftMx, dataT*  fftMy,
+                                 dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
+                                 size_t     Nx, size_t     Ny) {
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
 
     if ((ix >= Nx) || (iy >= Ny)) {
         return;
@@ -45,16 +48,12 @@ void kernmulrsymm2dxy_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void kernmulrsymm2dxy_t(size_t blocks[3], size_t threads[3], sycl::queue q,
-                       dataT*  fftMx, dataT* fftMy,
-                       dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
-                       size_t Nx, size_t Ny) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item){
-        kernmulrsymm2dxy_fcn<dataT>(item,
-                                     fftMx,  fftMy,
-                                    fftKxx, fftKyy, fftKxy,
-                                    Nx, Ny);
-    });
+void kernmulrsymm2dxy_t(dim3 blocks[3], dim3 threads[3], sycl::queue q,
+                        dataT*  fftMx, dataT*  fftMy,
+                        dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
+                        size_t     Nx, size_t     Ny) {
+    libMumax3clDeviceFcnCall(kernmulrsymm2dxy_fcn<dataT>, blocks, threads,
+                              fftMx,  fftMy,
+                             fftKxx, fftKyy, fftKxy,
+                                 Nx,     Ny);
 }

@@ -6,7 +6,7 @@ Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
 }
 
-void Mumax3clUtil::addexchange(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::addexchange(dim3 blocks, dim3 threads,
                    real_t* Bx, real_t* By, real_t* Bz,
                    real_t* mx, real_t* my, real_t* mz,
                    real_t* Ms, real_t Ms_mul,
@@ -25,7 +25,7 @@ void Mumax3clUtil::addexchange(size_t blocks[3], size_t threads[3],
                            PBC);
 }
 
-void Mumax3clUtil::addcubicanisotropy2(size_t blocks, size_t threads,
+void Mumax3clUtil::addcubicanisotropy2(dim3 blocks, dim3 threads,
                    real_t* BX, real_t* BY, real_t* BZ,
                    real_t* mx, real_t* my, real_t* mz,
                    real_t* Ms_, real_t Ms_mul,
@@ -55,7 +55,7 @@ void Mumax3clUtil::addcubicanisotropy2(size_t blocks, size_t threads,
                    N);
 }
 
-void Mumax3clUtil::copypadmul2(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::copypadmul2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    size_t  Dx, size_t Dy, size_t Dz,
                    real_t* src,
@@ -71,7 +71,7 @@ void Mumax3clUtil::copypadmul2(size_t blocks[3], size_t threads[3],
                            vol);
 }
 
-void Mumax3clUtil::copyunpad(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::copyunpad(dim3 blocks, dim3 threads,
                    real_t* dst,
                    size_t  Dx, size_t Dy, size_t Dz,
                    real_t* src,
@@ -83,7 +83,7 @@ void Mumax3clUtil::copyunpad(size_t blocks[3], size_t threads[3],
                            Sx, Sy, Sz);
 }
 
-void Mumax3clUtil::crop(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::crop(dim3 blocks, dim3 threads,
           real_t* dst,
           size_t   Dx, size_t   Dy, size_t   Dz,
           real_t* src,
@@ -97,7 +97,7 @@ void Mumax3clUtil::crop(size_t blocks[3], size_t threads[3],
                     Offx, Offy, Offz);
 }
 
-void Mumax3clUtil::crossproduct(size_t blocks, size_t threads,
+void Mumax3clUtil::crossproduct(dim3 blocks, dim3 threads,
                    real_t* dstX, real_t* dstY, real_t* dstZ,
                    real_t*   a0, real_t*   a1, real_t*   a2,
                    real_t*   b0, real_t*   b1, real_t*   b2,
@@ -109,7 +109,7 @@ void Mumax3clUtil::crossproduct(size_t blocks, size_t threads,
                             N);
 }
 
-void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
+void Mumax3clUtil::pointwise_div(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* ax,
                    real_t* bx,
@@ -121,7 +121,7 @@ void Mumax3clUtil::pointwise_div(size_t blocks, size_t threads,
                              N);
 }
 
-void Mumax3clUtil::adddmi(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::adddmi(dim3 blocks, dim3 threads,
                    real_t* Hx, real_t* Hy, real_t* Hz,
                    real_t* mx, real_t* my, real_t* mz,
                    real_t* Ms_, real_t Ms_mul,
@@ -141,7 +141,7 @@ void Mumax3clUtil::adddmi(size_t blocks[3], size_t threads[3],
                       PBC, OpenBC);
 }
 
-void Mumax3clUtil::adddmibulk(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::adddmibulk(dim3 blocks, dim3 threads,
                    real_t* Hx, real_t* Hy, real_t* Hz,
                    real_t* mx, real_t* my, real_t* mz,
                    real_t* Ms_, real_t Ms_mul,
@@ -161,7 +161,7 @@ void Mumax3clUtil::adddmibulk(size_t blocks[3], size_t threads[3],
                       PBC, OpenBC);
 }
 
-void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
+void Mumax3clUtil::dotproduct(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t  prefactor,
                    real_t* src1x,
@@ -183,7 +183,7 @@ void Mumax3clUtil::dotproduct(size_t blocks, size_t threads,
                           N);
 }
 
-void Mumax3clUtil::exchangedecode(size_t blocks[3], size_t threads[3],
+void Mumax3clUtil::exchangedecode(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* aLUT2d,
                    uint8_t* regions,
@@ -199,7 +199,7 @@ void Mumax3clUtil::exchangedecode(size_t blocks[3], size_t threads[3],
                               PBC);
 }
 
-void Mumax3clUtil::llnoprecess(size_t blocks, size_t threads,
+void Mumax3clUtil::llnoprecess(dim3 blocks, dim3 threads,
                    real_t*  tx, real_t*  ty, real_t*  tz,
                    real_t* mx_, real_t* my_, real_t* mz_,
                    real_t* hx_, real_t* hy_, real_t* hz_,
@@ -211,7 +211,7 @@ void Mumax3clUtil::llnoprecess(size_t blocks, size_t threads,
                            N);
 }
 
-void Mumax3clUtil::lltorque2(size_t blocks, size_t threads,
+void Mumax3clUtil::lltorque2(dim3 blocks, dim3 threads,
                   real_t*  tx, real_t*  ty, real_t*  tz,
                   real_t* mx_, real_t* my_, real_t* mz_,
                   real_t* hx_, real_t* hy_, real_t* hz_,
@@ -225,7 +225,7 @@ void Mumax3clUtil::lltorque2(size_t blocks, size_t threads,
                          N);
 }
 
-void Mumax3clUtil::madd2(size_t blocks, size_t threads,
+void Mumax3clUtil::madd2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
                    real_t  fac1,
@@ -241,7 +241,7 @@ void Mumax3clUtil::madd2(size_t blocks, size_t threads,
                      N);
 }
 
-void Mumax3clUtil::madd3(size_t blocks, size_t threads,
+void Mumax3clUtil::madd3(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
                    real_t  fac1,
@@ -261,7 +261,7 @@ void Mumax3clUtil::madd3(size_t blocks, size_t threads,
                      N);
 }
 
-void Mumax3clUtil::normalize(size_t blocks, size_t threads,
+void Mumax3clUtil::normalize(dim3 blocks, dim3 threads,
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,
                    size_t N) {
@@ -271,7 +271,7 @@ void Mumax3clUtil::normalize(size_t blocks, size_t threads,
                           N);
 }
 
-void Mumax3clUtil::vecnorm(size_t blocks, size_t threads,
+void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* a0, real_t* a1, real_t* a2,
                    size_t N) {
@@ -293,7 +293,7 @@ Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
 }
 
-void addexchange(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void addexchange(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  real_t* Bx, real_t* By, real_t* Bz,
                  real_t* mx, real_t* my, real_t* mz,
                  real_t* Ms, real_t Ms_mul,
@@ -312,7 +312,7 @@ void addexchange(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                      PBC);
 }
 
-void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void addcubicanisotropy2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                    real_t* BX, real_t* BY, real_t* BZ,
                    real_t* mx, real_t* my, real_t* mz,
                    real_t* Ms_, real_t Ms_mul,
@@ -342,7 +342,7 @@ void addcubicanisotropy2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                              N);
 }
 
-void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void copypadmul2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  real_t* dst,
                  size_t  Dx, size_t Dy, size_t Dz,
                  real_t* src,
@@ -358,7 +358,7 @@ void copypadmul2(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                      vol);
 }
 
-void copyunpad(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void copyunpad(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  real_t* dst,
                  size_t  Dx, size_t Dy, size_t Dz,
                  real_t* src,
@@ -370,7 +370,7 @@ void copyunpad(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                      Sx, Sy, Sz);
 }
 
-void crop(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void crop(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
           real_t* dst,
           size_t   Dx, size_t   Dy, size_t   Dz,
           real_t* src,
@@ -384,7 +384,7 @@ void crop(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
               Offx, Offy, Offz);
 }
 
-void crossproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void crossproduct(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                   real_t* dstX, real_t* dstY, real_t* dstZ,
                   real_t*   a0, real_t*   a1, real_t*   a2,
                   real_t*   b0, real_t*   b1, real_t*   b2,
@@ -396,7 +396,7 @@ void crossproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
                       N);
 }
 
-void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void pointwise_div(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* ax,
                    real_t* bx,
@@ -408,7 +408,7 @@ void pointwise_div(Mumax3clUtil* obj, size_t blocks, size_t threads,
                        N);
 }
 
-void adddmi(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void adddmi(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                 real_t* Hx, real_t* Hy, real_t* Hz,
                 real_t* mx, real_t* my, real_t* mz,
                 real_t* Ms_, real_t Ms_mul,
@@ -428,7 +428,7 @@ void adddmi(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                 PBC, OpenBC);
 }
 
-void adddmibulk(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void adddmibulk(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                 real_t* Hx, real_t* Hy, real_t* Hz,
                 real_t* mx, real_t* my, real_t* mz,
                 real_t* Ms_, real_t Ms_mul,
@@ -448,7 +448,7 @@ void adddmibulk(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                 PBC, OpenBC);
 }
 
-void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void dotproduct(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                 real_t* dst,
                 real_t  prefactor,
                 real_t* src1x,
@@ -470,7 +470,7 @@ void dotproduct(Mumax3clUtil* obj, size_t blocks, size_t threads,
                     N);
 }
 
-void exchangedecode(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
+void exchangedecode(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* aLUT2d,
       uint8_t* regions,
@@ -486,7 +486,7 @@ void exchangedecode(Mumax3clUtil* obj, size_t blocks[3], size_t threads[3],
                         PBC);
 }
 
-void llnoprecess(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void llnoprecess(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t*  tx, real_t*  ty, real_t*  tz,
       real_t* mx_, real_t* my_, real_t* mz_,
       real_t* hx_, real_t* hy_, real_t* hz_,
@@ -498,7 +498,7 @@ void llnoprecess(Mumax3clUtil* obj, size_t blocks, size_t threads,
                      N);
 }
 
-void lltorque2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void lltorque2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t*  tx, real_t*  ty, real_t*  tz,
       real_t* mx_, real_t* my_, real_t* mz_,
       real_t* hx_, real_t* hy_, real_t* hz_,
@@ -512,7 +512,7 @@ void lltorque2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                    N);
 }
 
-void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void madd2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* src1,
       real_t  fac1,
@@ -528,7 +528,7 @@ void madd2(Mumax3clUtil* obj, size_t blocks, size_t threads,
                N);
 }
 
-void madd3(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void madd3(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* src1,
       real_t  fac1,
@@ -548,7 +548,7 @@ void madd3(Mumax3clUtil* obj, size_t blocks, size_t threads,
                N);
 }
 
-void normalize(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void normalize(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* vx, real_t* vy, real_t* vz,
       real_t* vol,
       size_t N) {
@@ -558,7 +558,7 @@ void normalize(Mumax3clUtil* obj, size_t blocks, size_t threads,
                     N);
 }
 
-void vecnorm(Mumax3clUtil* obj, size_t blocks, size_t threads,
+void vecnorm(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* a0, real_t* a1, real_t* a2,
       size_t N) {

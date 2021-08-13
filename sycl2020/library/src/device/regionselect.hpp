@@ -1,31 +1,28 @@
 // regionselect kernel
 
+#include "include/utils.h"
+#include "include/device_function.hpp"
 // device side function. This is essentially the function of the kernel
 template <typename dataT>
-void regionselect_fcn(sycl::nd_item<3> item,
-                      dataT* dst,
-                      dataT* src,
-                      uint8_t* regions,
-                      size_t N) {
-    size_t gid = (item.get_group_id(1) * item.get_group_range(0) + item.get_group_id(0)) * item.get_local_range(0) + item.get_local_id(0);
-
-    if (gid < N) {
+inline void regionselect_fcn(sycl::nd_item<3> item,
+                             dataT*       dst,
+                             dataT*       src,
+                             uint8_t* regions,
+                             size_t         N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
         dstPtr[gid] = (regions[gid] == region ? src[gid] : (dataT)(0.0));
     }
 }
 
 template <typename dataT>
-void regionselect_t(size_t blocks[3], size_t threads[3], sycl::queue q,
-                 dataT* dst,
-                 dataT* src,
-                 uint8_t* regions,
-                 size_t N) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item) {
-            regionselect_fcn<dataT>(    dst,
-                                        LUT,
-                                    regions,
-                                          N);
-    });
+void regionselect_t(dim3 blocks, dim3 threads, sycl::queue q,
+                    dataT*       dst,
+                    dataT*       src,
+                    uint8_t* regions,
+                    size_t         N) {
+    libMumax3clDeviceFcnCall(regionselect_fcn<dataT>, blocks, threads,
+                                 dst,
+                                 LUT,
+                             regions,
+                                   N);
 }

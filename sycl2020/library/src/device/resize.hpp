@@ -1,19 +1,20 @@
 // resize kernel
 
 #include "include/stencil.hpp"
-
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // Select and resize one layer for interactive output
 template <typename dataT>
-void resize_fcn(sycl::nd_item<3> item,
-                dataT* dst,
-                size_t Dx, size_t Dy, size_t Dz,
-                dataT* src,
-                size_t Sx, size_t Sy, size_t Sz,
-                int layer,
-                int scalex, int scaley) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
+inline void resize_fcn(sycl::nd_item<3> item,
+                       dataT*    dst,
+                       size_t     Dx, size_t  Dy, size_t Dz,
+                       dataT*    src,
+                       size_t     Sx, size_t  Sy, size_t Sz,
+                       int     layer,
+                       int    scalex, int scaley) {
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
 
     if ((ix < Dx) && (iy < Dy)) {
 
@@ -37,21 +38,18 @@ void resize_fcn(sycl::nd_item<3> item,
 }
 
 template <typename dataT>
-void resize_t(size_t blocks[3], size_t threads[3], sycl::queue q,
+void resize_t(dim3 blocks, dim3 threads, sycl::queue q,
               dataT*    dst,
               size_t     Dx, size_t Dy, size_t Dz,
               dataT*    src,
               size_t     Sx, size_t Sy, size_t Sz,
               int     layer,
               int    scalex, int scaley) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item) {
-            resize_fcn<dataT>(    dst,
-                                   Dx,     Dy, Dz,
-                                  src,
-                                   Sx,     Sy, Sz,
-                                layer,
-                               scalex, scaley);
-    });
+    libMumax3clDeviceFcnCall(resize_fcn<dataT>, blocks, threads,
+                                dst,
+                                 Dx,     Dy, Dz,
+                                src,
+                                 Sx,     Sy, Sz,
+                              layer,
+                             scalex, scaley);
 }

@@ -1,26 +1,26 @@
 // cubicanisotropy2 kernel
 
-#include "include/device_function.hpp"
-
 // device side function. This is essentially the function of the kernel
 #include "include/amul.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 template <typename dataT>
-void addcubicanisotropy2_fcn(size_t totalThreads, sycl::nd_item<1> item,
-                             dataT* BX, dataT* BY, dataT* BZ,
-                             dataT* mx, dataT* my, dataT* mz,
-                             dataT* Ms_, dataT Ms_mul,
-                             dataT* k1_, dataT k1_mul,
-                             dataT* k2_, dataT k2_mul,
-                             dataT* k3_, dataT k3_mul,
-                             dataT* c1x, dataT c1x_mul,
-                             dataT* c1y, dataT c1y_mul,
-                             dataT* c1z, dataT c1z_mul,
-                             dataT* c2x, dataT c2x_mul,
-                             dataT* c2y, dataT c2y_mul,
-                             dataT* c2z, dataT c2z_mul,
-                             size_t N) {
-    for (size_t gid = item.get_global_linear_id(); gid < N; gid += totalThreads) {
+inline void addcubicanisotropy2_fcn(sycl::nd_item<3> item,
+                                    dataT*  BX, dataT*     BY, dataT* BZ,
+                                    dataT*  mx, dataT*     my, dataT* mz,
+                                    dataT* Ms_, dataT   Ms_mul,
+                                    dataT* k1_, dataT   k1_mul,
+                                    dataT* k2_, dataT   k2_mul,
+                                    dataT* k3_, dataT   k3_mul,
+                                    dataT* c1x, dataT  c1x_mul,
+                                    dataT* c1y, dataT  c1y_mul,
+                                    dataT* c1z, dataT  c1z_mul,
+                                    dataT* c2x, dataT  c2x_mul,
+                                    dataT* c2y, dataT  c2y_mul,
+                                    dataT* c2z, dataT  c2z_mul,
+                                    size_t   N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
 
         dataT invMs = inv_Msat<dataT>(Ms_, Ms_mul, gid);
         dataT    k1 = amul<dataT>(k1_, k1_mul, gid);
@@ -58,33 +58,32 @@ void addcubicanisotropy2_fcn(size_t totalThreads, sycl::nd_item<1> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void addcubicanisotropy2_t(size_t blocks, size_t threads, sycl::queue q,
-                           dataT* BX, dataT* BY, dataT* BZ,
-                           dataT* mx, dataT* my, dataT* mz,
-                           dataT* Ms_, dataT Ms_mul,
-                           dataT* k1_, dataT k1_mul,
-                           dataT* k2_, dataT k2_mul,
-                           dataT* k3_, dataT k3_mul,
-                           dataT* c1x_, dataT c1x_mul,
-                           dataT* c1y_, dataT c1y_mul,
-                           dataT* c1z_, dataT c1z_mul,
-                           dataT* c2x_, dataT c2x_mul,
-                           dataT* c2y_, dataT c2y_mul,
-                           dataT* c2z_, dataT c2z_mul,
-                           size_t N) {
-    size_t totalThreads = blocks*threads;
-    libMumax3clDeviceFcnCall(addcubicanisotropy2_fcn<dataT>, totalThreads, threads,
-                             BX, BY, BZ,
-                             mx, my, mz,
-                             Ms_, Ms_mul,
-                             k1_, k1_mul,
-                             k2_, k2_mul,
-                             k3_, k3_mul,
+void addcubicanisotropy2_t(dim3 blocks, dim3 threads, sycl::queue q,
+                           dataT*   BX, dataT*      BY, dataT* BZ,
+                           dataT*   mx, dataT*      my, dataT* mz,
+                           dataT*  Ms_, dataT   Ms_mul,
+                           dataT*  k1_, dataT   k1_mul,
+                           dataT*  k2_, dataT   k2_mul,
+                           dataT*  k3_, dataT   k3_mul,
+                           dataT* c1x_, dataT  c1x_mul,
+                           dataT* c1y_, dataT  c1y_mul,
+                           dataT* c1z_, dataT  c1z_mul,
+                           dataT* c2x_, dataT  c2x_mul,
+                           dataT* c2y_, dataT  c2y_mul,
+                           dataT* c2z_, dataT  c2z_mul,
+                           size_t    N) {
+    libMumax3clDeviceFcnCall(addcubicanisotropy2_fcn<dataT>, blocks, threads,
+                               BX,      BY, BZ,
+                               mx,      my, mz,
+                              Ms_,  Ms_mul,
+                              k1_,  k1_mul,
+                              k2_,  k2_mul,
+                              k3_,  k3_mul,
                              c1x_, c1x_mul,
                              c1y_, c1y_mul,
                              c1z_, c1z_mul,
                              c2x_, c2x_mul,
                              c2y_, c2y_mul,
                              c2z_, c2z_mul,
-                             N);
+                                N);
 }

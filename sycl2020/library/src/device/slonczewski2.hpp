@@ -2,28 +2,30 @@
 
 #include "include/amul.hpp"
 #include "include/constants.hpp"
+#include "include/utils.h"
+#include "include/device_function.hpp"
 
 // Original implementation by Mykola Dvornik for mumax2
 // Modified for mumax3 by Arne Vansteenkiste, 2013, 2016
 
 template <typename dataT>
-void addslonczewskitorque2_fcn(size_t totalThreads, sycl::nd_item<1> item,
-                               dataT* tx, dataT* ty, dataT* tz,
-                               dataT* mx_, dataT* my_, dataT* mz_,
-                               dataT* Ms_, dataT Ms_mul,
-                               dataT* jz_, dataT jz_mul,
-                               dataT* px_, dataT px_mul,
-                               dataT* py_, dataT py_mul,
-                               dataT* pz_, dataT pz_mul,
-                               dataT* alpha_, dataT alpha_mul,
-                               dataT* pol_, dataT pol_mul,
-                               dataT* lambda_, dataT lambda_mul,
-                               dataT* epsPrime_, dataT epsPrime_mul,
-                               dataT* flt_, dataT flt_mul,
-                               size_t N) {
-    for (size_t gid = item.get_global_linear_id(); gid < N; gid += totalThreads) {
-        dataT  J  = amul(jz_, jz_mul, gid);
-        dataT  Ms = amul(Ms_, Ms_mul, gid);
+inline void addslonczewskitorque2_fcn(sycl::nd_item<3> item,
+                                      dataT*        tx, dataT*           ty, dataT* tz,
+                                      dataT*       mx_, dataT*          my_, dataT* mz_,
+                                      dataT*       Ms_, dataT        Ms_mul,
+                                      dataT*       jz_, dataT        jz_mul,
+                                      dataT*       px_, dataT        px_mul,
+                                      dataT*       py_, dataT        py_mul,
+                                      dataT*       pz_, dataT        pz_mul,
+                                      dataT*    alpha_, dataT     alpha_mul,
+                                      dataT*      pol_, dataT       pol_mul,
+                                      dataT*   lambda_, dataT    lambda_mul,
+                                      dataT* epsPrime_, dataT  epsPrime_mul,
+                                      dataT*      flt_, dataT       flt_mul,
+                                      size_t         N) {
+    for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
+        dataT  J  = amul<dataT>(jz_, jz_mul, gid);
+        dataT  Ms = amul<dataT>(Ms_, Ms_mul, gid);
         if (J == (dataT)(0.0) || Ms == (dataT)(0.0)) {
             return;
         }
@@ -58,22 +60,21 @@ void addslonczewskitorque2_fcn(size_t totalThreads, sycl::nd_item<1> item,
 }
 
 template <typename dataT>
-void addslonczewskitorque2_t(size_t blocks, size_t threads, sycl::queue q,
-                             dataT* tx, dataT* ty, dataT* tz,
-                             dataT* mx, dataT* my, dataT* mz,
-                             dataT* Ms, dataT Ms_mul,
-                             dataT* jz, dataT jz_mul,
-                             dataT* px, dataT px_mul,
-                             dataT* py, dataT py_mul,
-                             dataT* pz, dataT pz_mul,
-                             dataT* alpha, dataT alpha_mul,
-                             dataT* pol, dataT pol_mul,
-                             dataT* lambda, dataT lambda_mul,
-                             dataT* epsPrime, dataT epsPrime_mul,
-                             dataT* flt, dataT flt_mul,
-                             size_t N) {
-    size_t totalThreads = blocks * threads;
-    libMumax3clDeviceFcnCall(addslonczewskitorque2_kernel<dataT>, totalThreads, threads,
+void addslonczewskitorque2_t(dim3 blocks, dim3 threads, sycl::queue q,
+                             dataT*       tx, dataT*           ty, dataT* tz,
+                             dataT*       mx, dataT*           my, dataT* mz,
+                             dataT*       Ms, dataT        Ms_mul,
+                             dataT*       jz, dataT        jz_mul,
+                             dataT*       px, dataT        px_mul,
+                             dataT*       py, dataT        py_mul,
+                             dataT*       pz, dataT        pz_mul,
+                             dataT*    alpha, dataT     alpha_mul,
+                             dataT*      pol, dataT       pol_mul,
+                             dataT*   lambda, dataT    lambda_mul,
+                             dataT* epsPrime, dataT  epsPrime_mul,
+                             dataT*      flt, dataT       flt_mul,
+                             size_t        N) {
+    libMumax3clDeviceFcnCall(addslonczewskitorque2_kernel<dataT>, blocks, threads,
                                    tx,           ty, tz,
                                    mx,           my, mz,
                                    Ms,       Ms_mul,

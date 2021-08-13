@@ -26,7 +26,7 @@ class Mumax3clUtil_t {
         };
         sycl::queue getQueue() { return this->mainQ; }
         sycl::device getDevice() { return this->mainDev; }
-        void addexchange(size_t blocks[3], size_t threads[3],
+        void addexchange(dim3 blocks, dim3 threads,
                    dataT* Bx, dataT* By, dataT* Bz,
                    dataT* mx, dataT* my, dataT* mz,
                    dataT* Ms, dataT Ms_mul,
@@ -45,7 +45,7 @@ class Mumax3clUtil_t {
                    Nx, Ny, Nz,
                    PBC);
                 };
-        void copypadmul2(size_t blocks[3], size_t threads[3],
+        void copypadmul2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
                    dataT* src,
@@ -60,7 +60,7 @@ class Mumax3clUtil_t {
                    Ms_, Ms_mul,
                    vol);
                 };
-        void copyunpad(size_t blocks[3], size_t threads[3],
+        void copyunpad(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
                    dataT* src,
@@ -71,7 +71,7 @@ class Mumax3clUtil_t {
                    src,
                    Sx, Sy, Sz);
                 };
-        void crop(size_t blocks[3], size_t threads[3],
+        void crop(dim3 blocks, dim3 threads,
                    dataT*  dst,
                    size_t   Dx, size_t   Dy, size_t   Dz,
                    dataT*  src,
@@ -84,7 +84,7 @@ class Mumax3clUtil_t {
                    Sx, Sy, Sz,
                    Offx, Offy, Offz);
                 };
-        void crossproduct(size_t blocks, size_t threads,
+        void crossproduct(dim3 blocks, dim3 threads,
                    dataT* dstX, dataT* dstY, dataT* dstZ,
                    dataT*   a0, dataT*   a1, dataT*   a2,
                    dataT*   b0, dataT*   b1, dataT*   b2,
@@ -95,7 +95,7 @@ class Mumax3clUtil_t {
                    b0, b1, b2,
                    N);
                 };
-        void addcubicanisotropy2(size_t blocks, size_t threads,
+        void addcubicanisotropy2(dim3 blocks, dim3 threads,
                    dataT* BX, dataT* BY, dataT* BZ,
                    dataT* mx, dataT* my, dataT* mz,
                    dataT* Ms_, dataT Ms_mul,
@@ -124,7 +124,7 @@ class Mumax3clUtil_t {
                    c2z_, c2z_mul,
                    N);
                 };
-        void pointwise_div(size_t blocks, size_t threads,
+        void pointwise_div(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* ax,
                    dataT* bx,
@@ -135,7 +135,7 @@ class Mumax3clUtil_t {
                                        bx,
                                        N);
                 };
-        void adddmi(size_t blocks[3], size_t threads[3],
+        void adddmi(dim3 blocks, dim3 threads,
                    dataT* Hx, dataT* Hy, dataT* Hz,
                    dataT* mx, dataT* my, dataT* mz,
                    dataT* Ms_, dataT Ms_mul,
@@ -154,7 +154,7 @@ class Mumax3clUtil_t {
                                 Nx, Ny, Nz,
                                 PBC, OpenBC);
                 };
-        void adddmibulk(size_t blocks[3], size_t threads[3],
+        void adddmibulk(dim3 blocks, dim3 threads,
                    dataT* Hx, dataT* Hy, dataT* Hz,
                    dataT* mx, dataT* my, dataT* mz,
                    dataT* Ms_, dataT Ms_mul,
@@ -173,7 +173,7 @@ class Mumax3clUtil_t {
                                     Nx, Ny, Nz,
                                     PBC, OpenBC);
                 };
-        void dotproduct(size_t blocks, size_t threads,
+        void dotproduct(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT  prefactor,
                    dataT* src1x,
@@ -194,7 +194,7 @@ class Mumax3clUtil_t {
                                     src2z,
                                     N);
             };
-        void exchangedecode(size_t blocks[3], size_t threads[3],
+        void exchangedecode(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* aLUT2d,
                    uint8_t* regions,
@@ -209,7 +209,7 @@ class Mumax3clUtil_t {
                                         Nx, Ny, Nz,
                                         PBC);
             };
-        void llnoprecess(size_t blocks, size_t threads,
+        void llnoprecess(dim3 blocks, dim3 threads,
                    dataT*  tx, dataT*  ty, dataT*  tz,
                    dataT* mx_, dataT* my_, dataT* mz_,
                    dataT* hx_, dataT* hy_, dataT* hz_,
@@ -220,7 +220,7 @@ class Mumax3clUtil_t {
                                      hx_, hy_, hz_,
                                      N);
             };
-        void lltorque2(size_t blocks, size_t threads,
+        void lltorque2(dim3 blocks, dim3 threads,
                    dataT*  tx, dataT*  ty, dataT*  tz,
                    dataT* mx_, dataT* my_, dataT* mz_,
                    dataT* hx_, dataT* hy_, dataT* hz_,
@@ -233,7 +233,7 @@ class Mumax3clUtil_t {
                                      alpha_, alpha_mul,
                                      N);
             };
-        void madd2(size_t blocks, size_t threads,
+        void madd2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
                    dataT fac1,
@@ -248,7 +248,7 @@ class Mumax3clUtil_t {
                                fac2,
                                N);
             };
-        void madd3(size_t blocks, size_t threads,
+        void madd3(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
                    dataT fac1,
@@ -267,7 +267,7 @@ class Mumax3clUtil_t {
                                fac3,
                                N);
             };
-        void normalize(size_t blocks, size_t threads,
+        void normalize(dim3 blocks, dim3 threads,
                    dataT* vx, dataT* vy, dataT* vz,
                    dataT* vol,
                    size_t N) {
@@ -277,7 +277,7 @@ class Mumax3clUtil_t {
                                N);
             };
 
-        void vecnorm(size_t blocks, size_t threads,
+        void vecnorm(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* a0, dataT* a1, dataT* a2,
                    size_t N) {

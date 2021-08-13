@@ -1,5 +1,7 @@
 // setmaxangle kernel
 
+#include "include/utils.h"
+#include "include/device_function.hpp"
 // device side function. This is essentially the function of the kernel
 // See maxangle.go for more details.
 template <typename dataT>
@@ -10,9 +12,9 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
                      uint8_t* regions,
                      size_t Nx, size_t Ny, size_t Nz,
                      uint8_t PBC) {
-    size_t ix = item.get_group(0) * item.get_local_range(0) + item.get_local_id(0);
-    size_t iy = item.get_group(1) * item.get_local_range(1) + item.get_local_id(1);
-    size_t iz = item.get_group(2) * item.get_local_range(2) + item.get_local_id(2);
+    size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
+    size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;
+    size_t iz = syclBlockIdx_z * syclBlockDim_z + syclThreadIdx_z;
 
     if ((ix >= Nx) || (iy >= Ny) || (iz >= Nz)) {
         return;
@@ -95,22 +97,18 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void setmaxangle_fcn(size_t blocks[3], size_t threads[3], sycl::queue q,
+void setmaxangle_fcn(dim3 blocks, dim3 threads, sycl::queue q,
                      dataT*       dst,
                      dataT*        mx, dataT* my, dataT* mz,
                      dataT*    aLUT2d,
                      uint8_t* regions,
                      size_t        Nx, size_t Ny, size_t Nz,
                      uint8_t      PBC) {
-    q.parallel_for(sycl::nd_range<3>(sycl::range<3>(blocks[0]*threads[0], blocks[1]*threads[1], blocks[2]*threads[2]),
-                                     sycl::range<3>(          threads[0],           threads[1],           threads[2])),
-        [=](sycl::nd_item<3> item){
-        setmaxangle_t<dataT>(   item,
+    libMumax3clDeviceFcnCall(setmaxangle_t<dataT>, blocks, threads,
                                  dst,
                                   mx, my, mz,
                               aLUT2d,
                              regions,
                                   Nx, Ny, Nz,
                                  PBC);
-    });
 }
