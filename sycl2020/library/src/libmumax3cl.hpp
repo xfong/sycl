@@ -25,6 +25,10 @@
 #include "device/mul.hpp"
 #include "device/normalize.hpp"
 #include "device/oommf_slonczewski.hpp"
+#include "device/regionadds.hpp"
+#include "device/regionaddv.hpp"
+#include "device/regiondecode.hpp"
+#include "device/regionselect.hpp"
 #include "device/vecnorm.hpp"
 //#include "device/"
 
@@ -462,6 +466,56 @@ class Mumax3clUtil_t {
                                lambdafree, lambdafree_mul,
                                epsPrime, epsPrime_mul,
                                flt, flt_mul,
+                               N);
+            };
+
+        void regionadds(dim3 blocks, dim3 threads,
+                   dataT*       dst,
+                   dataT*       LUT,
+                   uint8_t* regions,
+                   size_t         N) {
+                regionadds_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               LUT,
+                               regions,
+                               N);
+            };
+
+        void regionaddv(dim3 blocks, dim3 threads,
+                   dataT*       dstx, dataT* dsty,  dataT* dstz,
+                   dataT*       LUTx, dataT* LUTy,  dataT* LUTz,
+                   uint8_t* regions,
+                   size_t         N) {
+                regionaddv_t<dataT>(blocks, threads, this->mainQ,
+                               dstx, dsty, dstz,
+                               LUTx, LUTy, LUTz,
+                               regions,
+                               N);
+            };
+
+        void regiondecode(dim3 blocks, dim3 threads,
+                   dataT*       dst,
+                   dataT*       LUT,
+                   uint8_t* regions,
+                   size_t         N) {
+                regiondecode_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               LUT,
+                               regions,
+                               N);
+            };
+
+        void regionselect(dim3 blocks, dim3 threads,
+                   dataT*       dst,
+                   dataT*       src,
+                   uint8_t* regions,
+                   uint8_t   region,
+                   size_t         N) {
+                regionselect_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src,
+                               regions,
+                               region,
                                N);
             };
 

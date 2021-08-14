@@ -430,6 +430,56 @@ void Mumax3clUtil::addoommfslonczewskitorque(dim3 blocks, dim3 threads,
                                                   N);
 }
 
+void Mumax3clUtil::regionadds(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      LUT,
+                   uint8_t* regions,
+                   size_t         N) {
+    this->obj->regionadds(blocks, threads,
+                          dst,
+                          LUT,
+                          regions,
+                          N);
+}
+
+void Mumax3clUtil::regionaddv(dim3 blocks, dim3 threads,
+                   real_t*     dstx, real_t* dsty,  real_t* dstz,
+                   real_t*     LUTx, real_t* LUTy,  real_t* LUTz,
+                   uint8_t* regions,
+                   size_t         N) {
+    this->obj->regionaddv(blocks, threads,
+                          dstx, dsty, dstz,
+                          LUTx, LUTy, LUTz,
+                          regions,
+                          N);
+}
+
+void Mumax3clUtil::regiondecode(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      LUT,
+                   uint8_t* regions,
+                   size_t         N) {
+    this->obj->regiondecode(blocks, threads,
+                            dst,
+                            LUT,
+                            regions,
+                            N);
+}
+
+void Mumax3clUtil::regionselect(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      src,
+                   uint8_t* regions,
+                   uint8_t   region,
+                   size_t         N) {
+    this->obj->regionselect(blocks, threads,
+                            dst,
+                            src,
+                            regions,
+                            region,
+                            N);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* a0, real_t* a1, real_t* a2,

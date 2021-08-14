@@ -11,7 +11,7 @@ inline void regiondecode_fcn(sycl::nd_item<3> item,
                              uint8_t* regions,
                              size_t         N) {
     for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
-        dstPtr[gid] = LUT[regions[gid]];
+        dst[gid] = LUT[regions[gid]];
     }
 }
 

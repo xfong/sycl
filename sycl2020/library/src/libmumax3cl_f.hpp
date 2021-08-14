@@ -189,6 +189,27 @@ class Mumax3clUtil {
                    real_t*   epsPrime, real_t    epsPrime_mul,
                    real_t*        flt, real_t         flt_mul,
                    size_t          N);
+        void regionadds(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      LUT,
+                   uint8_t* regions,
+                   size_t         N);
+        void regionaddv(dim3 blocks, dim3 threads,
+                   real_t*     dstx, real_t* dsty,  real_t* dstz,
+                   real_t*     LUTx, real_t* LUTy,  real_t* LUTz,
+                   uint8_t* regions,
+                   size_t         N);
+        void regiondecode(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      LUT,
+                   uint8_t* regions,
+                   size_t         N);
+        void regionselect(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*      src,
+                   uint8_t* regions,
+                   uint8_t   region,
+                   size_t         N);
         void vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* a0, real_t* a1, real_t* a2,
