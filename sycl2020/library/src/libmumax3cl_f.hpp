@@ -255,6 +255,14 @@ class Mumax3clUtil {
                    real_t* epsPrime, real_t  epsPrime_mul,
                    real_t*      flt, real_t       flt_mul,
                    size_t         N);
+        void settemperature2(dim3 blocks, dim3 threads,
+                       real_t*            B,
+                       real_t*        noise,
+                       real_t  kB2_VgammaDt,
+                       real_t*           Ms, real_t    Ms_mul,
+                       real_t*         temp, real_t  temp_mul,
+                       real_t*        alpha, real_t alpha_mul,
+                       size_t             N);
         void vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t*  a0, real_t* a1, real_t* a2,

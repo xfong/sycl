@@ -35,7 +35,7 @@
 #include "device/shifty.hpp"
 #include "device/shiftz.hpp"
 #include "device/slonczewski2.hpp"
-//#include "device/temperature2.hpp"
+#include "device/temperature2.hpp"
 //#include "device/topologicalcharge.hpp"
 //#include "device/uniaxialanisotropy2.hpp"
 #include "device/vecnorm.hpp"
@@ -629,6 +629,24 @@ class Mumax3clUtil_t {
                                lambda, lambda_mul,
                                epsPrime, epsPrime_mul,
                                flt, flt_mul,
+                               N);
+            };
+
+        void settemperature2(dim3 blocks, dim3 threads,
+                       dataT*            B,
+                       dataT*        noise,
+                       dataT  kB2_VgammaDt,
+                       dataT*           Ms, dataT    Ms_mul,
+                       dataT*         temp, dataT  temp_mul,
+                       dataT*        alpha, dataT alpha_mul,
+                       size_t            N) {
+                settemperature2_t<dataT>(blocks, threads, this->mainQ,
+                               B,
+                               noise,
+                               kB2_VgammaDt,
+                               Ms, Ms_mul,
+                               temp, temp_mul,
+                               alpha, alpha_mul,
                                N);
             };
 

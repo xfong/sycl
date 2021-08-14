@@ -582,6 +582,24 @@ void Mumax3clUtil::addslonczewskitorque2(dim3 blocks, dim3 threads,
                                      N);
 }
 
+void Mumax3clUtil::settemperature2(dim3 blocks, dim3 threads,
+                   real_t*            B,
+                   real_t*        noise,
+                   real_t  kB2_VgammaDt,
+                   real_t*           Ms, real_t    Ms_mul,
+                   real_t*         temp, real_t  temp_mul,
+                   real_t*        alpha, real_t alpha_mul,
+                   size_t             N) {
+    this->obj->settemperature2(blocks, threads,
+                               B,
+                               noise,
+                               kB2_VgammaDt,
+                               Ms, Ms_mul,
+                               temp, temp_mul,
+                               alpha, alpha_mul,
+                               N);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t*  a0, real_t* a1, real_t* a2,

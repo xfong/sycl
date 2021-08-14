@@ -18,7 +18,7 @@ inline void settemperature2_fcn(sycl::nd_item<3> item,
         dataT invMs = inv_Msat<dataT>(Ms_, Ms_mul, gid);
         dataT temp = amul<dataT>(temp_, temp_mul, gid);
         dataT alpha = amul<dataT>(alpha_, alpha_mul, gid);
-        B[gid] = noise[gid] * sycl::srqt(kB2_VgammaDt * alpha * temp * invMs);
+        B[gid] = noise[gid] * sycl::sqrt(kB2_VgammaDt * alpha * temp * invMs);
     }
 }
 
@@ -36,8 +36,8 @@ void settemperature2_t(dim3 blocks, dim3 threads, sycl::queue q,
                                         B,
                                     noise,
                              kB2_VgammaDt,
-                                      Ms_,    Ms_mul,
-                                    temp_,  temp_mul,
-                                   alpha_, alpha_mul,
+                                       Ms,    Ms_mul,
+                                     temp,  temp_mul,
+                                    alpha, alpha_mul,
                                         N);
 }
