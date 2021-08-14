@@ -288,6 +288,19 @@ class Mumax3clUtil {
                    real_t*  maskLUT,
                    uint8_t* regions,
                    size_t         N);
+        void addzhanglitorque2(dim3 blocks, dim3 threads,
+                   real_t*     TX, real_t*       TY, real_t* TZ,
+                   real_t*     mx, real_t*       my, real_t* mz,
+                   real_t*    Ms_, real_t    Ms_mul,
+                   real_t*    jx_, real_t    jx_mul,
+                   real_t*    jy_, real_t    jy_mul,
+                   real_t*    jz_, real_t    jz_mul,
+                   real_t* alpha_, real_t alpha_mul,
+                   real_t*    xi_, real_t    xi_mul,
+                   real_t*   pol_, real_t   pol_mul,
+                   real_t      cx, real_t        cy, real_t  cz,
+                   size_t      Nx, size_t       Ny, size_t Nz,
+                   uint8_t    PBC);
         sycl::queue getQueue();
         sycl::device getDevice();
     private :

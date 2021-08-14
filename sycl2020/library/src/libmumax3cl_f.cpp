@@ -658,6 +658,34 @@ void Mumax3clUtil::zeromask(dim3 blocks, dim3 threads,
                         N);
 }
 
+void Mumax3clUtil::addzhanglitorque2(dim3 blocks, dim3 threads,
+                   real_t*     TX, real_t*       TY, real_t* TZ,
+                   real_t*     mx, real_t*       my, real_t* mz,
+                   real_t*    Ms_, real_t    Ms_mul,
+                   real_t*    jx_, real_t    jx_mul,
+                   real_t*    jy_, real_t    jy_mul,
+                   real_t*    jz_, real_t    jz_mul,
+                   real_t* alpha_, real_t alpha_mul,
+                   real_t*    xi_, real_t    xi_mul,
+                   real_t*   pol_, real_t   pol_mul,
+                   real_t      cx, real_t        cy, real_t  cz,
+                   size_t      Nx, size_t       Ny, size_t Nz,
+                   uint8_t    PBC) {
+    this->obj->addzhanglitorque2(blocks, threads,
+                                 TX, TY, TZ,
+                                 mx, my, mz,
+                                 Ms_, Ms_mul,
+                                 jx_, jz_mul,
+                                 jy_, jy_mul,
+                                 jz_, jz_mul,
+                                 alpha_, alpha_mul,
+                                 xi_, xi_mul,
+                                 pol_, pol_mul,
+                                 cx, cy, cz,
+                                 Nx, Ny, Nz,
+                                 PBC);
+}
+
 sycl::queue Mumax3clUtil::getQueue() { return this->obj->getQueue(); }
 sycl::device Mumax3clUtil::getDevice() { return this->obj->getDevice(); }
 

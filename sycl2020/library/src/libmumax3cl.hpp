@@ -40,7 +40,7 @@
 #include "device/uniaxialanisotropy2.hpp"
 #include "device/vecnorm.hpp"
 #include "device/zeromask.hpp"
-//#include "device/zhangli2.hpp"
+#include "device/zhangli2.hpp"
 //#include "device/"
 
 template <typename dataT>
@@ -706,6 +706,34 @@ class Mumax3clUtil_t {
                                maskLUT,
                                regions,
                                N);
+            };
+
+        void addzhanglitorque2(dim3 blocks, dim3 threads,
+                   dataT*     TX, dataT*       TY, dataT* TZ,
+                   dataT*     mx, dataT*       my, dataT* mz,
+                   dataT*    Ms_, dataT    Ms_mul,
+                   dataT*    jx_, dataT    jx_mul,
+                   dataT*    jy_, dataT    jy_mul,
+                   dataT*    jz_, dataT    jz_mul,
+                   dataT* alpha_, dataT alpha_mul,
+                   dataT*    xi_, dataT    xi_mul,
+                   dataT*   pol_, dataT   pol_mul,
+                   dataT      cx, dataT        cy, dataT  cz,
+                   size_t     Nx, size_t       Ny, size_t Nz,
+                   uint8_t   PBC) {
+                addzhanglitorque2_t<dataT>(blocks, threads, this->mainQ,
+                               TX, TY, TZ,
+                               mx, my, mz,
+                               Ms_, Ms_mul,
+                               jx_, jz_mul,
+                               jy_, jy_mul,
+                               jz_, jz_mul,
+                               alpha_, alpha_mul,
+                               xi_, xi_mul,
+                               pol_, pol_mul,
+                               cx, cy, cz,
+                               Nx, Ny, Nz,
+                               PBC);
             };
 
     private :

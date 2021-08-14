@@ -44,21 +44,21 @@ inline void addzhanglitorque2_fcn(sycl::nd_item<3> item,
     dataT pol                = amul<dataT>(pol_, pol_mul, i);
     dataT invMs              = inv_Msat<dataT>(Ms_, Ms_mul, i);
     dataT b                  = invMs * PREFACTOR / ((dataT)(1.0) + xi*xi);
-    sycl::vec<dataT, 3> Jvec = vmul<dataT>(jxPtr, jyPtr, jzPtr, jx_mul, jy_mul, jz_mul, i);
+    sycl::vec<dataT, 3> Jvec = vmul<dataT>(jx_, jy_, jz_, jx_mul, jy_mul, jz_mul, i);
     sycl::vec<dataT, 3> J    = pol*Jvec;
 
     sycl::vec<dataT, 3> hspin = make_vec3<dataT>((dataT)(0.0), (dataT)(0.0), (dataT)(0.0)); // (u·∇)m
     if (J.x() != (dataT)(0.0)) {
-        hspin += (b/cx)*J.x() * make_vec3<dataT>(deltax(mxPtr), deltax(myPtr), deltax(mzPtr));
+        hspin += (b/cx)*J.x() * make_vec3<dataT>(deltax(mx), deltax(my), deltax(mz));
     }
     if (J.y() != (dataT)(0.0)) {
-        hspin += (b/cy)*J.y() * make_vec3<dataT>(deltay(mxPtr), deltay(myPtr), deltay(mzPtr));
+        hspin += (b/cy)*J.y() * make_vec3<dataT>(deltay(mx), deltay(my), deltay(mz));
     }
     if (J.z() != (dataT)(0.0)) {
-        hspin += (b/cz)*J.z() * make_vec3<dataT>(deltaz(mxPtr), deltaz(myPtr), deltaz(mzPtr));
+        hspin += (b/cz)*J.z() * make_vec3<dataT>(deltaz(mx), deltaz(my), deltaz(mz));
     }
 
-    sycl::vec<dataT, 3> m      = make_vec3<dataT>(mxPtr[i], myPtr[i], mzPtr[i]);
+    sycl::vec<dataT, 3> m      = make_vec3<dataT>(mx[i], my[i], mz[i]);
     sycl::vec<dataT, 3> torque = ((dataT)(-1.0)/((dataT)(1.0) + alpha*alpha)) * (
                                  ((dataT)(1.0)+xi*alpha) * sycl::cross(m, sycl::cross(m, hspin))
                                  +(  xi-alpha) * sycl::cross(m, hspin)           );
@@ -95,5 +95,6 @@ void addzhanglitorque2_t(dim3 blocks, dim3 threads, sycl::queue q,
                                 xi_,    xi_mul,
                                pol_,   pol_mul,
                                  cx,        cy, cz,
-                                 Nx,        Ny, Nz);
+                                 Nx,        Ny, Nz,
+                                PBC);
 }
