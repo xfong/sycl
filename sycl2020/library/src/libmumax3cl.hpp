@@ -36,8 +36,8 @@
 #include "device/shiftz.hpp"
 #include "device/slonczewski2.hpp"
 #include "device/temperature2.hpp"
-//#include "device/topologicalcharge.hpp"
-//#include "device/uniaxialanisotropy2.hpp"
+#include "device/topologicalcharge.hpp"
+#include "device/uniaxialanisotropy2.hpp"
 #include "device/vecnorm.hpp"
 #include "device/zeromask.hpp"
 //#include "device/zhangli2.hpp"
@@ -647,6 +647,42 @@ class Mumax3clUtil_t {
                                Ms, Ms_mul,
                                temp, temp_mul,
                                alpha, alpha_mul,
+                               N);
+            };
+
+        void settopologicalcharge(dim3 blocks, dim3 threads,
+                            dataT*    s,
+                            dataT*   mx, dataT* my, dataT* mz,
+                            dataT icxcy,
+                            size_t   Nx, size_t Ny, size_t Nz,
+                            uint8_t PBC) {
+                settopologicalcharge_t<dataT>(blocks, threads, this->mainQ,
+                               s,
+                               mx, my, mz,
+                               icxcy,
+                               Nx, Ny, Nz,
+                               PBC);
+            };
+
+        void adduniaxialanisotropy2(dim3 blocks, dim3 threads,
+                              dataT*  BX, dataT*     BY, dataT* BZ,
+                              dataT*  mx, dataT*     my, dataT* mz,
+                              dataT* Ms_, dataT  Ms_mul,
+                              dataT* k1_, dataT  k1_mul,
+                              dataT* k2_, dataT  k2_mul,
+                              dataT* ux_, dataT  ux_mul,
+                              dataT* uy_, dataT  uy_mul,
+                              dataT* uz_, dataT  uz_mul,
+                              size_t   N) {
+                adduniaxialanisotropy2_t<dataT>(blocks, threads, this->mainQ,
+                               BX, BY, BZ,
+                               mx, my, mz,
+                               Ms_, Ms_mul,
+                               k1_, k1_mul,
+                               k2_, k2_mul,
+                               ux_, ux_mul,
+                               uy_, uy_mul,
+                               uz_, uz_mul,
                                N);
             };
 

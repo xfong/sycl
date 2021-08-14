@@ -600,6 +600,42 @@ void Mumax3clUtil::settemperature2(dim3 blocks, dim3 threads,
                                N);
 }
 
+void Mumax3clUtil::settopologicalcharge(dim3 blocks, dim3 threads,
+                   real_t*    s,
+                   real_t*   mx, real_t* my, real_t* mz,
+                   real_t icxcy,
+                   size_t    Nx, size_t Ny, size_t Nz,
+                   uint8_t  PBC) {
+    this->obj->settopologicalcharge(blocks, threads,
+                                    s,
+                                    mx, my, mz,
+                                    icxcy,
+                                    Nx, Ny, Nz,
+                                    PBC);
+}
+
+void Mumax3clUtil::adduniaxialanisotropy2(dim3 blocks, dim3 threads,
+                   real_t*  BX, real_t*     BY, real_t* BZ,
+                   real_t*  mx, real_t*     my, real_t* mz,
+                   real_t* Ms_, real_t  Ms_mul,
+                   real_t* k1_, real_t  k1_mul,
+                   real_t* k2_, real_t  k2_mul,
+                   real_t* ux_, real_t  ux_mul,
+                   real_t* uy_, real_t  uy_mul,
+                   real_t* uz_, real_t  uz_mul,
+                   size_t    N) {
+    this->obj->adduniaxialanisotropy2(blocks, threads,
+                                      BX, BY, BZ,
+                                      mx, my, mz,
+                                      Ms_, Ms_mul,
+                                      k1_, k1_mul,
+                                      k2_, k2_mul,
+                                      ux_, ux_mul,
+                                      uy_, uy_mul,
+                                      uz_, uz_mul,
+                                      N);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t*  a0, real_t* a1, real_t* a2,
