@@ -145,13 +145,13 @@ class Mumax3clUtil {
                    real_t*  Ms, real_t  Ms_mul,
                    size_t   N);
         void getmagnetoelasticforce(dim3 blocks, dim3 threads,
-                              real_t*  fx, real_t*    fy, real_t*  fz,
-                              real_t*  mx, real_t*    my, real_t*  mz,
-                              real_t* B1_, real_t B1_mul,
-                              real_t* B2_, real_t B2_mul,
-                              real_t rcsx, real_t   rcsy, real_t rcsz,
-                              size_t  Nx, size_t    Ny, size_t  Nz,
-                              uint8_t PBC);
+                   real_t*  fx, real_t*    fy, real_t*  fz,
+                   real_t*  mx, real_t*    my, real_t*  mz,
+                   real_t* B1_, real_t B1_mul,
+                   real_t* B2_, real_t B2_mul,
+                   real_t rcsx, real_t   rcsy, real_t rcsz,
+                   size_t  Nx, size_t    Ny, size_t  Nz,
+                   uint8_t PBC);
         void setmaxangle(dim3 blocks, dim3 threads,
                    real_t*       dst,
                    real_t*        mx, real_t* my, real_t* mz,
@@ -420,8 +420,8 @@ extern "C" {
              size_t      Nx, size_t      Ny);
 
   void kernmulrsymm2dz(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
-                   real_t* fftMz, real_t* fftKzz,
-                   size_t     Nx, size_t      Ny);
+             real_t* fftMz, real_t* fftKzz,
+             size_t     Nx, size_t      Ny);
 
   void kernmulrsymm3d(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
              real_t*  fftMx, real_t*  fftMy, real_t*  fftMz,
