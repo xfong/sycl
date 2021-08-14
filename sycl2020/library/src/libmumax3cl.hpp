@@ -24,6 +24,7 @@
 #include "device/minimize.hpp"
 #include "device/mul.hpp"
 #include "device/normalize.hpp"
+#include "device/oommf_slonczewski.hpp"
 #include "device/vecnorm.hpp"
 //#include "device/"
 
@@ -430,14 +431,48 @@ class Mumax3clUtil_t {
                                N);
             };
 
+        void addoommfslonczewskitorque(dim3 blocks, dim3 threads,
+                   dataT*         tx, dataT*             ty, dataT* tz,
+                   dataT*         mx, dataT*             my, dataT* mz,
+                   dataT*         Ms, dataT          Ms_mul,
+                   dataT*         jz, dataT          jz_mul,
+                   dataT*         px, dataT          px_mul,
+                   dataT*         py, dataT          py_mul,
+                   dataT*         pz, dataT          pz_mul,
+                   dataT*      alpha, dataT       alpha_mul,
+                   dataT*       pfix, dataT        pfix_mul,
+                   dataT*      pfree, dataT       pfree_mul,
+                   dataT*  lambdafix, dataT   lambdafix_mul,
+                   dataT* lambdafree, dataT  lambdafree_mul,
+                   dataT*   epsPrime, dataT    epsPrime_mul,
+                   dataT*        flt, dataT         flt_mul,
+                   size_t          N) {
+                addoommfslonczewskitorque_t<dataT>(blocks, threads, this->mainQ,
+                               tx, ty, tz,
+                               mx, my, mz,
+                               Ms, Ms_mul,
+                               jz, jz_mul,
+                               px, px_mul,
+                               py, py_mul,
+                               pz, pz_mul,
+                               alpha, alpha_mul,
+                               pfix, pfix_mul,
+                               pfree, pfree_mul,
+                               lambdafix, lambdafix_mul,
+                               lambdafree, lambdafree_mul,
+                               epsPrime, epsPrime_mul,
+                               flt, flt_mul,
+                               N);
+            };
+
         void vecnorm(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* a0, dataT* a1, dataT* a2,
                    size_t N) {
                 vecnorm_t<dataT>(blocks, threads, this->mainQ,
-                                 dst,
-                                 a0, a1, a2,
-                                 N);
+                               dst,
+                               a0, a1, a2,
+                               N);
             };
 
     private :

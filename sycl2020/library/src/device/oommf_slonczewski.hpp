@@ -31,7 +31,7 @@ inline void addoommfslonczewskitorque_fcn(sycl::nd_item<3> item,
              return;
          }
 
-         sycl::vec<dataT, 3> m = make_vec3<dataT>(mx_[gid], my[gid], mz[gid]);
+         sycl::vec<dataT, 3> m = make_vec3<dataT>(mx_[gid], my_[gid], mz_[gid]);
          sycl::vec<dataT, 3> p = normalized<dataT>(vmul(px_, py_, pz_, px_mul, py_mul, pz_mul, gid));
          dataT  alpha        = amul<dataT>(alpha_, alpha_mul, gid);
          dataT  flt          = amul<dataT>(flt_, flt_mul, gid);
@@ -39,7 +39,7 @@ inline void addoommfslonczewskitorque_fcn(sycl::nd_item<3> item,
          dataT  pfree        = amul<dataT>(pfree_, pfree_mul, gid);
          dataT  lambdafix    = amul<dataT>(lambdafix_, lambdafix_mul, gid);
          dataT  lambdafree   = amul<dataT>(lambdafree_, lambdafix_mul, gid);
-         dataT  epsilonPrime = amul<dataT>(epsilonPrime_, epsilonPrime_mul, gid);
+         dataT  epsilonPrime = amul<dataT>(epsPrime_, epsPrime_mul, gid);
 
          dataT beta    = (HBAR / QE) * (J / ((dataT)(2.0) *flt*Ms) );
          dataT lambdafix2 = lambdafix * lambdafix;
@@ -99,7 +99,7 @@ void addoommfslonczewskitorque_t(dim3 blocks, dim3 threads, sycl::queue q,
                                  dataT*   epsPrime, dataT    epsPrime_mul,
                                  dataT*        flt, dataT         flt_mul,
                                  size_t          N) {
-    libMumax3clDeviceFcnCall(addslonczewskitorque_fcn<dataT>, blocks, threads,
+    libMumax3clDeviceFcnCall(addoommfslonczewskitorque_fcn<dataT>, blocks, threads,
                                      tx,             ty, tz,
                                      mx,             my, mz,
                                      Ms,         Ms_mul,
