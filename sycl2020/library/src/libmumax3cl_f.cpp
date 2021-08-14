@@ -698,55 +698,6 @@ Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
 }
 
-void addexchange(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
-                 real_t* Bx, real_t* By, real_t* Bz,
-                 real_t* mx, real_t* my, real_t* mz,
-                 real_t* Ms, real_t Ms_mul,
-                 real_t* aLUT2d,
-                 uint8_t* regions,
-                 real_t wx, real_t wy, real_t wz,
-                 size_t Nx, size_t Ny, size_t Nz,
-                 uint8_t PBC) {
-    obj->addexchange(blocks, threads,
-                     Bx, By, Bz,
-                     mx, my, mz,
-                     Ms, Ms_mul,
-                     aLUT2d, regions,
-                     wx, wy, wz,
-                     Nx, Ny, Nz,
-                     PBC);
-}
-
-void addcubicanisotropy2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
-                   real_t* BX, real_t* BY, real_t* BZ,
-                   real_t* mx, real_t* my, real_t* mz,
-                   real_t* Ms_, real_t Ms_mul,
-                   real_t* k1_, real_t k1_mul,
-                   real_t* k2_, real_t k2_mul,
-                   real_t* k3_, real_t k3_mul,
-                   real_t* c1x_, real_t c1x_mul,
-                   real_t* c1y_, real_t c1y_mul,
-                   real_t* c1z_, real_t c1z_mul,
-                   real_t* c2x_, real_t c2x_mul,
-                   real_t* c2y_, real_t c2y_mul,
-                   real_t* c2z_, real_t c2z_mul,
-                   size_t N) {
-    obj->addcubicanisotropy2(blocks, threads,
-                             BX, BY, BZ,
-                             mx, my, mz,
-                             Ms_, Ms_mul,
-                             k1_, k1_mul,
-                             k2_, k2_mul,
-                             k3_, k3_mul,
-                             c1x_, c1x_mul,
-                             c1y_, c1y_mul,
-                             c1z_, c1z_mul,
-                             c2x_, c2x_mul,
-                             c2y_, c2y_mul,
-                             c2z_, c2z_mul,
-                             N);
-}
-
 void copypadmul2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  real_t* dst,
                  size_t  Dx, size_t Dy, size_t Dz,
@@ -799,6 +750,36 @@ void crossproduct(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                         a0,   a1,   a2,
                         b0,   b1,   b2,
                       N);
+}
+
+void addcubicanisotropy2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+                   real_t* BX, real_t* BY, real_t* BZ,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* k1_, real_t k1_mul,
+                   real_t* k2_, real_t k2_mul,
+                   real_t* k3_, real_t k3_mul,
+                   real_t* c1x_, real_t c1x_mul,
+                   real_t* c1y_, real_t c1y_mul,
+                   real_t* c1z_, real_t c1z_mul,
+                   real_t* c2x_, real_t c2x_mul,
+                   real_t* c2y_, real_t c2y_mul,
+                   real_t* c2z_, real_t c2z_mul,
+                   size_t N) {
+    obj->addcubicanisotropy2(blocks, threads,
+                             BX, BY, BZ,
+                             mx, my, mz,
+                             Ms_, Ms_mul,
+                             k1_, k1_mul,
+                             k2_, k2_mul,
+                             k3_, k3_mul,
+                             c1x_, c1x_mul,
+                             c1y_, c1y_mul,
+                             c1z_, c1z_mul,
+                             c2x_, c2x_mul,
+                             c2y_, c2y_mul,
+                             c2z_, c2z_mul,
+                             N);
 }
 
 void pointwise_div(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
@@ -875,6 +856,25 @@ void dotproduct(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                     N);
 }
 
+void addexchange(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+                 real_t* Bx, real_t* By, real_t* Bz,
+                 real_t* mx, real_t* my, real_t* mz,
+                 real_t* Ms, real_t Ms_mul,
+                 real_t* aLUT2d,
+                 uint8_t* regions,
+                 real_t wx, real_t wy, real_t wz,
+                 size_t Nx, size_t Ny, size_t Nz,
+                 uint8_t PBC) {
+    obj->addexchange(blocks, threads,
+                     Bx, By, Bz,
+                     mx, my, mz,
+                     Ms, Ms_mul,
+                     aLUT2d, regions,
+                     wx, wy, wz,
+                     Nx, Ny, Nz,
+                     PBC);
+}
+
 void exchangedecode(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* aLUT2d,
@@ -889,6 +889,44 @@ void exchangedecode(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                         wx, wy, wz,
                         Nx, Ny, Nz,
                         PBC);
+}
+
+void kernmulc(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t* fftM, real_t* fftK,
+      size_t    Nx, size_t    Ny) {
+    obj->kernmulc(blocks, threads,
+                  fftM, fftK,
+                    Nx,   Ny);
+}
+
+void kernmulrsymm2dxy(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  fftMx, real_t*  fftMy,
+      real_t* fftKxx, real_t* fftKyy, real_t* fftKxy,
+      size_t      Nx, size_t      Ny) {
+    obj->kernmulrsymm2dxy(blocks, threads,
+                           fftMx,  fftMy,
+                          fftKxx, fftKyy, fftKxy,
+                              Nx,     Ny);
+}
+
+void kernmulrsymm2dz(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t* fftMz, real_t* fftKzz,
+      size_t     Nx, size_t      Ny) {
+    obj->kernmulrsymm2dz(blocks, threads,
+                         fftMz, fftKzz,
+                            Nx,     Ny);
+}
+
+void kernmulrsymm3d(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  fftMx, real_t*  fftMy, real_t*  fftMz,
+      real_t* fftKxx, real_t* fftKyy, real_t* fftKzz,
+      real_t* fftKyz, real_t* fftKxz, real_t* fftKxy,
+      size_t      Nx, size_t      Ny, size_t      Nz) {
+    obj->kernmulrsymm3d(blocks, threads,
+                         fftMx,   fftMy,   fftMz,
+                        fftKxx,  fftKyy,  fftKzz,
+                        fftKyz,  fftKxz,  fftKxy,
+                            Nx,      Ny,      Nz);
 }
 
 void llnoprecess(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
@@ -953,6 +991,92 @@ void madd3(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                N);
 }
 
+void getmagnetoelasticfield(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  Bx, real_t*     By, real_t* Bz,
+      real_t*  mx, real_t*     my, real_t* mz,
+      real_t* exx, real_t exx_mul,
+      real_t* eyy, real_t eyy_mul,
+      real_t* ezz, real_t ezz_mul,
+      real_t* exy, real_t exy_mul,
+      real_t* exz, real_t exz_mul,
+      real_t* eyz, real_t eyz_mul,
+      real_t*  B1, real_t  B1_mul,
+      real_t*  B2, real_t  B2_mul,
+      real_t*  Ms, real_t  Ms_mul,
+      size_t   N) {
+    obj->getmagnetoelasticfield(blocks, threads,
+                                 Bx,      By, Bz,
+                                 mx,      my, mz,
+                                exx, exx_mul,
+                                eyy, eyy_mul,
+                                ezz, ezz_mul,
+                                exy, exy_mul,
+                                exz, exz_mul,
+                                eyz, eyz_mul,
+                                 B1,  B1_mul,
+                                 B2,  B2_mul,
+                                 Ms,  Ms_mul,
+                                  N);
+}
+
+void getmagnetoelasticforce(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  fx, real_t*    fy, real_t*  fz,
+      real_t*  mx, real_t*    my, real_t*  mz,
+      real_t* B1_, real_t B1_mul,
+      real_t* B2_, real_t B2_mul,
+      real_t rcsx, real_t   rcsy, real_t rcsz,
+      size_t  Nx, size_t    Ny, size_t  Nz,
+      uint8_t PBC) {
+    obj->getmagnetoelasticforce(blocks, threads,
+                                  fx,     fy,   fz,
+                                  mx,     my,   mz,
+                                 B1_, B1_mul,
+                                 B2_, B2_mul,
+                                rcsx,   rcsy, rcsz,
+                                  Nx,     Ny,   Nz,
+                                 PBC);
+}
+
+void setmaxangle(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*       dst,
+      real_t*        mx, real_t* my, real_t* mz,
+      real_t*    aLUT2d,
+      uint8_t* regions,
+      size_t        Nx, size_t Ny, size_t Nz,
+      uint8_t      PBC) {
+    obj->setmaxangle(blocks, threads,
+                         dst,
+                          mx, my, mz,
+                      aLUT2d,
+                     regions,
+                          Nx, Ny, Nz,
+                         PBC);
+}
+
+void minimize(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  mx_, real_t*  my_, real_t*  mz_,
+      real_t* m0x_, real_t* m0y_, real_t* m0z_,
+      real_t*  tx_, real_t*  ty_, real_t*  tz_,
+      real_t dt, size_t N) {
+    obj->minimize(blocks, threads,
+                   mx_,  my_,  mz_,
+                  m0x_, m0y_, m0z_,
+                   tx_,  ty_,  tz_,
+                    dt,    N);
+}
+
+void mul(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t* dst,
+      real_t*  a0,
+      real_t*  b0,
+      size_t   N) {
+    obj->mul(blocks, threads,
+             dst,
+              a0,
+              b0,
+               N);
+}
+
 void normalize(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* vx, real_t* vy, real_t* vz,
       real_t* vol,
@@ -963,6 +1087,246 @@ void normalize(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                     N);
 }
 
+void addoommfslonczewskitorque(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*         tx, real_t*             ty, real_t* tz,
+      real_t*         mx, real_t*             my, real_t* mz,
+      real_t*         Ms, real_t          Ms_mul,
+      real_t*         jz, real_t          jz_mul,
+      real_t*         px, real_t          px_mul,
+      real_t*         py, real_t          py_mul,
+      real_t*         pz, real_t          pz_mul,
+      real_t*      alpha, real_t       alpha_mul,
+      real_t*       pfix, real_t        pfix_mul,
+      real_t*      pfree, real_t       pfree_mul,
+      real_t*  lambdafix, real_t   lambdafix_mul,
+      real_t* lambdafree, real_t  lambdafree_mul,
+      real_t*   epsPrime, real_t    epsPrime_mul,
+      real_t*        flt, real_t         flt_mul,
+      size_t          N) {
+    obj->addoommfslonczewskitorque(blocks, threads,
+                                           tx,             ty, tz,
+                                           mx,             my, mz,
+                                           Ms,         Ms_mul,
+                                           jz,         jz_mul,
+                                           px,         pz_mul,
+                                           py,         py_mul,
+                                           pz,         pz_mul,
+                                        alpha,      alpha_mul,
+                                         pfix,       pfix_mul,
+                                        pfree,      pfree_mul,
+                                    lambdafix,  lambdafix_mul,
+                                   lambdafree, lambdafree_mul,
+                                     epsPrime,   epsPrime_mul,
+                                          flt,        flt_mul,
+                                            N);
+}
+
+void regionadds(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*      dst,
+      real_t*      LUT,
+      uint8_t* regions,
+      size_t         N) {
+    obj->regionadds(blocks, threads,
+                    dst,
+                    LUT,
+                    regions,
+                    N);
+}
+
+void regionaddv(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*     dstx, real_t* dsty,  real_t* dstz,
+      real_t*     LUTx, real_t* LUTy,  real_t* LUTz,
+      uint8_t* regions,
+      size_t         N) {
+    obj->regionaddv(blocks, threads,
+                    dstx, dsty, dstz,
+                    LUTx, LUTy, LUTz,
+                    regions,
+                    N);
+}
+
+void regiondecode(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*      dst,
+      real_t*      LUT,
+      uint8_t* regions,
+      size_t         N) {
+    obj->regiondecode(blocks, threads,
+                      dst,
+                      LUT,
+                      regions,
+                      N);
+}
+
+void regionselect(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*      dst,
+      real_t*      src,
+      uint8_t* regions,
+      uint8_t   region,
+      size_t         N) {
+    obj->regionselect(blocks, threads,
+                      dst,
+                      src,
+                      regions,
+                      region,
+                      N);
+}
+
+void resize(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*    dst,
+      size_t      Dx, size_t Dy, size_t Dz,
+      real_t*    src,
+      size_t      Sx, size_t Sy, size_t Sz,
+      int      layer,
+      int     scalex, int scaley) {
+    obj->resize(blocks, threads,
+                dst,
+                Dx, Dy, Dz,
+                src,
+                Sx, Sy, Sz,
+                layer,
+                scalex, scaley);
+}
+
+void shiftbytesy(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      uint8_t*    dst,
+      uint8_t*    src,
+      size_t       Nx, size_t Ny, size_t Nz,
+      size_t      shy,
+      uint8_t  clampV) {
+    obj->shiftbytesy(blocks, threads,
+                     dst,
+                     src,
+                     Nx, Ny, Nz,
+                     shy,
+                     clampV);
+}
+
+void shiftx(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*    dst,
+      real_t*    src,
+      size_t      Nx, size_t    Ny, size_t Nz,
+      size_t     shx,
+      real_t   clampL, real_t clampR) {
+    obj->shiftx(blocks, threads,
+                dst,
+                src,
+                Nx, Ny, Nz,
+                shx,
+                clampL, clampR);
+}
+
+void shifty(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*    dst,
+      real_t*    src,
+      size_t      Nx, size_t    Ny, size_t Nz,
+      size_t     shy,
+      real_t   clampL, real_t clampR) {
+    obj->shifty(blocks, threads,
+                dst,
+                src,
+                Nx, Ny, Nz,
+                shy,
+                clampL, clampR);
+}
+
+void shiftz(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*    dst,
+      real_t*    src,
+      size_t      Nx, size_t    Ny, size_t Nz,
+      size_t     shz,
+      real_t   clampL, real_t clampR) {
+    obj->shiftz(blocks, threads,
+                dst,
+                src,
+                Nx, Ny, Nz,
+                shz,
+                clampL, clampR);
+}
+
+void addslonczewskitorque2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*       tx, real_t*           ty, real_t* tz,
+      real_t*       mx, real_t*           my, real_t* mz,
+      real_t*       Ms, real_t        Ms_mul,
+      real_t*       jz, real_t        jz_mul,
+      real_t*       px, real_t        px_mul,
+      real_t*       py, real_t        py_mul,
+      real_t*       pz, real_t        pz_mul,
+      real_t*    alpha, real_t     alpha_mul,
+      real_t*      pol, real_t       pol_mul,
+      real_t*   lambda, real_t    lambda_mul,
+      real_t* epsPrime, real_t  epsPrime_mul,
+      real_t*      flt, real_t       flt_mul,
+      size_t         N) {
+    obj->addslonczewskitorque2(blocks, threads,
+                               tx, ty, tz,
+                               mx, my, mz,
+                               Ms, Ms_mul,
+                               jz, jz_mul,
+                               px, px_mul,
+                               py, py_mul,
+                               pz, pz_mul,
+                               alpha, alpha_mul,
+                               pol, pol_mul,
+                               lambda, lambda_mul,
+                               epsPrime, epsPrime_mul,
+                               flt, flt_mul,
+                               N);
+}
+
+void settemperature2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*            B,
+      real_t*        noise,
+      real_t  kB2_VgammaDt,
+      real_t*           Ms, real_t    Ms_mul,
+      real_t*         temp, real_t  temp_mul,
+      real_t*        alpha, real_t alpha_mul,
+      size_t             N) {
+    obj->settemperature2(blocks, threads,
+                         B,
+                         noise,
+                         kB2_VgammaDt,
+                         Ms, Ms_mul,
+                         temp, temp_mul,
+                         alpha, alpha_mul,
+                         N);
+}
+
+void settopologicalcharge(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*    s,
+      real_t*   mx, real_t* my, real_t* mz,
+      real_t icxcy,
+      size_t    Nx, size_t Ny, size_t Nz,
+      uint8_t  PBC) {
+    obj->settopologicalcharge(blocks, threads,
+                              s,
+                              mx, my, mz,
+                              icxcy,
+                              Nx, Ny, Nz,
+                              PBC);
+}
+
+void adduniaxialanisotropy2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*  BX, real_t*     BY, real_t* BZ,
+      real_t*  mx, real_t*     my, real_t* mz,
+      real_t* Ms_, real_t  Ms_mul,
+      real_t* k1_, real_t  k1_mul,
+      real_t* k2_, real_t  k2_mul,
+      real_t* ux_, real_t  ux_mul,
+      real_t* uy_, real_t  uy_mul,
+      real_t* uz_, real_t  uz_mul,
+      size_t    N) {
+    obj->adduniaxialanisotropy2(blocks, threads,
+                                BX, BY, BZ,
+                                mx, my, mz,
+                                Ms_, Ms_mul,
+                                k1_, k1_mul,
+                                k2_, k2_mul,
+                                ux_, ux_mul,
+                                uy_, uy_mul,
+                                uz_, uz_mul,
+                                N);
+}
+
 void vecnorm(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* a0, real_t* a1, real_t* a2,
@@ -971,6 +1335,46 @@ void vecnorm(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  dst,
                  a0, a1, a2,
                  N);
+}
+
+void zeromask(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*      dst,
+      real_t*  maskLUT,
+      uint8_t* regions,
+      size_t         N) {
+    obj->zeromask(blocks, threads,
+                  dst,
+                  maskLUT,
+                  regions,
+                  N);
+}
+
+void addzhanglitorque2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
+      real_t*     TX, real_t*       TY, real_t* TZ,
+      real_t*     mx, real_t*       my, real_t* mz,
+      real_t*    Ms_, real_t    Ms_mul,
+      real_t*    jx_, real_t    jx_mul,
+      real_t*    jy_, real_t    jy_mul,
+      real_t*    jz_, real_t    jz_mul,
+      real_t* alpha_, real_t alpha_mul,
+      real_t*    xi_, real_t    xi_mul,
+      real_t*   pol_, real_t   pol_mul,
+      real_t      cx, real_t        cy, real_t  cz,
+      size_t      Nx, size_t       Ny, size_t Nz,
+      uint8_t    PBC) {
+    obj->addzhanglitorque2(blocks, threads,
+                           TX, TY, TZ,
+                           mx, my, mz,
+                           Ms_, Ms_mul,
+                           jx_, jz_mul,
+                           jy_, jy_mul,
+                           jz_, jz_mul,
+                           alpha_, alpha_mul,
+                           xi_, xi_mul,
+                           pol_, pol_mul,
+                           cx, cy, cz,
+                           Nx, Ny, Nz,
+                           PBC);
 }
 
 #ifdef __cplusplus
