@@ -396,6 +396,30 @@ class Mumax3clUtil_t {
                                PBC);
             };
 
+        void minimize(dim3 blocks, dim3 threads,
+                   dataT*  mx_, dataT*  my_, dataT*  mz_,
+                   dataT* m0x_, dataT* m0y_, dataT* m0z_,
+                   dataT*  tx_, dataT*  ty_, dataT*  tz_,
+                   dataT dt, size_t N) {
+                minimize_t<dataT>(blocks, threads, this->mainQ,
+                               mx_, my_, mz_,
+                               m0x_, m0y_, m0z_,
+                               tx_, ty_, tz_,
+                               dt, N);
+            };
+
+        void mul(dim3 blocks, dim3 threads,
+                   dataT* dst,
+                   dataT*  a0,
+                   dataT*  b0,
+                   size_t   N) {
+                mul_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               a0,
+                               b0,
+                               N);
+            };
+
         void normalize(dim3 blocks, dim3 threads,
                    dataT* vx, dataT* vy, dataT* vz,
                    dataT* vol,

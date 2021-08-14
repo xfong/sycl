@@ -159,6 +159,16 @@ class Mumax3clUtil {
                    uint8_t* regions,
                    size_t        Nx, size_t Ny, size_t Nz,
                    uint8_t      PBC);
+        void minimize(dim3 blocks, dim3 threads,
+                   real_t*  mx_, real_t*  my_, real_t*  mz_,
+                   real_t* m0x_, real_t* m0y_, real_t* m0z_,
+                   real_t*  tx_, real_t*  ty_, real_t*  tz_,
+                   real_t dt, size_t N);
+        void mul(dim3 blocks, dim3 threads,
+                   real_t* dst,
+                   real_t*  a0,
+                   real_t*  b0,
+                   size_t   N);
         void normalize(dim3 blocks, dim3 threads,
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,

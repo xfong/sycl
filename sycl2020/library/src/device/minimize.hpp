@@ -14,9 +14,9 @@ void minimize_fcn(sycl::nd_item<3> item,
         sycl::vec<dataT, 3> m0 = {m0x_[gid], m0y_[gid], m0z_[gid]};
         sycl::vec<dataT, 3> t = {tx_[gid], ty_[gid], tz_[gid]};
 
-        sycl::vec<dataT, 3> t2 = dt*dt*sycl::dot(t, t);
+        dataT t2 = dt*dt*sycl::dot(t, t);
         sycl::vec<dataT, 3> result = ((dataT)(4.0) - t2) * m0 + (dataT)(4.0) * dt * t;
-        sycl::vec<dataT, 3> divisor = (dataT)(4.0) + t2;
+        dataT divisor = (dataT)(4.0) + t2;
 
         mx_[gid] = result.x() / divisor;
         my_[gid] = result.y() / divisor;

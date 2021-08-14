@@ -362,6 +362,30 @@ void Mumax3clUtil::setmaxangle(dim3 blocks, dim3 threads,
                               PBC);
 }
 
+void Mumax3clUtil::minimize(dim3 blocks, dim3 threads,
+                   real_t*  mx_, real_t*  my_, real_t*  mz_,
+                   real_t* m0x_, real_t* m0y_, real_t* m0z_,
+                   real_t*  tx_, real_t*  ty_, real_t*  tz_,
+                   real_t dt, size_t N) {
+    this->obj->minimize(blocks, threads,
+                         mx_,  my_,  mz_,
+                        m0x_, m0y_, m0z_,
+                         tx_,  ty_,  tz_,
+                          dt,    N);
+}
+
+void Mumax3clUtil::mul(dim3 blocks, dim3 threads,
+                   real_t* dst,
+                   real_t*  a0,
+                   real_t*  b0,
+                   size_t   N) {
+    this->obj->mul(blocks, threads,
+                   dst,
+                    a0,
+                    b0,
+                     N);
+}
+
 void Mumax3clUtil::normalize(dim3 blocks, dim3 threads,
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,
