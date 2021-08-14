@@ -480,6 +480,22 @@ void Mumax3clUtil::regionselect(dim3 blocks, dim3 threads,
                             N);
 }
 
+void Mumax3clUtil::resize(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   size_t      Dx, size_t Dy, size_t Dz,
+                   real_t*    src,
+                   size_t      Sx, size_t Sy, size_t Sz,
+                   int      layer,
+                   int     scalex, int scaley) {
+    this->obj->resize(blocks, threads,
+                      dst,
+                      Dx, Dy, Dz,
+                      src,
+                      Sx, Sy, Sz,
+                      layer,
+                      scalex, scaley);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* a0, real_t* a1, real_t* a2,
@@ -488,6 +504,18 @@ void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                        dst,
                        a0, a1, a2,
                        N);
+}
+
+void Mumax3clUtil::zeromask(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*  maskLUT,
+                   uint8_t* regions,
+                   size_t         N) {
+    this->obj->zeromask(blocks, threads,
+                        dst,
+                        maskLUT,
+                        regions,
+                        N);
 }
 
 sycl::queue Mumax3clUtil::getQueue() { return this->obj->getQueue(); }

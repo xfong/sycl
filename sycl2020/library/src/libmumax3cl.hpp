@@ -29,7 +29,18 @@
 #include "device/regionaddv.hpp"
 #include "device/regiondecode.hpp"
 #include "device/regionselect.hpp"
+#include "device/resize.hpp"
+//#include "device/shiftbytesy.hpp"
+//#include "device/shiftx.hpp"
+//#include "device/shifty.hpp"
+//#include "device/shiftz.hpp"
+//#include "device/slonczewski2.hpp"
+//#include "device/temperature2.hpp"
+//#include "device/topologicalcharge.hpp"
+//#include "device/uniaxialanisotropy2.hpp"
 #include "device/vecnorm.hpp"
+#include "device/zeromask.hpp"
+//#include "device/zhangli2.hpp"
 //#include "device/"
 
 template <typename dataT>
@@ -519,6 +530,22 @@ class Mumax3clUtil_t {
                                N);
             };
 
+        void resize(dim3 blocks, dim3 threads,
+                   dataT*    dst,
+                   size_t     Dx, size_t Dy, size_t Dz,
+                   dataT*    src,
+                   size_t     Sx, size_t Sy, size_t Sz,
+                   int     layer,
+                   int    scalex, int scaley) {
+                resize_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               Dx, Dy, Dz,
+                               src,
+                               Sx, Sy, Sz,
+                               layer,
+                               scalex, scaley);
+            };
+
         void vecnorm(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* a0, dataT* a1, dataT* a2,
@@ -526,6 +553,18 @@ class Mumax3clUtil_t {
                 vecnorm_t<dataT>(blocks, threads, this->mainQ,
                                dst,
                                a0, a1, a2,
+                               N);
+            };
+
+        void zeromask(dim3 blocks, dim3 threads,
+                   dataT*       dst,
+                   dataT*   maskLUT,
+                   uint8_t* regions,
+                   size_t         N) {
+                zeromask_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               maskLUT,
+                               regions,
                                N);
             };
 

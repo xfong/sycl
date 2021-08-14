@@ -210,10 +210,22 @@ class Mumax3clUtil {
                    uint8_t* regions,
                    uint8_t   region,
                    size_t         N);
+        void resize(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   size_t      Dx, size_t Dy, size_t Dz,
+                   real_t*    src,
+                   size_t      Sx, size_t Sy, size_t Sz,
+                   int      layer,
+                   int     scalex, int scaley);
         void vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* a0, real_t* a1, real_t* a2,
                    size_t N);
+        void zeromask(dim3 blocks, dim3 threads,
+                   real_t*      dst,
+                   real_t*  maskLUT,
+                   uint8_t* regions,
+                   size_t         N);
         sycl::queue getQueue();
         sycl::device getDevice();
     private :
