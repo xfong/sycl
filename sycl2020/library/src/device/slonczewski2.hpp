@@ -74,7 +74,7 @@ void addslonczewskitorque2_t(dim3 blocks, dim3 threads, sycl::queue q,
                              dataT* epsPrime, dataT  epsPrime_mul,
                              dataT*      flt, dataT       flt_mul,
                              size_t        N) {
-    libMumax3clDeviceFcnCall(addslonczewskitorque2_kernel<dataT>, blocks, threads,
+    libMumax3clDeviceFcnCall(addslonczewskitorque2_fcn<dataT>, blocks, threads,
                                    tx,           ty, tz,
                                    mx,           my, mz,
                                    Ms,       Ms_mul,

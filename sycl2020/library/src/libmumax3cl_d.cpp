@@ -552,6 +552,36 @@ void Mumax3clUtil::shiftz(dim3 blocks, dim3 threads,
                       clampL, clampR);
 }
 
+void Mumax3clUtil::addslonczewskitorque2(dim3 blocks, dim3 threads,
+                   real_t*       tx, real_t*           ty, real_t* tz,
+                   real_t*       mx, real_t*           my, real_t* mz,
+                   real_t*       Ms, real_t        Ms_mul,
+                   real_t*       jz, real_t        jz_mul,
+                   real_t*       px, real_t        px_mul,
+                   real_t*       py, real_t        py_mul,
+                   real_t*       pz, real_t        pz_mul,
+                   real_t*    alpha, real_t     alpha_mul,
+                   real_t*      pol, real_t       pol_mul,
+                   real_t*   lambda, real_t    lambda_mul,
+                   real_t* epsPrime, real_t  epsPrime_mul,
+                   real_t*      flt, real_t       flt_mul,
+                   size_t         N) {
+    this->obj->addslonczewskitorque2(blocks, threads,
+                                     tx, ty, tz,
+                                     mx, my, mz,
+                                     Ms, Ms_mul,
+                                     jz, jz_mul,
+                                     px, px_mul,
+                                     py, py_mul,
+                                     pz, pz_mul,
+                                     alpha, alpha_mul,
+                                     pol, pol_mul,
+                                     lambda, lambda_mul,
+                                     epsPrime, epsPrime_mul,
+                                     flt, flt_mul,
+                                     N);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t*  a0, real_t* a1, real_t* a2,

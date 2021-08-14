@@ -34,7 +34,7 @@
 #include "device/shiftx.hpp"
 #include "device/shifty.hpp"
 #include "device/shiftz.hpp"
-//#include "device/slonczewski2.hpp"
+#include "device/slonczewski2.hpp"
 //#include "device/temperature2.hpp"
 //#include "device/topologicalcharge.hpp"
 //#include "device/uniaxialanisotropy2.hpp"
@@ -600,6 +600,36 @@ class Mumax3clUtil_t {
                                Nx, Ny, Nz,
                                shz,
                                clampL, clampR);
+            };
+
+        void addslonczewskitorque2(dim3 blocks, dim3 threads,
+                             dataT*       tx, dataT*           ty, dataT* tz,
+                             dataT*       mx, dataT*           my, dataT* mz,
+                             dataT*       Ms, dataT        Ms_mul,
+                             dataT*       jz, dataT        jz_mul,
+                             dataT*       px, dataT        px_mul,
+                             dataT*       py, dataT        py_mul,
+                             dataT*       pz, dataT        pz_mul,
+                             dataT*    alpha, dataT     alpha_mul,
+                             dataT*      pol, dataT       pol_mul,
+                             dataT*   lambda, dataT    lambda_mul,
+                             dataT* epsPrime, dataT  epsPrime_mul,
+                             dataT*      flt, dataT       flt_mul,
+                             size_t        N) {
+                addslonczewskitorque2_t<dataT>(blocks, threads, this->mainQ,
+                               tx, ty, tz,
+                               mx, my, mz,
+                               Ms, Ms_mul,
+                               jz, jz_mul,
+                               px, px_mul,
+                               py, py_mul,
+                               pz, pz_mul,
+                               alpha, alpha_mul,
+                               pol, pol_mul,
+                               lambda, lambda_mul,
+                               epsPrime, epsPrime_mul,
+                               flt, flt_mul,
+                               N);
             };
 
         void vecnorm(dim3 blocks, dim3 threads,
