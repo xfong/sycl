@@ -30,10 +30,10 @@
 #include "device/regiondecode.hpp"
 #include "device/regionselect.hpp"
 #include "device/resize.hpp"
-//#include "device/shiftbytesy.hpp"
-//#include "device/shiftx.hpp"
-//#include "device/shifty.hpp"
-//#include "device/shiftz.hpp"
+#include "device/shiftbytesy.hpp"
+#include "device/shiftx.hpp"
+#include "device/shifty.hpp"
+#include "device/shiftz.hpp"
 //#include "device/slonczewski2.hpp"
 //#include "device/temperature2.hpp"
 //#include "device/topologicalcharge.hpp"
@@ -544,6 +544,62 @@ class Mumax3clUtil_t {
                                Sx, Sy, Sz,
                                layer,
                                scalex, scaley);
+            };
+
+        void shiftbytesy(dim3 blocks, dim3 threads,
+                   uint8_t*    dst,
+                   uint8_t*    src,
+                   size_t       Nx, size_t Ny, size_t Nz,
+                   size_t      shy,
+                   uint8_t  clampV) {
+                shiftbytesy_t(blocks, threads, this->mainQ,
+                               dst,
+                               src,
+                               Nx, Ny, Nz,
+                               shy,
+                               clampV);
+            };
+
+        void shiftx(dim3 blocks, dim3 threads,
+                   dataT*    dst,
+                   dataT*    src,
+                   size_t     Nx, size_t    Ny, size_t Nz,
+                   size_t    shx,
+                   dataT  clampL, dataT clampR) {
+                shiftx_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src,
+                               Nx, Ny, Nz,
+                               shx,
+                               clampL, clampR);
+            };
+
+        void shifty(dim3 blocks, dim3 threads,
+                   dataT*    dst,
+                   dataT*    src,
+                   size_t     Nx, size_t    Ny, size_t Nz,
+                   size_t    shy,
+                   dataT  clampL, dataT clampR) {
+                shifty_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src,
+                               Nx, Ny, Nz,
+                               shy,
+                               clampL, clampR);
+            };
+
+        void shiftz(dim3 blocks, dim3 threads,
+                   dataT*    dst,
+                   dataT*    src,
+                   size_t     Nx, size_t    Ny, size_t Nz,
+                   size_t    shz,
+                   dataT  clampL, dataT clampR) {
+                shiftx_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               src,
+                               Nx, Ny, Nz,
+                               shz,
+                               clampL, clampR);
             };
 
         void vecnorm(dim3 blocks, dim3 threads,

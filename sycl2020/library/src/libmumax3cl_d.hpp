@@ -217,10 +217,34 @@ class Mumax3clUtil {
                    size_t      Sx, size_t Sy, size_t Sz,
                    int      layer,
                    int     scalex, int scaley);
+        void shiftbytesy(dim3 blocks, dim3 threads,
+                   uint8_t*    dst,
+                   uint8_t*    src,
+                   size_t       Nx, size_t Ny, size_t Nz,
+                   size_t      shy,
+                   uint8_t  clampV);
+        void shiftx(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shx,
+                   real_t   clampL, real_t clampR);
+        void shifty(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shy,
+                   real_t   clampL, real_t clampR);
+        void shiftz(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shz,
+                   real_t   clampL, real_t clampR);
         void vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
-                   real_t* a0, real_t* a1, real_t* a2,
-                   size_t N);
+                   real_t*  a0, real_t* a1, real_t* a2,
+                   size_t    N);
         void zeromask(dim3 blocks, dim3 threads,
                    real_t*      dst,
                    real_t*  maskLUT,

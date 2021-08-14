@@ -496,10 +496,66 @@ void Mumax3clUtil::resize(dim3 blocks, dim3 threads,
                       scalex, scaley);
 }
 
+void Mumax3clUtil::shiftbytesy(dim3 blocks, dim3 threads,
+                   uint8_t*    dst,
+                   uint8_t*    src,
+                   size_t       Nx, size_t Ny, size_t Nz,
+                   size_t      shy,
+                   uint8_t  clampV) {
+    this->obj->shiftbytesy(blocks, threads,
+                           dst,
+                           src,
+                           Nx, Ny, Nz,
+                           shy,
+                           clampV);
+}
+
+void Mumax3clUtil::shiftx(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shx,
+                   real_t  clampL, real_t clampR) {
+    this->obj->shiftx(blocks, threads,
+                      dst,
+                      src,
+                      Nx, Ny, Nz,
+                      shx,
+                      clampL, clampR);
+}
+
+void Mumax3clUtil::shifty(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shy,
+                   real_t  clampL, real_t clampR) {
+    this->obj->shifty(blocks, threads,
+                      dst,
+                      src,
+                      Nx, Ny, Nz,
+                      shy,
+                      clampL, clampR);
+}
+
+void Mumax3clUtil::shiftz(dim3 blocks, dim3 threads,
+                   real_t*    dst,
+                   real_t*    src,
+                   size_t      Nx, size_t    Ny, size_t Nz,
+                   size_t     shz,
+                   real_t  clampL, real_t clampR) {
+    this->obj->shiftz(blocks, threads,
+                      dst,
+                      src,
+                      Nx, Ny, Nz,
+                      shz,
+                      clampL, clampR);
+}
+
 void Mumax3clUtil::vecnorm(dim3 blocks, dim3 threads,
                    real_t* dst,
-                   real_t* a0, real_t* a1, real_t* a2,
-                   size_t N) {
+                   real_t*  a0, real_t* a1, real_t* a2,
+                   size_t    N) {
     this->obj->vecnorm(blocks, threads,
                        dst,
                        a0, a1, a2,
