@@ -10,18 +10,18 @@
 // where Umel is magneto-elastic energy denstiy given by the eq. (12.18) of Gurevich&Melkov "Magnetization Oscillations and Waves", CRC Press, 1996
 template <typename dataT>
 inline void getmagnetoelasticfield_fcn(sycl::nd_item<3> item,
-                                       dataT*  Bx, dataT*     By, dataT* Bz,
-                                       dataT*  mx, dataT*     my, dataT* mz,
-                                       dataT* exx, dataT exx_mul,
-                                       dataT* eyy, dataT eyy_mul,
-                                       dataT* ezz, dataT ezz_mul,
-                                       dataT* exy, dataT exy_mul,
-                                       dataT* exz, dataT exz_mul,
-                                       dataT* eyz, dataT eyz_mul,
-                                       dataT*  B1, dataT  B1_mul,
-                                       dataT*  B2, dataT  B2_mul,
-                                       dataT*  Ms, dataT  Ms_mul,
-                                       size_t   N) {
+                                       dataT*   Bx, dataT*     By, dataT* Bz,
+                                       dataT*   mx, dataT*     my, dataT* mz,
+                                       dataT* exx_, dataT exx_mul,
+                                       dataT* eyy_, dataT eyy_mul,
+                                       dataT* ezz_, dataT ezz_mul,
+                                       dataT* exy_, dataT exy_mul,
+                                       dataT* exz_, dataT exz_mul,
+                                       dataT* eyz_, dataT eyz_mul,
+                                       dataT*  B1_, dataT  B1_mul,
+                                       dataT*  B2_, dataT  B2_mul,
+                                       dataT*  Ms_, dataT  Ms_mul,
+                                       size_t    N) {
     for (size_t gid = item.get_global_linear_id(); gid < N; gid += syclThreadCount) {
 
         dataT Exx = amul<dataT>(exx_, exx_mul, gid);

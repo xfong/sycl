@@ -227,7 +227,7 @@ inline void getmagnetoelasticforce_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void getmagnetoelasticforce_t(dim3 blocks, dim3 threads[3], sycl::queue funcQueue,
+void getmagnetoelasticforce_t(dim3 blocks, dim3 threads, sycl::queue q,
                               dataT*  fx, dataT*    fy, dataT*  fz,
                               dataT*  mx, dataT*    my, dataT*  mz,
                               dataT* B1_, dataT B1_mul,

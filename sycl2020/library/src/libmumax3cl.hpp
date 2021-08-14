@@ -18,8 +18,14 @@
 #include "device/lltorque2.hpp"
 #include "device/madd2.hpp"
 #include "device/madd3.hpp"
+#include "device/magnetoelasticfield.hpp"
+#include "device/magnetoelasticforce.hpp"
+#include "device/maxangle.hpp"
+#include "device/minimize.hpp"
+#include "device/mul.hpp"
 #include "device/normalize.hpp"
 #include "device/vecnorm.hpp"
+//#include "device/"
 
 template <typename dataT>
 class Mumax3clUtil_t {
@@ -28,8 +34,11 @@ class Mumax3clUtil_t {
             this->mainDev = getGPU(id);
             this->mainQ = sycl::queue(this->mainDev);
         };
+
         sycl::queue getQueue() { return this->mainQ; }
+
         sycl::device getDevice() { return this->mainDev; }
+
         void copypadmul2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
@@ -45,6 +54,7 @@ class Mumax3clUtil_t {
                    Ms_, Ms_mul,
                    vol);
                 };
+
         void copyunpad(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
@@ -56,6 +66,7 @@ class Mumax3clUtil_t {
                    src,
                    Sx, Sy, Sz);
                 };
+
         void crop(dim3 blocks, dim3 threads,
                    dataT*  dst,
                    size_t   Dx, size_t   Dy, size_t   Dz,
@@ -69,6 +80,7 @@ class Mumax3clUtil_t {
                    Sx, Sy, Sz,
                    Offx, Offy, Offz);
                 };
+
         void crossproduct(dim3 blocks, dim3 threads,
                    dataT* dstX, dataT* dstY, dataT* dstZ,
                    dataT*   a0, dataT*   a1, dataT*   a2,
@@ -80,6 +92,7 @@ class Mumax3clUtil_t {
                    b0, b1, b2,
                    N);
                 };
+
         void addcubicanisotropy2(dim3 blocks, dim3 threads,
                    dataT* BX, dataT* BY, dataT* BZ,
                    dataT* mx, dataT* my, dataT* mz,
@@ -109,6 +122,7 @@ class Mumax3clUtil_t {
                    c2z_, c2z_mul,
                    N);
                 };
+
         void pointwise_div(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* ax,
@@ -120,6 +134,7 @@ class Mumax3clUtil_t {
                                        bx,
                                        N);
                 };
+
         void adddmi(dim3 blocks, dim3 threads,
                    dataT* Hx, dataT* Hy, dataT* Hz,
                    dataT* mx, dataT* my, dataT* mz,
@@ -139,6 +154,7 @@ class Mumax3clUtil_t {
                                 Nx, Ny, Nz,
                                 PBC, OpenBC);
                 };
+
         void adddmibulk(dim3 blocks, dim3 threads,
                    dataT* Hx, dataT* Hy, dataT* Hz,
                    dataT* mx, dataT* my, dataT* mz,
@@ -158,6 +174,7 @@ class Mumax3clUtil_t {
                                     Nx, Ny, Nz,
                                     PBC, OpenBC);
                 };
+
         void dotproduct(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT  prefactor,
@@ -179,6 +196,7 @@ class Mumax3clUtil_t {
                                     src2z,
                                     N);
             };
+
         void addexchange(dim3 blocks, dim3 threads,
                    dataT* Bx, dataT* By, dataT* Bz,
                    dataT* mx, dataT* my, dataT* mz,
@@ -198,6 +216,7 @@ class Mumax3clUtil_t {
                    Nx, Ny, Nz,
                    PBC);
                 };
+
         void exchangedecode(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* aLUT2d,
@@ -213,6 +232,7 @@ class Mumax3clUtil_t {
                                         Nx, Ny, Nz,
                                         PBC);
             };
+
         void kernmulc(dim3 blocks, dim3 threads,
                    dataT* fftM, dataT* fftK,
                    size_t Nx, size_t Ny) {
@@ -220,6 +240,7 @@ class Mumax3clUtil_t {
                                   fftM, fftK,
                                     Nx,   Ny);
             };
+
         void kernmulrsymm2dxy(dim3 blocks, dim3 threads,
                    dataT*  fftMx, dataT*  fftMy,
                    dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
@@ -229,6 +250,7 @@ class Mumax3clUtil_t {
                                           fftKxx, fftKyy, fftKxy,
                                               Nx,     Ny);
             };
+
         void kernmulrsymm2dz(dim3 blocks, dim3 threads,
                    dataT* fftMz, dataT* fftKzz,
                    size_t    Nx, size_t     Ny) {
@@ -237,6 +259,7 @@ class Mumax3clUtil_t {
                                             Nx,     Ny);
 
             };
+
         void kernmulrsymm3d(dim3 blocks, dim3 threads,
                    dataT*  fftMx, dataT*  fftMy, dataT*  fftMz,
                    dataT* fftKxx, dataT* fftKyy, dataT* fftKzz,
@@ -248,6 +271,7 @@ class Mumax3clUtil_t {
                                         fftKyz,  fftKxz,  fftKxy,
                                             Nx,      Ny,      Nz);
             };
+
         void llnoprecess(dim3 blocks, dim3 threads,
                    dataT*  tx, dataT*  ty, dataT*  tz,
                    dataT* mx_, dataT* my_, dataT* mz_,
@@ -259,6 +283,7 @@ class Mumax3clUtil_t {
                                      hx_, hy_, hz_,
                                      N);
             };
+
         void lltorque2(dim3 blocks, dim3 threads,
                    dataT*  tx, dataT*  ty, dataT*  tz,
                    dataT* mx_, dataT* my_, dataT* mz_,
@@ -272,6 +297,7 @@ class Mumax3clUtil_t {
                                      alpha_, alpha_mul,
                                      N);
             };
+
         void madd2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
@@ -287,6 +313,7 @@ class Mumax3clUtil_t {
                                fac2,
                                N);
             };
+
         void madd3(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
@@ -306,6 +333,69 @@ class Mumax3clUtil_t {
                                fac3,
                                N);
             };
+
+        void getmagnetoelasticfield(dim3 blocks, dim3 threads,
+                   dataT*  Bx, dataT*     By, dataT* Bz,
+                   dataT*  mx, dataT*     my, dataT* mz,
+                   dataT* exx, dataT exx_mul,
+                   dataT* eyy, dataT eyy_mul,
+                   dataT* ezz, dataT ezz_mul,
+                   dataT* exy, dataT exy_mul,
+                   dataT* exz, dataT exz_mul,
+                   dataT* eyz, dataT eyz_mul,
+                   dataT*  B1, dataT  B1_mul,
+                   dataT*  B2, dataT  B2_mul,
+                   dataT*  Ms, dataT  Ms_mul,
+                   size_t   N) {
+                getmagnetoelasticfield_t<dataT>(blocks, threads, this->mainQ,
+                               Bx, By, Bz,
+                               mx, my, mz,
+                               exx, exx_mul,
+                               eyy, eyy_mul,
+                               ezz, ezz_mul,
+                               exy, exy_mul,
+                               exz, exz_mul,
+                               eyz, eyz_mul,
+                               B1, B1_mul,
+                               B2, B2_mul,
+                               Ms, Ms_mul,
+                               N);
+            };
+
+        void getmagnetoelasticforce(dim3 blocks, dim3 threads,
+                   dataT*  fx, dataT*    fy, dataT*  fz,
+                   dataT*  mx, dataT*    my, dataT*  mz,
+                   dataT* B1_, dataT B1_mul,
+                   dataT* B2_, dataT B2_mul,
+                   dataT rcsx, dataT   rcsy, dataT rcsz,
+                   size_t  Nx, size_t    Ny, size_t  Nz,
+                   uint8_t PBC) {
+                getmagnetoelasticforce_t<dataT>(blocks, threads, this->mainQ,
+                               fx, fy, fz,
+                               mx, my, mz,
+                               B1_, B1_mul,
+                               B2_, B2_mul,
+                               rcsx, rcsy, rcsz,
+                               Nx, Ny, Nz,
+                               PBC);
+            };
+
+        void setmaxangle(dim3 blocks, dim3 threads,
+                   dataT*       dst,
+                   dataT*        mx, dataT* my, dataT* mz,
+                   dataT*    aLUT2d,
+                   uint8_t* regions,
+                   size_t        Nx, size_t Ny, size_t Nz,
+                   uint8_t      PBC) {
+                setmaxangle_t<dataT>(blocks, threads, this->mainQ,
+                               dst,
+                               mx, my, mz,
+                               aLUT2d,
+                               regions,
+                               Nx, Ny, Nz,
+                               PBC);
+            };
+
         void normalize(dim3 blocks, dim3 threads,
                    dataT* vx, dataT* vy, dataT* vz,
                    dataT* vol,

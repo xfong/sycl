@@ -300,13 +300,75 @@ void Mumax3clUtil::madd3(dim3 blocks, dim3 threads,
                      N);
 }
 
+void Mumax3clUtil::getmagnetoelasticfield(dim3 blocks, dim3 threads,
+                   real_t*  Bx, real_t*     By, real_t* Bz,
+                   real_t*  mx, real_t*     my, real_t* mz,
+                   real_t* exx, real_t exx_mul,
+                   real_t* eyy, real_t eyy_mul,
+                   real_t* ezz, real_t ezz_mul,
+                   real_t* exy, real_t exy_mul,
+                   real_t* exz, real_t exz_mul,
+                   real_t* eyz, real_t eyz_mul,
+                   real_t*  B1, real_t  B1_mul,
+                   real_t*  B2, real_t  B2_mul,
+                   real_t*  Ms, real_t  Ms_mul,
+                   size_t   N) {
+    this->obj->getmagnetoelasticfield(blocks, threads,
+                                       Bx,      By, Bz,
+                                       mx,      my, mz,
+                                      exx, exx_mul,
+                                      eyy, eyy_mul,
+                                      ezz, ezz_mul,
+                                      exy, exy_mul,
+                                      exz, exz_mul,
+                                      eyz, eyz_mul,
+                                       B1,  B1_mul,
+                                       B2,  B2_mul,
+                                       Ms,  Ms_mul,
+                                        N);
+}
+
+void Mumax3clUtil::getmagnetoelasticforce(dim3 blocks, dim3 threads,
+                   real_t*  fx, real_t*    fy, real_t*  fz,
+                   real_t*  mx, real_t*    my, real_t*  mz,
+                   real_t* B1_, real_t B1_mul,
+                   real_t* B2_, real_t B2_mul,
+                   real_t rcsx, real_t   rcsy, real_t rcsz,
+                   size_t  Nx, size_t    Ny, size_t  Nz,
+                   uint8_t PBC) {
+    this->obj->getmagnetoelasticforce(blocks, threads,
+                                        fx,     fy,   fz,
+                                        mx,     my,   mz,
+                                       B1_, B1_mul,
+                                       B2_, B2_mul,
+                                      rcsx,   rcsy, rcsz,
+                                        Nx,     Ny,   Nz,
+                                       PBC);
+}
+
+void Mumax3clUtil::setmaxangle(dim3 blocks, dim3 threads,
+                   real_t*       dst,
+                   real_t*        mx, real_t* my, real_t* mz,
+                   real_t*    aLUT2d,
+                   uint8_t* regions,
+                   size_t        Nx, size_t Ny, size_t Nz,
+                   uint8_t      PBC) {
+    this->obj->setmaxangle(blocks, threads,
+                              dst,
+                               mx, my, mz,
+                           aLUT2d,
+                          regions,
+                               Nx, Ny, Nz,
+                              PBC);
+}
+
 void Mumax3clUtil::normalize(dim3 blocks, dim3 threads,
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,
                    size_t N) {
     this->obj->normalize(blocks, threads,
                           vx, vy, vz,
-                          vol,
+                         vol,
                           N);
 }
 

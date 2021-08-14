@@ -6,55 +6,6 @@ Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
 }
 
-void Mumax3clUtil::addexchange(dim3 blocks, dim3 threads,
-                   real_t* Bx, real_t* By, real_t* Bz,
-                   real_t* mx, real_t* my, real_t* mz,
-                   real_t* Ms, real_t Ms_mul,
-                   real_t* aLUT2d,
-                   uint8_t* regions,
-                   real_t wx, real_t wy, real_t wz,
-                   size_t Nx, size_t Ny, size_t Nz,
-                   uint8_t PBC) {
-    this->obj->addexchange(blocks, threads,
-                           Bx, By, Bz,
-                           mx, my, mz,
-                           Ms, Ms_mul,
-                           aLUT2d, regions,
-                           wx, wy, wz,
-                           Nx, Ny, Nz,
-                           PBC);
-}
-
-void Mumax3clUtil::addcubicanisotropy2(dim3 blocks, dim3 threads,
-                   real_t* BX, real_t* BY, real_t* BZ,
-                   real_t* mx, real_t* my, real_t* mz,
-                   real_t* Ms_, real_t Ms_mul,
-                   real_t* k1_, real_t k1_mul,
-                   real_t* k2_, real_t k2_mul,
-                   real_t* k3_, real_t k3_mul,
-                   real_t* c1x_, real_t c1x_mul,
-                   real_t* c1y_, real_t c1y_mul,
-                   real_t* c1z_, real_t c1z_mul,
-                   real_t* c2x_, real_t c2x_mul,
-                   real_t* c2y_, real_t c2y_mul,
-                   real_t* c2z_, real_t c2z_mul,
-                   size_t N) {
-    this->obj->addcubicanisotropy2(blocks, threads,
-                   BX, BY, BZ,
-                   mx, my, mz,
-                   Ms_, Ms_mul,
-                   k1_, k1_mul,
-                   k2_, k2_mul,
-                   k3_, k3_mul,
-                   c1x_, c1x_mul,
-                   c1y_, c1y_mul,
-                   c1z_, c1z_mul,
-                   c2x_, c2x_mul,
-                   c2y_, c2y_mul,
-                   c2z_, c2z_mul,
-                   N);
-}
-
 void Mumax3clUtil::copypadmul2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    size_t  Dx, size_t Dy, size_t Dz,
@@ -107,6 +58,36 @@ void Mumax3clUtil::crossproduct(dim3 blocks, dim3 threads,
                               a0,   a1,   a2,
                               b0,   b1,   b2,
                             N);
+}
+
+void Mumax3clUtil::addcubicanisotropy2(dim3 blocks, dim3 threads,
+                   real_t* BX, real_t* BY, real_t* BZ,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms_, real_t Ms_mul,
+                   real_t* k1_, real_t k1_mul,
+                   real_t* k2_, real_t k2_mul,
+                   real_t* k3_, real_t k3_mul,
+                   real_t* c1x_, real_t c1x_mul,
+                   real_t* c1y_, real_t c1y_mul,
+                   real_t* c1z_, real_t c1z_mul,
+                   real_t* c2x_, real_t c2x_mul,
+                   real_t* c2y_, real_t c2y_mul,
+                   real_t* c2z_, real_t c2z_mul,
+                   size_t N) {
+    this->obj->addcubicanisotropy2(blocks, threads,
+                   BX, BY, BZ,
+                   mx, my, mz,
+                   Ms_, Ms_mul,
+                   k1_, k1_mul,
+                   k2_, k2_mul,
+                   k3_, k3_mul,
+                   c1x_, c1x_mul,
+                   c1y_, c1y_mul,
+                   c1z_, c1z_mul,
+                   c2x_, c2x_mul,
+                   c2y_, c2y_mul,
+                   c2z_, c2z_mul,
+                   N);
 }
 
 void Mumax3clUtil::pointwise_div(dim3 blocks, dim3 threads,
@@ -183,6 +164,25 @@ void Mumax3clUtil::dotproduct(dim3 blocks, dim3 threads,
                           N);
 }
 
+void Mumax3clUtil::addexchange(dim3 blocks, dim3 threads,
+                   real_t* Bx, real_t* By, real_t* Bz,
+                   real_t* mx, real_t* my, real_t* mz,
+                   real_t* Ms, real_t Ms_mul,
+                   real_t* aLUT2d,
+                   uint8_t* regions,
+                   real_t wx, real_t wy, real_t wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+    this->obj->addexchange(blocks, threads,
+                           Bx, By, Bz,
+                           mx, my, mz,
+                           Ms, Ms_mul,
+                           aLUT2d, regions,
+                           wx, wy, wz,
+                           Nx, Ny, Nz,
+                           PBC);
+}
+
 void Mumax3clUtil::exchangedecode(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* aLUT2d,
@@ -198,6 +198,45 @@ void Mumax3clUtil::exchangedecode(dim3 blocks, dim3 threads,
                               Nx, Ny, Nz,
                               PBC);
 }
+
+void Mumax3clUtil::kernmulc(dim3 blocks, dim3 threads,
+                   real_t* fftM, real_t* fftK,
+                   size_t    Nx, size_t    Ny) {
+    this->obj->kernmulc(blocks, threads,
+                        fftM, fftK,
+                          Nx,   Ny);
+            };
+
+void Mumax3clUtil::kernmulrsymm2dxy(dim3 blocks, dim3 threads,
+                   real_t*  fftMx, real_t*  fftMy,
+                   real_t* fftKxx, real_t* fftKyy, real_t* fftKxy,
+                   size_t      Nx, size_t      Ny) {
+    this->obj->kernmulrsymm2dxy(blocks, threads,
+                                 fftMx,  fftMy,
+                                fftKxx, fftKyy, fftKxy,
+                                    Nx,     Ny);
+            };
+
+void Mumax3clUtil::kernmulrsymm2dz(dim3 blocks, dim3 threads,
+                   real_t* fftMz, real_t* fftKzz,
+                   size_t     Nx, size_t      Ny) {
+    this->obj->kernmulrsymm2dz(blocks, threads,
+                               fftMz, fftKzz,
+                                  Nx,     Ny);
+
+            };
+
+void Mumax3clUtil::kernmulrsymm3d(dim3 blocks, dim3 threads,
+                   real_t*  fftMx, real_t*  fftMy, real_t*  fftMz,
+                   real_t* fftKxx, real_t* fftKyy, real_t* fftKzz,
+                   real_t* fftKyz, real_t* fftKxz, real_t* fftKxy,
+                   size_t      Nx, size_t      Ny, size_t      Nz) {
+    this->obj->kernmulrsymm3d(blocks, threads,
+                               fftMx,   fftMy,   fftMz,
+                              fftKxx,  fftKyy,  fftKzz,
+                              fftKyz,  fftKxz,  fftKxy,
+                                  Nx,      Ny,      Nz);
+            };
 
 void Mumax3clUtil::llnoprecess(dim3 blocks, dim3 threads,
                    real_t*  tx, real_t*  ty, real_t*  tz,
@@ -261,13 +300,75 @@ void Mumax3clUtil::madd3(dim3 blocks, dim3 threads,
                      N);
 }
 
+void Mumax3clUtil::getmagnetoelasticfield(dim3 blocks, dim3 threads,
+                   real_t*  Bx, real_t*     By, real_t* Bz,
+                   real_t*  mx, real_t*     my, real_t* mz,
+                   real_t* exx, real_t exx_mul,
+                   real_t* eyy, real_t eyy_mul,
+                   real_t* ezz, real_t ezz_mul,
+                   real_t* exy, real_t exy_mul,
+                   real_t* exz, real_t exz_mul,
+                   real_t* eyz, real_t eyz_mul,
+                   real_t*  B1, real_t  B1_mul,
+                   real_t*  B2, real_t  B2_mul,
+                   real_t*  Ms, real_t  Ms_mul,
+                   size_t   N) {
+    this->obj->getmagnetoelasticfield(blocks, threads,
+                                       Bx,      By, Bz,
+                                       mx,      my, mz,
+                                      exx, exx_mul,
+                                      eyy, eyy_mul,
+                                      ezz, ezz_mul,
+                                      exy, exy_mul,
+                                      exz, exz_mul,
+                                      eyz, eyz_mul,
+                                       B1,  B1_mul,
+                                       B2,  B2_mul,
+                                       Ms,  Ms_mul,
+                                        N);
+}
+
+void Mumax3clUtil::getmagnetoelasticforce(dim3 blocks, dim3 threads,
+                   real_t*  fx, real_t*    fy, real_t*  fz,
+                   real_t*  mx, real_t*    my, real_t*  mz,
+                   real_t* B1_, real_t B1_mul,
+                   real_t* B2_, real_t B2_mul,
+                   real_t rcsx, real_t   rcsy, real_t rcsz,
+                   size_t  Nx, size_t    Ny, size_t  Nz,
+                   uint8_t PBC) {
+    this->obj->getmagnetoelasticforce(blocks, threads,
+                                        fx,     fy,   fz,
+                                        mx,     my,   mz,
+                                       B1_, B1_mul,
+                                       B2_, B2_mul,
+                                      rcsx,   rcsy, rcsz,
+                                        Nx,     Ny,   Nz,
+                                       PBC);
+}
+
+void Mumax3clUtil::setmaxangle(dim3 blocks, dim3 threads,
+                   real_t*       dst,
+                   real_t*        mx, real_t* my, real_t* mz,
+                   real_t*    aLUT2d,
+                   uint8_t* regions,
+                   size_t        Nx, size_t Ny, size_t Nz,
+                   uint8_t      PBC) {
+    this->obj->setmaxangle(blocks, threads,
+                              dst,
+                               mx, my, mz,
+                           aLUT2d,
+                          regions,
+                               Nx, Ny, Nz,
+                              PBC);
+}
+
 void Mumax3clUtil::normalize(dim3 blocks, dim3 threads,
                    real_t* vx, real_t* vy, real_t* vz,
                    real_t* vol,
                    size_t N) {
     this->obj->normalize(blocks, threads,
                           vx, vy, vz,
-                          vol,
+                         vol,
                           N);
 }
 

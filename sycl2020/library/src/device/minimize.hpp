@@ -31,7 +31,7 @@ void minimize_t(dim3 blocks, dim3 threads, sycl::queue q,
                   dataT* m0x_, dataT* m0y_, dataT* m0z_,
                   dataT*  tx_, dataT*  ty_, dataT*  tz_,
                   dataT dt, size_t N) {
-    libMumax3clDeviceFcnCall(mul_fcn<dataT>, blocks, threads,
+    libMumax3clDeviceFcnCall(minimize_fcn<dataT>, blocks, threads,
                               mx_,  my_,  mz_,
                              m0x_, m0y_, m0z_,
                               tx_,  ty_,  tz_,

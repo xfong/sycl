@@ -41,7 +41,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
     m_  = ( is0(m_)? m0: m_ );                  // replace missing non-boundary neighbor
     a__ = aLUT2d[symidx(r0, regions[i_])];
     if (a__ != 0) {
-        angle = max(angle, acos(dot(m_,m0)));
+        angle = max(angle, sycl::acos(dot(m_,m0)));
     }
 
     // right neighbor
@@ -50,7 +50,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
     m_  = ( is0(m_)? m0: m_ );
     a__ = aLUT2d[symidx(r0, regions[i_])];
     if (a__ != 0) {
-        angle = max(angle, acos(dot(m_,m0)));
+        angle = max(angle, sycl::acos(dot(m_,m0)));
     }
 
     // back neighbor
@@ -59,7 +59,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
     m_  = ( is0(m_)? m0: m_ );
     a__ = aLUT2d[symidx(r0, regions[i_])];
     if (a__ != 0) {
-        angle = max(angle, acos(dot(m_,m0)));
+        angle = max(angle, sycl::acos(dot(m_,m0)));
     }
 
     // front neighbor
@@ -68,7 +68,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
     m_  = ( is0(m_)? m0: m_ );
     a__ = aLUT2d[symidx(r0, regions[i_])];
     if (a__ != 0) {
-        angle = max(angle, acos(dot(m_,m0)));
+        angle = max(angle, sycl::acos(dot(m_,m0)));
     }
 
     // only take vertical derivative for 3D sim
@@ -79,7 +79,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
         m_  = ( is0(m_)? m0: m_ );
         a__ = aLUT2d[symidx(r0, regions[i_])];
         if (a__ != 0) {
-             angle = max(angle, acos(dot(m_,m0)));
+             angle = max(angle, sycl::acos(dot(m_,m0)));
         }
 
         // top neighbor
@@ -88,7 +88,7 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
         m_  = ( is0(m_)? m0: m_ );
         a__ = aLUT2d[symidx(r0, regions[i_])];
         if (a__ != 0) {
-            angle = max(angle, acos(dot(m_,m0)));
+            angle = max(angle, sycl::acos(dot(m_,m0)));
         }
     }
 
@@ -97,14 +97,14 @@ void setmaxangle_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void setmaxangle_fcn(dim3 blocks, dim3 threads, sycl::queue q,
-                     dataT*       dst,
-                     dataT*        mx, dataT* my, dataT* mz,
-                     dataT*    aLUT2d,
-                     uint8_t* regions,
-                     size_t        Nx, size_t Ny, size_t Nz,
-                     uint8_t      PBC) {
-    libMumax3clDeviceFcnCall(setmaxangle_t<dataT>, blocks, threads,
+void setmaxangle_t(dim3 blocks, dim3 threads, sycl::queue q,
+                   dataT*       dst,
+                   dataT*        mx, dataT* my, dataT* mz,
+                   dataT*    aLUT2d,
+                   uint8_t* regions,
+                   size_t        Nx, size_t Ny, size_t Nz,
+                   uint8_t      PBC) {
+    libMumax3clDeviceFcnCall(setmaxangle_fcn<dataT>, blocks, threads,
                                  dst,
                                   mx, my, mz,
                               aLUT2d,
