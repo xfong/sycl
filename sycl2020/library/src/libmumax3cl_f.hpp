@@ -89,6 +89,21 @@ class Mumax3clUtil {
                    real_t wx, real_t wy, real_t wz,
                    size_t Nx, size_t Ny, size_t Nz,
                    uint8_t PBC);
+        void kernmulc(dim3 blocks, dim3 threads,
+                   real_t* fftM, real_t* fftK,
+                   size_t    Nx, size_t    Ny);
+        void kernmulrsymm2dxy(dim3 blocks, dim3 threads,
+                   real_t*  fftMx, real_t*  fftMy,
+                   real_t* fftKxx, real_t* fftKyy, real_t* fftKxy,
+                   size_t      Nx, size_t      Ny);
+        void kernmulrsymm2dz(dim3 blocks, dim3 threads,
+                   real_t* fftMz, real_t* fftKzz,
+                   size_t     Nx, size_t      Ny);
+        void kernmulrsymm3d(dim3 blocks, dim3 threads,
+                   real_t*  fftMx, real_t*  fftMy, real_t*  fftMz,
+                   real_t* fftKxx, real_t* fftKyy, real_t* fftKzz,
+                   real_t* fftKyz, real_t* fftKxz, real_t* fftKxy,
+                   size_t      Nx, size_t      Ny, size_t      Nz);
         void llnoprecess(dim3 blocks, dim3 threads,
                    real_t*  tx, real_t*  ty, real_t*  tz,
                    real_t* mx_, real_t* my_, real_t* mz_,

@@ -8,7 +8,7 @@
 // Using the same symmetries as kernmulrsymm3d
 template <typename dataT>
 inline void kernmulrsymm2dz_fcn(sycl::nd_item<3> item,
-                                dataT* fftMz, dataT* fftKzz
+                                dataT* fftMz, dataT* fftKzz,
                                 size_t    Nx, size_t     Ny) {
     size_t ix = syclBlockIdx_x * syclBlockDim_x + syclThreadIdx_x;
     size_t iy = syclBlockIdx_y * syclBlockDim_y + syclThreadIdx_y;

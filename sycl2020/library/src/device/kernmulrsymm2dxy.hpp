@@ -48,7 +48,7 @@ inline void kernmulrsymm2dxy_fcn(sycl::nd_item<3> item,
 
 // the function that launches the kernel
 template <typename dataT>
-void kernmulrsymm2dxy_t(dim3 blocks[3], dim3 threads[3], sycl::queue q,
+void kernmulrsymm2dxy_t(dim3 blocks, dim3 threads, sycl::queue q,
                         dataT*  fftMx, dataT*  fftMy,
                         dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
                         size_t     Nx, size_t     Ny) {

@@ -10,6 +10,10 @@
 #include "device/dotproduct.hpp"
 #include "device/exchange.hpp"
 #include "device/exchangedecode.hpp"
+#include "device/kernmulc.hpp"
+#include "device/kernmulrsymm2dxy.hpp"
+#include "device/kernmulrsymm2dz.hpp"
+#include "device/kernmulrsymm3d.hpp"
 #include "device/llnoprecess.hpp"
 #include "device/lltorque2.hpp"
 #include "device/madd2.hpp"
@@ -26,25 +30,6 @@ class Mumax3clUtil_t {
         };
         sycl::queue getQueue() { return this->mainQ; }
         sycl::device getDevice() { return this->mainDev; }
-        void addexchange(dim3 blocks, dim3 threads,
-                   dataT* Bx, dataT* By, dataT* Bz,
-                   dataT* mx, dataT* my, dataT* mz,
-                   dataT* Ms, dataT Ms_mul,
-                   dataT* aLUT2d,
-                   uint8_t* regions,
-                   dataT wx, dataT wy, dataT wz,
-                   size_t Nx, size_t Ny, size_t Nz,
-                   uint8_t PBC) {
-                addexchange_t<dataT>(blocks, threads, this->mainQ,
-                   Bx, By, Bz,
-                   mx, my, mz,
-                   Ms, Ms_mul,
-                   aLUT2d,
-                   regions,
-                   wx, wy, wz,
-                   Nx, Ny, Nz,
-                   PBC);
-                };
         void copypadmul2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
@@ -194,6 +179,25 @@ class Mumax3clUtil_t {
                                     src2z,
                                     N);
             };
+        void addexchange(dim3 blocks, dim3 threads,
+                   dataT* Bx, dataT* By, dataT* Bz,
+                   dataT* mx, dataT* my, dataT* mz,
+                   dataT* Ms, dataT Ms_mul,
+                   dataT* aLUT2d,
+                   uint8_t* regions,
+                   dataT wx, dataT wy, dataT wz,
+                   size_t Nx, size_t Ny, size_t Nz,
+                   uint8_t PBC) {
+                addexchange_t<dataT>(blocks, threads, this->mainQ,
+                   Bx, By, Bz,
+                   mx, my, mz,
+                   Ms, Ms_mul,
+                   aLUT2d,
+                   regions,
+                   wx, wy, wz,
+                   Nx, Ny, Nz,
+                   PBC);
+                };
         void exchangedecode(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* aLUT2d,
@@ -208,6 +212,41 @@ class Mumax3clUtil_t {
                                         wx, wy, wz,
                                         Nx, Ny, Nz,
                                         PBC);
+            };
+        void kernmulc(dim3 blocks, dim3 threads,
+                   dataT* fftM, dataT* fftK,
+                   size_t Nx, size_t Ny) {
+                kernmulc_t<dataT>(blocks, threads, this->mainQ,
+                                  fftM, fftK,
+                                    Nx,   Ny);
+            };
+        void kernmulrsymm2dxy(dim3 blocks, dim3 threads,
+                   dataT*  fftMx, dataT*  fftMy,
+                   dataT* fftKxx, dataT* fftKyy, dataT* fftKxy,
+                   size_t     Nx, size_t     Ny) {
+                kernmulrsymm2dxy_t<dataT>(blocks, threads, this->mainQ,
+                                           fftMx,  fftMy,
+                                          fftKxx, fftKyy, fftKxy,
+                                              Nx,     Ny);
+            };
+        void kernmulrsymm2dz(dim3 blocks, dim3 threads,
+                   dataT* fftMz, dataT* fftKzz,
+                   size_t    Nx, size_t     Ny) {
+                kernmulrsymm2dz_t<dataT>(blocks, threads, this->mainQ,
+                                         fftMz, fftKzz,
+                                            Nx,     Ny);
+
+            };
+        void kernmulrsymm3d(dim3 blocks, dim3 threads,
+                   dataT*  fftMx, dataT*  fftMy, dataT*  fftMz,
+                   dataT* fftKxx, dataT* fftKyy, dataT* fftKzz,
+                   dataT* fftKyz, dataT* fftKxz, dataT* fftKxy,
+                   size_t     Nx, size_t     Ny, size_t     Nz) {
+                kernmulrsymm3d_t<dataT>(blocks, threads, this->mainQ,
+                                         fftMx,   fftMy,   fftMz,
+                                        fftKxx,  fftKyy,  fftKzz,
+                                        fftKyz,  fftKxz,  fftKxy,
+                                            Nx,      Ny,      Nz);
             };
         void llnoprecess(dim3 blocks, dim3 threads,
                    dataT*  tx, dataT*  ty, dataT*  tz,
