@@ -6,21 +6,26 @@ FN=$1
 NVTARG="-fsycl-targets=nvptx64-nvidia-cuda-sycldevice"
 DEBUG=-DNDEBUG
 
-if [ -f ./${FN}.so ]; then
-    rm ./${FN}.so
+if [ -f ./libmumax3cl_f.so ]; then
+    rm ./libmumax3cl_f.so
 fi
-clang++ -shared -fPIC -O3 -fsycl ${NVTARG} ${DEBUG} ${FN}.cpp -o ${FN}.so
-
-if [ -f ../lib/${FN}.so ]; then
-    rm ../lib/${FN}.so
+if [ -f ./libmumax3cl_d.so ]; then
+    rm ./libmumax3cl_d.so
 fi
+clang++ -shared -fPIC -O3 -fsycl ${NVTARG} ${DEBUG} libmumax3cl_t.cpp -o libmumax3cl_f.so
+clang++ -shared -fPIC -O3 -fsycl ${NVTARG} ${DEBUG} -D__REAL_IS_DOUBLE__ libmumax3cl_t.cpp -o libmumax3cl_d.so
 
 if [ ! -d ../lib ]; then
     mkdir ../lib
+else
+    if [ -f ../lib/libmumax3cl_f.so ]; then
+        rm ../lib/libmumax3cl_f.so
+    fi
+    if [ -f ../lib/libmumax3cl_d.so ]; then
+        rm ../lib/libmumax3cl_d.so
+    fi
 fi
 
-if [ -f ../lib/${FN}.so ]; then
-    rm ../lib/${FN}.so
-fi
+cp ./libmumax3cl_f.so ../lib/libmumax3cl_f.so
+cp ./libmumax3cl_d.so ../lib/libmumax3cl_d.so
 
-cp ./${FN}.so ../lib/${FN}.so

@@ -1,6 +1,6 @@
 #include "gpu_select.hpp"
 #include "libmumax3cl.hpp"
-#include "libmumax3cl_d.hpp"
+#include "libmumax3cl_t.hpp"
 
 Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
