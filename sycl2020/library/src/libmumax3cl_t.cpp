@@ -5,7 +5,7 @@
 Mumax3clUtil::Mumax3clUtil(int id) {
     this->obj = new Mumax3clUtil_t<real_t>(id);
 }
-
+/*
 void Mumax3clUtil::copypadmul2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    size_t  Dx, size_t Dy, size_t Dz,
@@ -263,7 +263,7 @@ void Mumax3clUtil::lltorque2(dim3 blocks, dim3 threads,
                          alpha_, alpha_mul,
                          N);
 }
-
+*/
 void Mumax3clUtil::madd2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
@@ -279,7 +279,7 @@ void Mumax3clUtil::madd2(dim3 blocks, dim3 threads,
                      fac2,
                      N);
 }
-
+/*
 void Mumax3clUtil::madd3(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
@@ -685,7 +685,7 @@ void Mumax3clUtil::addzhanglitorque2(dim3 blocks, dim3 threads,
                                  Nx, Ny, Nz,
                                  PBC);
 }
-
+*/
 sycl::queue Mumax3clUtil::getQueue() { return this->obj->getQueue(); }
 sycl::device Mumax3clUtil::getDevice() { return this->obj->getDevice(); }
 
@@ -697,7 +697,7 @@ extern "C" {
 Mumax3clUtil* newMumax3clUtil(int id) {
     return new Mumax3clUtil(id);
 }
-
+/*
 void copypadmul2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                  real_t* dst,
                  size_t  Dx, size_t Dy, size_t Dz,
@@ -954,7 +954,7 @@ void lltorque2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                    alpha_, alpha_mul,
                    N);
 }
-
+*/
 void madd2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* src1,
@@ -970,7 +970,7 @@ void madd2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                fac2,
                N);
 }
-
+/*
 void madd3(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
       real_t* dst,
       real_t* src1,
@@ -1376,7 +1376,7 @@ void addzhanglitorque2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
                            Nx, Ny, Nz,
                            PBC);
 }
-
+*/
 #ifdef __cplusplus
 }
 #endif

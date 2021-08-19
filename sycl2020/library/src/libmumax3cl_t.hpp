@@ -7,6 +7,7 @@ typedef double real_t;
 class Mumax3clUtil {
     public :
         Mumax3clUtil(int id);
+/*
         void copypadmul2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    size_t  Dx, size_t Dy, size_t Dz,
@@ -119,6 +120,7 @@ class Mumax3clUtil {
                    real_t* hx_, real_t* hy_, real_t* hz_,
                    real_t* alpha_, real_t alpha_mul,
                    size_t N);
+*/
         void madd2(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
@@ -126,6 +128,7 @@ class Mumax3clUtil {
                    real_t* src2,
                    real_t  fac2,
                    size_t  N);
+/*
         void madd3(dim3 blocks, dim3 threads,
                    real_t* dst,
                    real_t* src1,
@@ -305,6 +308,7 @@ class Mumax3clUtil {
                    real_t      cx, real_t        cy, real_t  cz,
                    size_t      Nx, size_t       Ny, size_t Nz,
                    uint8_t    PBC);
+*/
         sycl::queue getQueue();
         sycl::device getDevice();
     private :
@@ -316,7 +320,7 @@ extern "C" {
 #endif
 
   Mumax3clUtil* newMumax3clUtil(int id);
-
+/*
   void copypadmul2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
              real_t* dst,
              size_t  Dx, size_t Dy, size_t Dz,
@@ -445,7 +449,7 @@ extern "C" {
              real_t* hx_, real_t* hy_, real_t* hz_,
              real_t* alpha_, real_t alpha_mul,
              size_t N);
-
+*/
   void madd2(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
              real_t* dst,
              real_t* src1,
@@ -453,7 +457,7 @@ extern "C" {
              real_t* src2,
              real_t  fac2,
              size_t  N);
-
+/*
   void madd3(Mumax3clUtil* obj, dim3 blocks, dim3 threads,
              real_t* dst,
              real_t* src1,
@@ -656,7 +660,7 @@ extern "C" {
              real_t      cx, real_t        cy, real_t  cz,
              size_t      Nx, size_t       Ny, size_t Nz,
              uint8_t    PBC);
-
+*/
 #ifdef __cplusplus
 }
 #endif

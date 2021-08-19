@@ -1,4 +1,5 @@
 #include <CL/sycl.hpp>
+/*
 #include "device/copypadmul2.hpp"
 #include "device/copyunpad.hpp"
 #include "device/crop.hpp"
@@ -16,7 +17,9 @@
 #include "device/kernmulrsymm3d.hpp"
 #include "device/llnoprecess.hpp"
 #include "device/lltorque2.hpp"
+*/
 #include "device/madd2.hpp"
+/*
 #include "device/madd3.hpp"
 #include "device/magnetoelasticfield.hpp"
 #include "device/magnetoelasticforce.hpp"
@@ -41,6 +44,7 @@
 #include "device/vecnorm.hpp"
 #include "device/zeromask.hpp"
 #include "device/zhangli2.hpp"
+*/
 //#include "device/"
 
 template <typename dataT>
@@ -54,7 +58,7 @@ class Mumax3clUtil_t {
         sycl::queue getQueue() { return this->mainQ; }
 
         sycl::device getDevice() { return this->mainDev; }
-
+/*
         void copypadmul2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    size_t Dx, size_t Dy, size_t Dz,
@@ -313,7 +317,7 @@ class Mumax3clUtil_t {
                                      alpha_, alpha_mul,
                                      N);
             };
-
+*/
         void madd2(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
@@ -329,7 +333,7 @@ class Mumax3clUtil_t {
                                fac2,
                                N);
             };
-
+/*
         void madd3(dim3 blocks, dim3 threads,
                    dataT* dst,
                    dataT* src1,
@@ -735,7 +739,7 @@ class Mumax3clUtil_t {
                                Nx, Ny, Nz,
                                PBC);
             };
-
+*/
     private :
         sycl::queue   mainQ;
         sycl::device  mainDev;
