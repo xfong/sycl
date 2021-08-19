@@ -2,7 +2,7 @@
 typedef float real_t;
 #else
 typedef double real_t;
-#endif __REAL_IS_DOUBLE__
+#endif // __REAL_IS_DOUBLE__
 
 class Mumax3clUtil {
     public :

@@ -1,6 +1,10 @@
 #include "utils.h"
 
+#ifndef __REAL_IS_DOUBLE__
 typedef float real_t;
+#else
+typedef double real_t;
+#endif // __REAL_IS_DOUBLE__
 
 #ifdef __cplusplus
   class Mumax3clUtil {
